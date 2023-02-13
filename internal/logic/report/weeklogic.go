@@ -4,10 +4,12 @@ import (
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"context"
+	"errors"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"io"
+	"net/http"
 )
 
 type WeekLogic struct {
@@ -24,11 +26,11 @@ func NewWeekLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WeekLogic {
 	}
 }
 
-func (l *WeekLogic) Week(req *types.ReportRequest) (resp *types.ReportResponse, err error) {
+func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我把以下的工作内容填充为一篇完整的周报,用 html 格式以分点叙述的形式输出:" + req.Content,
+		Prompt:           "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容总结和下周计划,用 markdown 格式以分点叙述的形式输出:" + req.Content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -36,14 +38,48 @@ func (l *WeekLogic) Week(req *types.ReportRequest) (resp *types.ReportResponse, 
 		PresencePenalty:  0,
 		N:                1,
 	}
-	ctx := context.Background()
-	stream, err := l.svcCtx.GptClient.CreateCompletion(ctx, gptReq)
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	// 创建上下文
+	ctx, cancel := context.WithCancel(l.ctx)
+	defer cancel()
+
+	ch := make(chan struct{})
+
+	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
 	if err != nil {
 		return nil, err
 	}
+	defer stream.Close()
+	go func() {
+		for {
+			response, err := stream.Recv()
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			if err != nil {
+				fmt.Printf("Stream error: %v\n", err)
+				break
+			}
+			if len(response.Choices) > 0 {
+				w.Write([]byte(response.Choices[0].Text))
+				fmt.Println(response.Choices[0].Text)
+				if f, ok := w.(http.Flusher); ok {
+					f.Flush()
+				}
+			}
 
-	fmt.Println(stream.Choices)
-	return &types.ReportResponse{
-		Data: stream.Choices[0].Text,
-	}, nil
+		}
+		close(ch)
+	}()
+
+	select {
+	case <-ch:
+		// 处理已完成
+		logx.Infof("EventStream logic finished")
+	case <-ctx.Done():
+		// 处理被取消
+		logx.Errorf("EventStream logic canceled")
+	}
+	return
 }

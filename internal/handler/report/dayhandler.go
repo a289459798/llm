@@ -18,7 +18,7 @@ func DayHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := report.NewDayLogic(r.Context(), svcCtx)
-		resp, err := l.Day(&req)
+		resp, err := l.Day(&req, w)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {

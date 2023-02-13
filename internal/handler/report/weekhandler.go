@@ -1,12 +1,11 @@
 package report
 
 import (
-	"net/http"
-
 	"chatgpt-tools/internal/logic/report"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"net/http"
 )
 
 func WeekHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -18,7 +17,7 @@ func WeekHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := report.NewWeekLogic(r.Context(), svcCtx)
-		resp, err := l.Week(&req)
+		resp, err := l.Week(&req, w)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {
