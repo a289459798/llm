@@ -1,0 +1,32 @@
+syntax = "v1"
+
+type(
+    ImageRequest {
+        Content string `json:"content"`
+    }
+
+    ImageResponse {
+        Url string `json:"url"`
+    }
+
+    WatermarkRequest {
+        Url string `json:"url"`
+        Content string `json:"content"`
+        Position string `json:"position"`
+        Opacity float32 `json:"opacity"`
+        FontSize uint `json:"fontSize"`
+        Color string `json:"color"`
+    }
+)
+
+@server(
+    middleware: AuthAndUse
+    group: image
+)
+service tools {
+    @handler create
+    post /images/create (ImageRequest) returns (ImageResponse)
+
+    @handler watermark
+    post /images/watermark (ImageRequest) returns (ImageResponse)
+}

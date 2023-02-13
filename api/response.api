@@ -1,0 +1,6 @@
+syntax = "v1"
+
+type Response {
+    Code uint `json:"code"`
+    Message string `json:"message"`
+}

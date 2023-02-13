@@ -1,0 +1,23 @@
+syntax = "v1"
+
+type(
+    ReportRequest {
+        Content string `json:"content"`
+    }
+
+    ReportResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+    middleware: AuthAndUse
+    group: report
+)
+service tools {
+    @handler day
+    post /report/day (ReportRequest) returns (ReportResponse)
+
+    @handler week
+    post /report/week (ReportRequest) returns (ReportResponse)
+}

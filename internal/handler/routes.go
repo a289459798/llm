@@ -4,6 +4,8 @@ package handler
 import (
 	"net/http"
 
+	image "chatgpt-tools/internal/handler/image"
+	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
 	"chatgpt-tools/internal/svc"
 
@@ -22,13 +24,51 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/users/:id",
-				Handler: user.UserInfoHandler(serverCtx),
-			},
-		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/:id",
+					Handler: user.UserInfoHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/report/day",
+					Handler: report.DayHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/report/week",
+					Handler: report.WeekHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/create",
+					Handler: image.CreateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/watermark",
+					Handler: image.WatermarkHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 }
