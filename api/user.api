@@ -1,0 +1,39 @@
+syntax = "v1"
+
+info(
+    title: "type title here"
+    desc: "type desc here"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+
+type LoginRequest {
+}
+
+type LoginResponse {
+}
+
+type InfoRequest {
+}
+
+type InfoResponse {
+}
+
+@server(
+    group: user
+)
+service tools {
+    @handler login
+    get /users/login (LoginRequest) returns (LoginResponse)
+}
+
+@server(
+    jwt: Auth
+    group: user
+)
+service tools {
+    @handler userInfo
+    get /users/:id (InfoRequest) returns (InfoResponse)
+}
