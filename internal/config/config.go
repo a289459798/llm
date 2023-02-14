@@ -8,4 +8,5 @@ type Config struct {
 		DataSource string
 	}
 	OpenAIKey string
+	JwtSecret string
 }

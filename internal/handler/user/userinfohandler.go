@@ -1,6 +1,7 @@
 package user
 
 import (
+	"chatgpt-tools/common/errorx"
 	"net/http"
 
 	"chatgpt-tools/internal/logic/user"
@@ -13,14 +14,14 @@ func UserInfoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.InfoRequest
 		if err := httpx.Parse(r, &req); err != nil {
-			httpx.Error(w, err)
+			errorx.Error(w, err.Error())
 			return
 		}
 
 		l := user.NewUserInfoLogic(r.Context(), svcCtx)
 		resp, err := l.UserInfo(&req)
 		if err != nil {
-			httpx.Error(w, err)
+			errorx.Error(w, err.Error())
 		} else {
 			httpx.OkJson(w, resp)
 		}

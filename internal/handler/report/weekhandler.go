@@ -1,6 +1,7 @@
 package report
 
 import (
+	"chatgpt-tools/common/errorx"
 	"chatgpt-tools/internal/logic/report"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -12,14 +13,14 @@ func WeekHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ReportRequest
 		if err := httpx.Parse(r, &req); err != nil {
-			httpx.Error(w, err)
+			errorx.Error(w, err.Error())
 			return
 		}
 
 		l := report.NewWeekLogic(r.Context(), svcCtx)
 		resp, err := l.Week(&req, w)
 		if err != nil {
-			httpx.Error(w, err)
+			errorx.Error(w, err.Error())
 		} else {
 			httpx.OkJson(w, resp)
 		}

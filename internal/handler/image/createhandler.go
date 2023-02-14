@@ -1,6 +1,7 @@
 package image
 
 import (
+	"chatgpt-tools/common/errorx"
 	"net/http"
 
 	"chatgpt-tools/internal/logic/image"
@@ -13,14 +14,14 @@ func CreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ImageRequest
 		if err := httpx.Parse(r, &req); err != nil {
-			httpx.Error(w, err)
+			errorx.Error(w, err.Error())
 			return
 		}
 
 		l := image.NewCreateLogic(r.Context(), svcCtx)
 		resp, err := l.Create(&req)
 		if err != nil {
-			httpx.Error(w, err)
+			errorx.Error(w, err.Error())
 		} else {
 			httpx.OkJson(w, resp)
 		}

@@ -1,15 +1,15 @@
 syntax = "v1"
 
 type LoginRequest {
-}
-
-type LoginResponse {
+    Code string `json:"code"`
 }
 
 type InfoRequest {
 }
 
 type InfoResponse {
+    Token string `json:"token"`
+    Amount uint `json:"amount"`
 }
 
 @server(
@@ -17,7 +17,7 @@ type InfoResponse {
 )
 service tools {
     @handler login
-    get /users/login (LoginRequest) returns (LoginResponse)
+    get /users/login (LoginRequest) returns (InfoResponse)
 }
 
 @server(
