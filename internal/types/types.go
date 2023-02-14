@@ -81,6 +81,10 @@ type IdiomRequest struct {
 	Content string `json:"content"`
 }
 
+type TwentyFourRequest struct {
+	Content string `json:"content"`
+}
+
 type GameResponse struct {
 	Code uint   `json:"code"`
 	Data string `json:"data"`

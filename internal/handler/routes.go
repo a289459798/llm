@@ -125,6 +125,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/game/idiom/answer",
 					Handler: game.IdiomAnswerHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/game/twenty-four",
+					Handler: game.TwentyFourHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/game/twenty-four/answer",
+					Handler: game.TwentyFourAnswerHandler(serverCtx),
+				},
 			}...,
 		),
 	)

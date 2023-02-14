@@ -37,29 +37,29 @@ func (l *IdiomAnswerLogic) IdiomAnswer(req *types.IdiomRequest) (resp *types.Gam
 		if string(rc[0]) != string(rp[3]) {
 			return nil, errors.New("请回答正确的四字成语")
 		}
-		gptReq := gogpt.CompletionRequest{
-			Model:            gogpt.GPT3TextDavinci003,
-			Prompt:           fmt.Sprintf("请告诉我%s是成语吗？只要回答我对还是错，不要包含其他文字与字符", req.Content),
-			MaxTokens:        1536,
-			Temperature:      0.7,
-			TopP:             1,
-			FrequencyPenalty: 0,
-			PresencePenalty:  0,
-			N:                1,
-		}
-		stream, err := l.svcCtx.GptClient.CreateCompletion(l.ctx, gptReq)
-		if err != nil {
-			return nil, err
-		}
-
-		if utils.TrimHtml(stream.Choices[0].Text) == "错" {
-			return nil, errors.New("这好像不是一个成语")
-		}
+		//gptReq := gogpt.CompletionRequest{
+		//	Model:            gogpt.GPT3TextDavinci003,
+		//	Prompt:           fmt.Sprintf("请告诉我%s是成语吗？只要回答我对还是错，不要包含其他文字与字符", req.Content),
+		//	MaxTokens:        1536,
+		//	Temperature:      0.7,
+		//	TopP:             1,
+		//	FrequencyPenalty: 0,
+		//	PresencePenalty:  0,
+		//	N:                1,
+		//}
+		//stream, err := l.svcCtx.GptClient.CreateCompletion(l.ctx, gptReq)
+		//if err != nil {
+		//	return nil, err
+		//}
+		//
+		//if utils.TrimHtml(stream.Choices[0].Text) == "错" {
+		//	return nil, errors.New("这好像不是一个成语")
+		//}
 	}
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("请给我一个以%s开头的四个字正确的成语，不要包含句号在内的所有字符", string(rc[3])),
+		Prompt:           fmt.Sprintf("请给我一个以%s开头的正确的四个字成语，不要包含句号在内的所有字符", string(rc[3])),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,

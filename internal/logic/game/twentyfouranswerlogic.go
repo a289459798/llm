@@ -2,32 +2,34 @@ package game
 
 import (
 	"chatgpt-tools/common/utils"
+	"context"
+	"fmt"
+	gogpt "github.com/sashabaranov/go-gpt3"
+
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
-	"context"
-	gogpt "github.com/sashabaranov/go-gpt3"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type IdiomLogic struct {
+type TwentyFourAnswerLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewIdiomLogic(ctx context.Context, svcCtx *svc.ServiceContext) *IdiomLogic {
-	return &IdiomLogic{
+func NewTwentyFourAnswerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TwentyFourAnswerLogic {
+	return &TwentyFourAnswerLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *IdiomLogic) Idiom() (resp *types.GameResponse, err error) {
+func (l *TwentyFourAnswerLogic) TwentyFourAnswer(req *types.TwentyFourRequest) (resp *types.GameResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请随机给我生成一个四字成语，不要包含句号在内的所有字符",
+		Prompt:           fmt.Sprintf("这些数字%s玩24点计算小游戏", req.Content),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
