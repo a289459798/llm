@@ -8,4 +8,6 @@ OpenAIKey: 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
 Mysql:
   DataSource: root:5ichong2015@tcp(192.168.1.134:3306)/chatgpt-tools?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 
-JwtSecret: chatgpt-tools
+Auth:
+  AccessSecret: chatgpt-tools
+  AccessExpire: 8640000

@@ -9,7 +9,7 @@ type InfoRequest {
 
 type InfoResponse {
     Token string `json:"token"`
-    Amount uint `json:"amount"`
+    Amount uint32 `json:"amount"`
 }
 
 @server(
@@ -21,7 +21,7 @@ service tools {
 }
 
 @server(
-    middleware: Auth
+    jwt: Auth
     group: user
 )
 service tools {

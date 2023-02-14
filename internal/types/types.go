@@ -10,7 +10,7 @@ type InfoRequest struct {
 
 type InfoResponse struct {
 	Token  string `json:"token"`
-	Amount uint   `json:"amount"`
+	Amount uint32 `json:"amount"`
 }
 
 type ReportRequest struct {

@@ -1,6 +1,8 @@
 package user
 
 import (
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
 	"github.com/golang-jwt/jwt/v4"
@@ -8,9 +10,6 @@ import (
 	"github.com/silenceper/wechat/v2/cache"
 	"github.com/silenceper/wechat/v2/miniprogram/config"
 	"time"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -53,15 +52,14 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 		l.svcCtx.Db.Create(&user)
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iat":    time.Now().Unix(),
-		"exp":    time.Now().Unix() + 86400*365,
-		"nbf":    time.Now().Unix(),
-		"uid":    user.ID,
-		"openid": user.OpenId,
-	})
+	claims := make(jwt.MapClaims)
+	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
+	claims["iat"] = time.Now().Unix()
+	claims["uid"] = user.ID
+	token := jwt.New(jwt.SigningMethodHS256)
+	token.Claims = claims
+	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
 
-	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.JwtSecret))
 	if err != nil {
 		return nil, err
 	}

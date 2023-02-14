@@ -20,6 +20,7 @@ type(
 )
 
 @server(
+    jwt: Auth
     middleware: AuthAndUse
     group: image
 )

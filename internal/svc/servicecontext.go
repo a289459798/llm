@@ -18,7 +18,6 @@ import (
 type ServiceContext struct {
 	Config     config.Config
 	Db         *gorm.DB
-	Auth       rest.Middleware
 	AuthAndUse rest.Middleware
 	GptClient  *gogpt.Client
 }
@@ -41,10 +40,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	})
 
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Account{})
+	db.AutoMigrate(&model.Record{})
+	db.AutoMigrate(&model.Feedback{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
-		Auth:       middleware.NewAuthMiddleware(c).Handle,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware().Handle,
 		GptClient:  gogpt.NewClient(c.OpenAIKey),
 	}

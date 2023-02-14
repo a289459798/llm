@@ -11,6 +11,7 @@ type(
 )
 
 @server(
+//    jwt: Auth
     middleware: AuthAndUse
     group: report
 )
