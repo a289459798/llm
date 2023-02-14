@@ -48,6 +48,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/report/week",
 					Handler: report.WeekHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/report/plot",
+					Handler: report.PlotHandler(serverCtx),
+				},
 			}...,
 		),
 	)

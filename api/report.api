@@ -21,4 +21,7 @@ service tools {
 
     @handler week
     post /report/week (ReportRequest) returns (ReportResponse)
+
+    @handler plot
+    post /report/plot (ReportRequest) returns (ReportResponse)
 }
