@@ -1,0 +1,29 @@
+syntax = "v1"
+
+type(
+    RegularRequest {
+        Content string `json:"content"`
+    }
+
+    GenerateRequest {
+        Content string `json:"content"`
+        Lang string `json:"lang,optional"`
+    }
+
+    CodeResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: AuthAndUse
+    group: code
+)
+service tools {
+    @handler regular
+    post /code/regular (RegularRequest) returns (CodeResponse)
+
+    @handler generate
+    post /code/generate (GenerateRequest) returns (CodeResponse)
+}

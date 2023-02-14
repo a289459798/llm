@@ -89,3 +89,16 @@ type GameResponse struct {
 	Code uint   `json:"code"`
 	Data string `json:"data"`
 }
+
+type RegularRequest struct {
+	Content string `json:"content"`
+}
+
+type GenerateRequest struct {
+	Content string `json:"content"`
+	Lang    string `json:"lang,optional"`
+}
+
+type CodeResponse struct {
+	Data string `json:"data"`
+}
