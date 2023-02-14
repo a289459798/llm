@@ -47,6 +47,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:     c,
 		Db:         db,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware().Handle,
-		GptClient:  gogpt.NewClient(c.OpenAIKey),
+		GptClient:  gogpt.NewOrgClient(c.OpenAIKey, "org-uEVmBE7js3m3RFGSCuxyt4pm"),
 	}
 }

@@ -1,6 +1,7 @@
 package divination
 
 import (
+	"chatgpt-tools/common/utils"
 	"context"
 	"errors"
 	"fmt"
@@ -73,8 +74,7 @@ func (l *QimingLogic) Qiming(req *types.QiMingRequest, w http.ResponseWriter) (r
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(response.Choices[0].Text))
-				fmt.Println(response.Choices[0].Text)
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}

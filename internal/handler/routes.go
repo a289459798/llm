@@ -86,6 +86,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/divination/qiming",
 					Handler: divination.QimingHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/divination/jiemeng",
+					Handler: divination.JiemengHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/divination/suanming",
+					Handler: divination.SuanmingHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/divination/gsqiming",
+					Handler: divination.GsqimingHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/divination/yyqiming",
+					Handler: divination.YyqimingHandler(serverCtx),
+				},
 			}...,
 		),
 	)

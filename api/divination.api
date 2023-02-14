@@ -15,7 +15,24 @@ type(
     }
 
     SuanMingRequest {
-        Content string `json:"content"`
+        Name string `json:"name"`
+        Brithday string `json:"brithday"`
+        Sex string `json:"sex,optional"`
+        Content string `json:"content,optional"`
+    }
+
+    GSQiMingRequest {
+        City string `json:"city"`
+        Industry string `json:"industry"`
+        Range string `json:"range"`
+        Culture string `json:"culture,optional"`
+        Other string `json:"other,optional"`
+    }
+
+    YYQiMingRequest {
+        Name string `json:"name"`
+        Sex string `json:"sex"`
+        Other string `json:"other,optional"`
     }
 
     DivinationResponse {
@@ -32,9 +49,15 @@ service tools {
     @handler qiming
     post /divination/qiming (QiMingRequest) returns (DivinationResponse)
 
-//    @handler jiemeng
-//    post /report/jiemeng (JieMengRequest) returns (DivinationResponse)
-//
-//    @handler suanming
-//    post /report/suanming (SuanMingRequest) returns (DivinationResponse)
+    @handler jiemeng
+    post /divination/jiemeng (JieMengRequest) returns (DivinationResponse)
+
+    @handler suanming
+    post /divination/suanming (SuanMingRequest) returns (DivinationResponse)
+
+    @handler gsqiming
+    post /divination/gsqiming (GSQiMingRequest) returns (DivinationResponse)
+
+    @handler yyqiming
+    post /divination/yyqiming (YYQiMingRequest) returns (DivinationResponse)
 }

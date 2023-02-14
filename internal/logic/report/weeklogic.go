@@ -1,6 +1,7 @@
 package report
 
 import (
+	"chatgpt-tools/common/utils"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"context"
@@ -58,11 +59,10 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 				break
 			}
 			if err != nil {
-				fmt.Printf("Stream error: %v\n", err)
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(response.Choices[0].Text))
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
 				fmt.Println(response.Choices[0].Text)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()

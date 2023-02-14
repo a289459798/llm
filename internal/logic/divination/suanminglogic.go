@@ -1,9 +1,10 @@
-package report
+package divination
 
 import (
 	"chatgpt-tools/common/utils"
 	"context"
 	"errors"
+	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
@@ -14,24 +15,33 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PlotLogic struct {
+type SuanmingLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewPlotLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlotLogic {
-	return &PlotLogic{
+func NewSuanmingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SuanmingLogic {
+	return &SuanmingLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
+func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
+	sex := ""
+	content := ""
+	if req.Sex != "" {
+		sex = "，性别为" + req.Sex
+	}
+	if req.Content != "" {
+		content = "，还有以下内容参考：" + req.Content
+	}
+	prompt := fmt.Sprintf("请帮我算命，我叫%s，出生年月为%s%s%s，给一份详情的算命报告，包含事业、爱情、运势、五行、命理等相关内容", req.Name, req.Brithday, sex, content)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我用以下内容完善一篇剧情，包含人物、道具以及情节,用 markdown 格式以分点叙述的形式输出：" + req.Content,
+		Prompt:           prompt,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -39,7 +49,8 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		PresencePenalty:  0,
 		N:                1,
 	}
-	w.Header().Set("Content-Type", "text/event-stream")
+
+	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
@@ -58,6 +69,7 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 				break
 			}
 			if err != nil {
+				fmt.Printf("Stream error: %v\n", err)
 				break
 			}
 			if len(response.Choices) > 0 {

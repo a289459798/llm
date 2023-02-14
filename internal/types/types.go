@@ -52,7 +52,24 @@ type JieMengRequest struct {
 }
 
 type SuanMingRequest struct {
-	Content string `json:"content"`
+	Name     string `json:"name"`
+	Brithday string `json:"brithday"`
+	Sex      string `json:"sex,optional"`
+	Content  string `json:"content,optional"`
+}
+
+type GSQiMingRequest struct {
+	City     string `json:"city"`
+	Industry string `json:"industry"`
+	Range    string `json:"range"`
+	Culture  string `json:"culture,optional"`
+	Other    string `json:"other,optional"`
+}
+
+type YYQiMingRequest struct {
+	Name  string `json:"name"`
+	Sex   string `json:"sex"`
+	Other string `json:"other,optional"`
 }
 
 type DivinationResponse struct {

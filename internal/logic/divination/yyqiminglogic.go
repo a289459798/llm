@@ -1,9 +1,9 @@
-package report
+package divination
 
 import (
-	"chatgpt-tools/common/utils"
 	"context"
 	"errors"
+	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
@@ -14,24 +14,30 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PlotLogic struct {
+type YyqimingLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewPlotLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlotLogic {
-	return &PlotLogic{
+func NewYyqimingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *YyqimingLogic {
+	return &YyqimingLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
+func (l *YyqimingLogic) Yyqiming(req *types.YYQiMingRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
+	other := ""
+	if req.Other != "" {
+		other = "，名字最好还" + req.Other
+	}
+	prompt := fmt.Sprintf("我中文名叫%s，性别为%s%s，请为我提供10个符合我的并且好听的英文名", req.Name, req.Sex, other)
+	fmt.Println(prompt)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我用以下内容完善一篇剧情，包含人物、道具以及情节,用 markdown 格式以分点叙述的形式输出：" + req.Content,
+		Prompt:           prompt,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -39,7 +45,8 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		PresencePenalty:  0,
 		N:                1,
 	}
-	w.Header().Set("Content-Type", "text/event-stream")
+
+	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
@@ -58,10 +65,12 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 				break
 			}
 			if err != nil {
+				fmt.Printf("Stream error: %v\n", err)
 				break
 			}
-			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
+			if len(response.Choices) > 0 && response.Choices[0].Text != "" {
+				w.Write([]byte(response.Choices[0].Text))
+				fmt.Println(response.Choices[0].Text)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
