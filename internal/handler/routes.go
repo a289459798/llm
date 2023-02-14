@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	divination "chatgpt-tools/internal/handler/divination"
 	image "chatgpt-tools/internal/handler/image"
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
@@ -74,5 +75,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/divination/qiming",
+					Handler: divination.QimingHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 }

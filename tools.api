@@ -12,4 +12,5 @@ import (
 	"api/user.api"
 	"api/report.api"
 	"api/image.api"
+	"api/divination.api"
 )

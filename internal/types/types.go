@@ -37,3 +37,24 @@ type WatermarkRequest struct {
 	FontSize uint    `json:"fontSize"`
 	Color    string  `json:"color"`
 }
+
+type QiMingRequest struct {
+	First    string `json:"first"`
+	Number   uint16 `json:"number"`
+	Brithday string `json:"brithday"`
+	Sex      string `json:"sex"`
+	Fix      string `json:"fix,optional"`
+	Other    string `json:"other,optional"`
+}
+
+type JieMengRequest struct {
+	Content string `json:"content"`
+}
+
+type SuanMingRequest struct {
+	Content string `json:"content"`
+}
+
+type DivinationResponse struct {
+	Data string `json:"data"`
+}

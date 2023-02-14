@@ -1,0 +1,40 @@
+syntax = "v1"
+
+type(
+    QiMingRequest {
+        First string `json:"first"`
+        Number uint16 `json:"number"`
+        Brithday string `json:"brithday"`
+        Sex string `json:"sex"`
+        Fix string `json:"fix,optional"`
+        Other string `json:"other,optional"`
+    }
+
+    JieMengRequest {
+        Content string `json:"content"`
+    }
+
+    SuanMingRequest {
+        Content string `json:"content"`
+    }
+
+    DivinationResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: AuthAndUse
+    group: divination
+)
+service tools {
+    @handler qiming
+    post /divination/qiming (QiMingRequest) returns (DivinationResponse)
+
+//    @handler jiemeng
+//    post /report/jiemeng (JieMengRequest) returns (DivinationResponse)
+//
+//    @handler suanming
+//    post /report/suanming (SuanMingRequest) returns (DivinationResponse)
+}
