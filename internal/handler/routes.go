@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	divination "chatgpt-tools/internal/handler/divination"
+	game "chatgpt-tools/internal/handler/game"
 	image "chatgpt-tools/internal/handler/image"
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
@@ -105,6 +106,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/divination/yyqiming",
 					Handler: divination.YyqimingHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/game/idiom",
+					Handler: game.IdiomHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/game/idiom/answer",
+					Handler: game.IdiomAnswerHandler(serverCtx),
 				},
 			}...,
 		),

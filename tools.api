@@ -13,4 +13,5 @@ import (
 	"api/report.api"
 	"api/image.api"
 	"api/divination.api"
+	"api/game.api"
 )

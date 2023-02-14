@@ -75,3 +75,13 @@ type YYQiMingRequest struct {
 type DivinationResponse struct {
 	Data string `json:"data"`
 }
+
+type IdiomRequest struct {
+	Pre     string `json:"pre,optional"`
+	Content string `json:"content"`
+}
+
+type GameResponse struct {
+	Code uint   `json:"code"`
+	Data string `json:"data"`
+}

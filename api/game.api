@@ -1,0 +1,26 @@
+syntax = "v1"
+
+type(
+    IdiomRequest {
+        Pre string `json:"pre,optional"`
+        Content string `json:"content"`
+    }
+
+    GameResponse {
+        Code uint `json:"code"`
+        Data string `json:"data"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: AuthAndUse
+    group: game
+)
+service tools {
+    @handler idiom
+    post /game/idiom  returns (GameResponse)
+
+    @handler idiomAnswer
+    post /game/idiom/answer (IdiomRequest)  returns (GameResponse)
+}
