@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	chat "chatgpt-tools/internal/handler/chat"
 	code "chatgpt-tools/internal/handler/code"
 	creation "chatgpt-tools/internal/handler/creation"
 	divination "chatgpt-tools/internal/handler/divination"
@@ -167,6 +168,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/creation/activity",
 					Handler: creation.ActivityHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/chat/introduce",
+					Handler: chat.IntroduceHandler(serverCtx),
 				},
 			}...,
 		),

@@ -16,4 +16,5 @@ import (
 	"api/game.api"
 	"api/code.api"
 	"api/creation.api"
+	"api/chat.api"
 )

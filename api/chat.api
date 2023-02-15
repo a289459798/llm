@@ -1,0 +1,25 @@
+syntax = "v1"
+
+type(
+    IntroduceRequest {
+        Name string `json:"name"`
+        Native string `json:"native"`
+        Interest string `json:"interest"`
+        Way string `json:"way,optional"`
+        Content string `json:"content,optional"`
+    }
+
+    ChatResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: AuthAndUse
+    group: chat
+)
+service tools {
+    @handler introduce
+    post /chat/introduce (IntroduceRequest) returns (ChatResponse)
+}

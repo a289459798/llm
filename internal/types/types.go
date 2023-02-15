@@ -114,3 +114,15 @@ type ActivityRequest struct {
 type CreationResponse struct {
 	Data string `json:"data"`
 }
+
+type IntroduceRequest struct {
+	Name     string `json:"name"`
+	Native   string `json:"native"`
+	Interest string `json:"interest"`
+	Way      string `json:"way,optional"`
+	Content  string `json:"content,optional"`
+}
+
+type ChatResponse struct {
+	Data string `json:"data"`
+}
