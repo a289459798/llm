@@ -4,6 +4,7 @@ import (
 	"chatgpt-tools/common/utils"
 	"context"
 	"errors"
+	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
@@ -31,7 +32,7 @@ func NewPlotLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlotLogic {
 func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我用以下内容完善一篇剧情，包含人物、道具以及情节,用 markdown 格式以分点叙述的形式输出：" + req.Content,
+		Prompt:           "请帮我用以下内容完善拍摄剧本，包含故事概要和主题、人物设定、场景设定、故事结构和情节、台词和对白、拍摄风格和视觉效果、音效和音乐,用 markdown 格式以分点叙述的形式输出：" + req.Content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -62,6 +63,7 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 			}
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
+				fmt.Println(response.Choices[0].Text)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
