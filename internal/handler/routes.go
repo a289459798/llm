@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	code "chatgpt-tools/internal/handler/code"
+	creation "chatgpt-tools/internal/handler/creation"
 	divination "chatgpt-tools/internal/handler/divination"
 	game "chatgpt-tools/internal/handler/game"
 	image "chatgpt-tools/internal/handler/image"
@@ -153,6 +154,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/code/generate",
 					Handler: code.GenerateHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/creation/activity",
+					Handler: creation.ActivityHandler(serverCtx),
 				},
 			}...,
 		),

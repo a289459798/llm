@@ -102,3 +102,15 @@ type GenerateRequest struct {
 type CodeResponse struct {
 	Data string `json:"data"`
 }
+
+type ActivityRequest struct {
+	Way     string `json:"way"`
+	Target  string `json:"target"`
+	Period  string `json:"period"`
+	User    string `json:"user"`
+	Content string `json:"content"`
+}
+
+type CreationResponse struct {
+	Data string `json:"data"`
+}

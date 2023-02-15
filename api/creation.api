@@ -1,0 +1,25 @@
+syntax = "v1"
+
+type(
+    ActivityRequest {
+        Way string `json:"way"`
+        Target string `json:"target"`
+        Period string `json:"period"`
+        User string `json:"user"`
+        Content string `json:"content"`
+    }
+
+    CreationResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: AuthAndUse
+    group: creation
+)
+service tools {
+    @handler activity
+    post /creation/activity (ActivityRequest) returns (CreationResponse)
+}
