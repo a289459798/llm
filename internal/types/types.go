@@ -123,6 +123,10 @@ type IntroduceRequest struct {
 	Content  string `json:"content,optional"`
 }
 
+type SalaryRequest struct {
+	Content string `json:"content"`
+}
+
 type ChatResponse struct {
 	Data string `json:"data"`
 }

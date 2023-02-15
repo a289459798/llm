@@ -9,6 +9,10 @@ type(
         Content string `json:"content,optional"`
     }
 
+    SalaryRequest {
+        Content string `json:"content"`
+    }
+
     ChatResponse {
         Data string `json:"data"`
     }
@@ -22,4 +26,7 @@ type(
 service tools {
     @handler introduce
     post /chat/introduce (IntroduceRequest) returns (ChatResponse)
+
+    @handler salary
+    post /chat/salary (SalaryRequest) returns (ChatResponse)
 }
