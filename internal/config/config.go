@@ -14,4 +14,8 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	}
+	MiniApp struct {
+		AppId     string
+		AppSecret string
+	}
 }

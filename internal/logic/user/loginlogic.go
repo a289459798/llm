@@ -32,8 +32,8 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	wc := wechat.NewWechat()
 	memory := cache.NewMemory()
 	cfg := &config.Config{
-		AppID:     "xxx",
-		AppSecret: "xxx",
+		AppID:     l.svcCtx.Config.MiniApp.AppId,
+		AppSecret: l.svcCtx.Config.MiniApp.AppSecret,
 		Cache:     memory,
 	}
 	mini := wc.GetMiniProgram(cfg)

@@ -11,3 +11,7 @@ Mysql:
 Auth:
   AccessSecret: chatgpt-tools
   AccessExpire: 8640000
+
+MiniApp:
+  AppId: wxfd9eea4f9c64e9b4
+  AppSecret: 3c8288719e2881f20a26b94cfdd519d3
