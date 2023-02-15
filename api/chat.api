@@ -13,6 +13,12 @@ type(
         Content string `json:"content"`
     }
 
+    RejectRequest {
+        Type string `json:"type"`
+        Way string `json:"way"`
+        Content string `json:"content"`
+    }
+
     ChatResponse {
         Data string `json:"data"`
     }
@@ -29,4 +35,7 @@ service tools {
 
     @handler salary
     post /chat/salary (SalaryRequest) returns (ChatResponse)
+
+    @handler reject
+    post /chat/reject (RejectRequest) returns (ChatResponse)
 }

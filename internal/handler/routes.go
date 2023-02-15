@@ -187,6 +187,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/chat/salary",
 					Handler: chat.SalaryHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/chat/reject",
+					Handler: chat.RejectHandler(serverCtx),
+				},
 			}...,
 		),
 	)

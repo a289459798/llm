@@ -127,6 +127,12 @@ type SalaryRequest struct {
 	Content string `json:"content"`
 }
 
+type RejectRequest struct {
+	Type    string `json:"type"`
+	Way     string `json:"way"`
+	Content string `json:"content"`
+}
+
 type ChatResponse struct {
 	Data string `json:"data"`
 }
