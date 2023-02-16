@@ -2,6 +2,8 @@ package report
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/model"
+	"chatgpt-tools/service"
 	"context"
 	"errors"
 	gogpt "github.com/sashabaranov/go-gpt3"
@@ -79,5 +81,11 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
+	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
+		Uid:     l.ctx.Value("uid").(uint32),
+		Type:    "report/day",
+		Content: "",
+		Result:  "",
+	})
 	return
 }

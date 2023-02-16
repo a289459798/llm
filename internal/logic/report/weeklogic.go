@@ -4,6 +4,8 @@ import (
 	"chatgpt-tools/common/utils"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
+	"chatgpt-tools/model"
+	"chatgpt-tools/service"
 	"context"
 	"errors"
 	"fmt"
@@ -81,5 +83,11 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
+	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
+		Uid:     l.ctx.Value("uid").(uint32),
+		Type:    "report/week",
+		Content: "",
+		Result:  "",
+	})
 	return
 }

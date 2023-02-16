@@ -2,6 +2,8 @@ package chat
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/model"
+	"chatgpt-tools/service"
 	"context"
 	"errors"
 	"fmt"
@@ -88,5 +90,11 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
+	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
+		Uid:     l.ctx.Value("uid").(uint32),
+		Type:    "chat/reject",
+		Content: "",
+		Result:  "",
+	})
 	return
 }

@@ -1,6 +1,8 @@
 package image
 
 import (
+	"chatgpt-tools/model"
+	"chatgpt-tools/service"
 	"context"
 	gogpt "github.com/sashabaranov/go-gpt3"
 
@@ -36,6 +38,13 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 	if err != nil {
 		return nil, err
 	}
+
+	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
+		Uid:     l.ctx.Value("uid").(uint32),
+		Type:    "image/create",
+		Content: "",
+		Result:  "",
+	})
 
 	return &types.ImageResponse{
 		Url: stream.Data[0].B64JSON,

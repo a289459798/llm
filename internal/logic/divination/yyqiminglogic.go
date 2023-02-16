@@ -1,6 +1,8 @@
 package divination
 
 import (
+	"chatgpt-tools/model"
+	"chatgpt-tools/service"
 	"context"
 	"errors"
 	"fmt"
@@ -88,5 +90,11 @@ func (l *YyqimingLogic) Yyqiming(req *types.YYQiMingRequest, w http.ResponseWrit
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
+	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
+		Uid:     l.ctx.Value("uid").(uint32),
+		Type:    "divination/yyqiming",
+		Content: "",
+		Result:  "",
+	})
 	return
 }

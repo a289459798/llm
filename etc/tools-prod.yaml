@@ -1,7 +1,7 @@
 Name: tools
 Host: 0.0.0.0
 Port: 8899
-Mode: dev
+Mode: pro
 
 Timeout: 0
 OpenAIKey: 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

@@ -2,6 +2,8 @@ package creation
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/model"
+	"chatgpt-tools/service"
 	"context"
 	"errors"
 	"fmt"
@@ -82,5 +84,11 @@ func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWrit
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
+	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
+		Uid:     l.ctx.Value("uid").(uint32),
+		Type:    "creation/activity",
+		Content: "",
+		Result:  "",
+	})
 	return
 }

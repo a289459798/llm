@@ -28,4 +28,4 @@ WORKDIR /app
 COPY --from=builder /app/tools /app/tools
 COPY --from=builder /app/etc /app/etc
 
-CMD ["./tools", "-f", "etc/tools.yaml"]
+CMD ["./tools", "-f", "etc/tools-prod.yaml"]
