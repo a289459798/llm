@@ -22,7 +22,6 @@ type(
     }
 
     GSQiMingRequest {
-        City string `json:"city"`
         Industry string `json:"industry"`
         Range string `json:"range"`
         Culture string `json:"culture,optional"`
@@ -41,7 +40,7 @@ type(
 )
 
 @server(
-//    jwt: Auth
+    jwt: Auth
     middleware: AuthAndUse
     group: divination
 )

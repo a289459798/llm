@@ -36,9 +36,9 @@ func (l *QimingLogic) Qiming(req *types.QiMingRequest, w http.ResponseWriter) (r
 		fix = "，名字里面必须包含" + req.Fix + "字"
 	}
 	if req.Other != "" {
-		other = "，名字还需要" + req.Other
+		other = "，名字还需要符合" + req.Other
 	}
-	prompt := fmt.Sprintf("请帮我起个名字，%d个字，姓%s，出生年月为%s，性别为%s%s%s，给我10个选项并给出名字的寓意", req.Number, req.First, req.Brithday, req.Sex, fix, other)
+	prompt := fmt.Sprintf("请帮我起一个包含%d个中文字符的名字，姓%s，出生年月为%s，性别为%s%s%s，输出格式为名字 - 寓意，请提供10个", req.Number, req.First, req.Brithday, req.Sex, fix, other)
 	fmt.Println(prompt)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,

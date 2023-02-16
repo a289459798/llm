@@ -11,6 +11,7 @@ type InfoRequest struct {
 type InfoResponse struct {
 	Token  string `json:"token"`
 	Amount uint32 `json:"amount"`
+	Uid    uint32 `json:"uid"`
 }
 
 type ReportRequest struct {
@@ -59,7 +60,6 @@ type SuanMingRequest struct {
 }
 
 type GSQiMingRequest struct {
-	City     string `json:"city"`
 	Industry string `json:"industry"`
 	Range    string `json:"range"`
 	Culture  string `json:"culture,optional"`

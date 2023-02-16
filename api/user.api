@@ -17,7 +17,7 @@ type InfoResponse {
 )
 service tools {
     @handler login
-    get /users/login (LoginRequest) returns (InfoResponse)
+    post /users/login (LoginRequest) returns (InfoResponse)
 }
 
 @server(
@@ -26,5 +26,5 @@ service tools {
 )
 service tools {
     @handler userInfo
-    get /users/:id (InfoRequest) returns (InfoResponse)
+    get /users (InfoRequest) returns (InfoResponse)
 }

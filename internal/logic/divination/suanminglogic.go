@@ -38,7 +38,7 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 	if req.Content != "" {
 		content = "，还有以下内容参考：" + req.Content
 	}
-	prompt := fmt.Sprintf("请帮我算命，我叫%s，出生年月为%s%s%s，给一份详情的算命报告，包含事业、爱情、运势、五行、命理等相关内容", req.Name, req.Brithday, sex, content)
+	prompt := fmt.Sprintf("请帮我算命，我叫%s，出生年月为%s%s%s，给一份详情的算命报告，包含八字分析、五行分析、命理分析、事业分析、爱情分析、财运分析等相关内容，请用markdown格式输出", req.Name, req.Brithday, sex, content)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           prompt,
@@ -79,6 +79,10 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 				}
 			}
 
+		}
+		w.Write([]byte(utils.EncodeURL("\n\n***\n\n*请注意，算命是一种非科学的预测方法，其准确性和可信度存在较大的差异。算命结果仅供参考，不应作为决策或行动的依据。*")))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
 		}
 		close(ch)
 	}()

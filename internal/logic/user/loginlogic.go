@@ -42,13 +42,12 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	if err != nil {
 		return nil, err
 	}
-
 	user := &model.User{}
 	l.svcCtx.Db.Where("open_id = ?", session.OpenID).First(user)
-	if user == nil {
+	if user.ID == 0 {
 		user.OpenId = session.OpenID
 		user.UnionId = session.UnionID
-		user.Amount = 20
+		user.Amount = 100
 		l.svcCtx.Db.Create(&user)
 	}
 
@@ -67,5 +66,6 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	return &types.InfoResponse{
 		Amount: user.Amount,
 		Token:  tokenString,
+		Uid:    user.ID,
 	}, nil
 }

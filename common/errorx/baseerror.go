@@ -17,6 +17,10 @@ func Unauthorized(w http.ResponseWriter, err string) {
 	httpx.WriteJson(w, http.StatusUnauthorized, map[string]string{"message": err})
 }
 
+func BadRequest(w http.ResponseWriter, err string) {
+	httpx.WriteJson(w, http.StatusBadRequest, map[string]string{"message": err})
+}
+
 func Abort(w http.ResponseWriter, code int, err string) {
 	httpx.WriteJson(w, code, map[string]string{"message": err})
 }

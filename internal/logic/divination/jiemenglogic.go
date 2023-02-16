@@ -32,7 +32,7 @@ func NewJiemengLogic(ctx context.Context, svcCtx *svc.ServiceContext) *JiemengLo
 func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "我昨天晚上做了一个梦，请帮我解一下这个梦的含义，以下是做梦的大致内容:" + req.Content,
+		Prompt:           "我昨天晚上做了一个梦，请帮我解一下这个梦的详细含义提供更多的信息，请用markdown格式输出，以下是做梦的大致内容:" + req.Content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -70,6 +70,10 @@ func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter)
 				}
 			}
 
+		}
+		w.Write([]byte(utils.EncodeURL("\n\n***\n\n*请注意，解梦是一种主观的解释和理解，其准确性和可信度存在较大的差异。解梦结果仅供参考，不应作为决策或行动的依据。*")))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
 		}
 		close(ch)
 	}()

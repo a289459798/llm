@@ -22,7 +22,7 @@ type(
 )
 
 @server(
-//    jwt: Auth
+    jwt: Auth
     middleware: AuthAndUse
     group: code
 )

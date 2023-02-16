@@ -38,7 +38,7 @@ func (l *GsqimingLogic) Gsqiming(req *types.GSQiMingRequest, w http.ResponseWrit
 	if req.Other != "" {
 		other = "，名字最好还能体现出" + req.Other
 	}
-	prompt := fmt.Sprintf("请帮我公司起个名字，公司坐落于%s，从事于%s相关行业，主要经营范围为%s%s%s，给我10个中文名字", req.City, req.Industry, req.Range, culture, other)
+	prompt := fmt.Sprintf("请给我起个公司名字，从事于%s相关行业，主要经营范围为%s%s%s，给我10个中文名字", req.Industry, req.Range, culture, other)
 	fmt.Println(prompt)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
