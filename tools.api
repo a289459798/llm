@@ -17,4 +17,5 @@ import (
 	"api/code.api"
 	"api/creation.api"
 	"api/chat.api"
+	"api/convert.api"
 )

@@ -15,28 +15,24 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GenerateLogic struct {
+type NameLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGenerateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GenerateLogic {
-	return &GenerateLogic{
+func NewNameLogic(ctx context.Context, svcCtx *svc.ServiceContext) *NameLogic {
+	return &NameLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	lang := ""
-	if req.Lang != "" {
-		lang = req.Lang + "编程语言的"
-	}
+func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("生成代码，请帮我写一份%s代码并提供demo处理以下问题:%s", lang, req.Content),
+		Prompt:           fmt.Sprintf("生成命名，请给我生成一些%s的%s名，具体需求如下:%s", req.Lang, req.Type, req.Content),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,

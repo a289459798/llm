@@ -10,6 +10,12 @@ type(
         Lang string `json:"lang,optional"`
     }
 
+    NameRequest {
+        Content string `json:"content"`
+        Lang string `json:"lang"`
+        Type string `json:"type"`
+    }
+
     CodeResponse {
         Data string `json:"data"`
     }
@@ -26,4 +32,7 @@ service tools {
 
     @handler generate
     post /code/generate (GenerateRequest) returns (CodeResponse)
+
+    @handler name
+    post /code/name (NameRequest) returns (CodeResponse)
 }

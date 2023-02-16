@@ -99,6 +99,12 @@ type GenerateRequest struct {
 	Lang    string `json:"lang,optional"`
 }
 
+type NameRequest struct {
+	Content string `json:"content"`
+	Lang    string `json:"lang"`
+	Type    string `json:"type"`
+}
+
 type CodeResponse struct {
 	Data string `json:"data"`
 }
@@ -134,5 +140,14 @@ type RejectRequest struct {
 }
 
 type ChatResponse struct {
+	Data string `json:"data"`
+}
+
+type TranslateRequest struct {
+	Content string `json:"content"`
+	Lang    string `json:"lang"`
+}
+
+type ConvertResponse struct {
 	Data string `json:"data"`
 }

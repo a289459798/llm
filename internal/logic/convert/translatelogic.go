@@ -1,4 +1,4 @@
-package code
+package convert
 
 import (
 	"chatgpt-tools/common/utils"
@@ -15,28 +15,24 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GenerateLogic struct {
+type TranslateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGenerateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GenerateLogic {
-	return &GenerateLogic{
+func NewTranslateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TranslateLogic {
+	return &TranslateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	lang := ""
-	if req.Lang != "" {
-		lang = req.Lang + "编程语言的"
-	}
+func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseWriter) (resp *types.ConvertResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("生成代码，请帮我写一份%s代码并提供demo处理以下问题:%s", lang, req.Content),
+		Prompt:           fmt.Sprintf("请把以下内容翻译成%s：%s", req.Lang, req.Content),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,

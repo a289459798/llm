@@ -1,0 +1,23 @@
+syntax = "v1"
+
+type(
+    TranslateRequest {
+        Content string `json:"content"`
+        Lang string `json:"lang"`
+    }
+
+    ConvertResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: AuthAndUse
+    group: convert
+)
+service tools {
+    @handler translate
+    post /convert/translate (TranslateRequest) returns (ConvertResponse)
+
+}

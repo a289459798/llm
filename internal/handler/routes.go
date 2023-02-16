@@ -6,6 +6,7 @@ import (
 
 	chat "chatgpt-tools/internal/handler/chat"
 	code "chatgpt-tools/internal/handler/code"
+	convert "chatgpt-tools/internal/handler/convert"
 	creation "chatgpt-tools/internal/handler/creation"
 	divination "chatgpt-tools/internal/handler/divination"
 	game "chatgpt-tools/internal/handler/game"
@@ -78,7 +79,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 
 	server.AddRoutes(
@@ -156,6 +156,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/code/generate",
 					Handler: code.GenerateHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/code/name",
+					Handler: code.NameHandler(serverCtx),
+				},
 			}...,
 		),
 	)
@@ -191,6 +196,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/chat/reject",
 					Handler: chat.RejectHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/convert/translate",
+					Handler: convert.TranslateHandler(serverCtx),
 				},
 			}...,
 		),
