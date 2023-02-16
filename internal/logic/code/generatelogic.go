@@ -36,7 +36,7 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 	}
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("生成代码，请帮我写一份%s代码并提供demo处理以下问题:%s", lang, req.Content),
+		Prompt:           fmt.Sprintf("生成代码，请帮我写一份%s代码并提供demo处理以下问题:%s，并通过markdown格式输出", lang, req.Content),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,

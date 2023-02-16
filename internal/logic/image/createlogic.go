@@ -26,8 +26,10 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse, err error) {
 	gptReq := gogpt.ImageRequest{
-		Prompt: "帮我画一幅画，需要包含下一下内容：" + req.Content,
-		N:      1,
+		Prompt:         "帮我画一幅画，需要包含下一下内容：" + req.Content,
+		N:              1,
+		ResponseFormat: "b64_json",
+		Size:           "512x512",
 	}
 	ctx := context.Background()
 	stream, err := l.svcCtx.GptClient.CreateImage(ctx, gptReq)

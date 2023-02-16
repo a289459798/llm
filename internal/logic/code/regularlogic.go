@@ -3,8 +3,11 @@ package code
 import (
 	"chatgpt-tools/common/utils"
 	"context"
+	"errors"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
+	"io"
+	"net/http"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -26,10 +29,10 @@ func NewRegularLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegularLo
 	}
 }
 
-func (l *RegularLogic) Regular(req *types.RegularRequest) (resp *types.CodeResponse, err error) {
+func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("请用以下描述生成一个正则表达式：%s", req.Content),
+		Prompt:           fmt.Sprintf("请用以下描述生成一个正则表达式：%s，并通过markdown格式输出", req.Content),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -38,9 +41,46 @@ func (l *RegularLogic) Regular(req *types.RegularRequest) (resp *types.CodeRespo
 		N:                1,
 	}
 
-	stream, err := l.svcCtx.GptClient.CreateCompletion(l.ctx, gptReq)
+	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
+	// 创建上下文
+	ctx, cancel := context.WithCancel(l.ctx)
+	defer cancel()
+
+	ch := make(chan struct{})
+
+	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
 	if err != nil {
 		return nil, err
 	}
-	return &types.CodeResponse{Data: utils.TrimHtml(stream.Choices[0].Text)}, nil
+	defer stream.Close()
+	go func() {
+		for {
+			response, err := stream.Recv()
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			if err != nil {
+				break
+			}
+			if len(response.Choices) > 0 {
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
+				fmt.Println(response.Choices[0].Text)
+				if f, ok := w.(http.Flusher); ok {
+					f.Flush()
+				}
+			}
+
+		}
+		close(ch)
+	}()
+
+	select {
+	case <-ch:
+		// 处理已完成
+		logx.Infof("EventStream logic finished")
+	case <-ctx.Done():
+		// 处理被取消
+		logx.Errorf("EventStream logic canceled")
+	}
+	return
 }
