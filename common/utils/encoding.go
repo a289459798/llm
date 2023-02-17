@@ -10,7 +10,7 @@ import (
 func EncodeURL(s string) string {
 	var result string
 	for _, r := range s {
-		if unicode.Is(unicode.Han, r) {
+		if unicode.Is(unicode.Han, r) || unicode.Is(unicode.P, r) {
 			result += url.QueryEscape(string(r))
 		} else {
 			result += string(r)
