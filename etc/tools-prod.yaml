@@ -7,12 +7,12 @@ Timeout: 0
 OpenAIKey: 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
 
 Mysql:
-  DataSource: root:5ichong2015@tcp(222.71.152.146:6033)/chatgpt-tools?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: chatgpt_tools:kN0nymV3d3khLj06@tcp(rm-3ghpe7z0013559378.mysql.rds.aliyuncs.com:3306)/chatgpt-tools?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 
 Auth:
   AccessSecret: chatgpt-tools
   AccessExpire: 8640000
 
 MiniApp:
-  AppId: wxfd9eea4f9c64e9b4
-  AppSecret: 3c8288719e2881f20a26b94cfdd519d3
+  AppId: wxab342e753dfef0b0
+  AppSecret: 2351083d4bddd18289afb3644f1f1de8
