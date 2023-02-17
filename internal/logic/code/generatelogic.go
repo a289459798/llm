@@ -37,9 +37,11 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 	if req.Lang != "" {
 		lang = req.Lang + "编程语言的"
 	}
+	content := fmt.Sprintf("我是用户%s，生成代码用markdown格式输出，请帮我写一份%s代码并提供demo处理以下问题:%s", l.ctx.Value("uid"), lang, req.Content)
+
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("生成代码，请帮我写一份%s代码并提供demo处理以下问题:%s，并通过markdown格式输出", lang, req.Content),
+		Prompt:           content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -71,6 +73,7 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 			}
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
+				fmt.Printf(response.Choices[0].Text)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}

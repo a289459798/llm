@@ -10,6 +10,7 @@ type InfoRequest {
 type InfoResponse {
     Token string `json:"token"`
     Amount uint32 `json:"amount"`
+    Uid uint32 `json:"uid"`
 }
 
 @server(

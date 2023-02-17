@@ -8,6 +8,7 @@ type(
     GenerateRequest {
         Content string `json:"content"`
         Lang string `json:"lang,optional"`
+        Context bool `json:"context,optional"`
     }
 
     NameRequest {
