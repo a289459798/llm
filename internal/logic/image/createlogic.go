@@ -4,6 +4,7 @@ import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"encoding/json"
 	gogpt "github.com/sashabaranov/go-gpt3"
 
 	"chatgpt-tools/internal/svc"
@@ -39,8 +40,9 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 		return nil, err
 	}
 
-	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
-		Uid:     l.ctx.Value("uid").(uint32),
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+		Uid:     uint32(uid),
 		Type:    "image/create",
 		Content: "",
 		Result:  "",

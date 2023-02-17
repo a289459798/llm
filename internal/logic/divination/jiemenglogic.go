@@ -5,6 +5,7 @@ import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
@@ -88,8 +89,9 @@ func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter)
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
-		Uid:     l.ctx.Value("uid").(uint32),
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+		Uid:     uint32(uid),
 		Type:    "divination/jiemeng",
 		Content: "",
 		Result:  "",

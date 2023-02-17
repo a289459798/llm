@@ -2,16 +2,16 @@ package report
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"encoding/json"
 	"errors"
 	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,7 +33,7 @@ func NewDayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DayLogic {
 func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我把以下的工作内容填充为一篇完整的日报,用 markdown 格式以分点叙述的形式输出:" + req.Content,
+		Prompt:           "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出:" + req.Content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -81,8 +81,9 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
-		Uid:     l.ctx.Value("uid").(uint32),
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+		Uid:     uint32(uid),
 		Type:    "report/day",
 		Content: "",
 		Result:  "",

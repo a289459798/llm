@@ -5,6 +5,7 @@ import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
@@ -72,7 +73,6 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 			}
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				fmt.Println(response.Choices[0].Text)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
@@ -90,8 +90,9 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
-		Uid:     l.ctx.Value("uid").(uint32),
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+		Uid:     uint32(uid),
 		Type:    "chat/reject",
 		Content: "",
 		Result:  "",

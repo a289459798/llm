@@ -15,6 +15,6 @@ func NewRecord(db *gorm.DB) *Record {
 	}
 }
 
-func (r *Record) Insert(record model.Record) {
+func (r *Record) Insert(record *model.Record) {
 	r.DB.Create(record)
 }

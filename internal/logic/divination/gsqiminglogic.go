@@ -5,6 +5,7 @@ import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
@@ -41,7 +42,6 @@ func (l *GsqimingLogic) Gsqiming(req *types.GSQiMingRequest, w http.ResponseWrit
 		other = "，名字最好还能体现出" + req.Other
 	}
 	prompt := fmt.Sprintf("请给我起个公司名字，从事于%s相关行业，主要经营范围为%s%s%s，给我10个中文名字", req.Industry, req.Range, culture, other)
-	fmt.Println(prompt)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           prompt,
@@ -77,7 +77,6 @@ func (l *GsqimingLogic) Gsqiming(req *types.GSQiMingRequest, w http.ResponseWrit
 			}
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				fmt.Println(response.Choices[0].Text)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
@@ -95,8 +94,9 @@ func (l *GsqimingLogic) Gsqiming(req *types.GSQiMingRequest, w http.ResponseWrit
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-	service.NewRecord(l.svcCtx.Db).Insert(model.Record{
-		Uid:     l.ctx.Value("uid").(uint32),
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+		Uid:     uint32(uid),
 		Type:    "divination/gsqiming",
 		Content: "",
 		Result:  "",
