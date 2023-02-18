@@ -4,7 +4,7 @@ Port: 8899
 Mode: pro
 
 Timeout: 0
-OpenAIKey: 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
+OpenAIKey: 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
 
 Mysql:
   DataSource: chatgpt_tools:kN0nymV3d3khLj06@tcp(rm-3ghpe7z0013559378.mysql.rds.aliyuncs.com:3306)/chatgpt-tools?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
