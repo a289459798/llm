@@ -33,15 +33,29 @@ func NewGenerateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Generate
 }
 
 func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	lang := ""
-	if req.Lang != "" {
-		lang = req.Lang + "编程语言的"
+
+	prompt := ""
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	content := fmt.Sprintf("请用编程语言%s实现以下需求:%s，请提供代码和demo，用 maekdown 的格式输出", req.Lang, req.Content)
+	if req.ChatId != "" {
+		var records []model.Record
+
+		fmt.Println(req.ChatId)
+		l.svcCtx.Db.Where("uid = ?", uid).Where("chat_id = ?", req.ChatId).Order("id asc").Find(&records)
+		if len(records) > 0 {
+			prompt = ""
+			for _, v := range records {
+				prompt += "Q：" + v.Content + "\n\n"
+				prompt += "A：" + v.Result + "\n\n"
+			}
+			content = fmt.Sprintf("%s，用%s语言", req.Content, req.Lang)
+		}
 	}
-	content := fmt.Sprintf("我是用户%s，生成代码用markdown格式输出，请帮我写一份%s代码并提供demo处理以下问题:%s", l.ctx.Value("uid"), lang, req.Content)
+	prompt += "Q：" + content
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           content,
+		Prompt:           prompt,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
@@ -62,6 +76,7 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 		return nil, err
 	}
 	defer stream.Close()
+	result := ""
 	go func() {
 		for {
 			response, err := stream.Recv()
@@ -73,7 +88,7 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 			}
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				fmt.Printf(response.Choices[0].Text)
+				result += response.Choices[0].Text
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
@@ -91,12 +106,13 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "code/generate",
-		Content: "",
-		Result:  "",
+		Content: content,
+		Result:  result,
+		ChatId:  req.ChatId,
 	})
 	return
 }

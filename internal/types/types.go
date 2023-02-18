@@ -97,7 +97,7 @@ type RegularRequest struct {
 type GenerateRequest struct {
 	Content string `json:"content"`
 	Lang    string `json:"lang,optional"`
-	Context bool   `json:"context,optional"`
+	ChatId  string `json:"chat_id,optional"`
 }
 
 type NameRequest struct {
