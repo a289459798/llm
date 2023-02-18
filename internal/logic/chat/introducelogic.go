@@ -36,16 +36,16 @@ func (l *IntroduceLogic) Introduce(req *types.IntroduceRequest, w http.ResponseW
 
 	way := ""
 	if req.Way != "" {
-		way = "介绍方式需要" + req.Way
+		way = "用" + req.Way + "的方式，"
 	}
 	content := ""
 	if req.Content != "" {
-		content = "还需要包含以下信息：" + req.Content
+		content = fmt.Sprintf("在%s中%s做自我介绍，", req.Content, way)
 	}
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("请帮我写一份自我介绍演讲稿，我叫%s，来自%s，兴趣爱好是%s%s%s，请用mackdown的格式输出", req.Name, req.Native, req.Interest, way, content),
+		Prompt:           fmt.Sprintf("请帮我写一份自我介绍演讲稿，%s我会用自己的价值与大家共同成长，我叫%s，来自%s，兴趣爱好是%s，请用mackdown的格式输出", content, req.Name, req.Native, req.Interest),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,

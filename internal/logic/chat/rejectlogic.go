@@ -36,12 +36,12 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 
 	content := ""
 	if req.Content != "" {
-		content = "，还需要注意下以下内容：" + req.Content
+		content = "，真实原因是：" + req.Content
 	}
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("请帮我生成几个拒绝对方的话术，对方诉求是%s，希望回复态度是%s%s，请用mackdown的格式输出", req.Type, req.Way, content),
+		Prompt:           fmt.Sprintf("收到了一个%s消息，我希望能通过%s的态度回绝对方，%s，请用mackdown的格式输出", req.Type, req.Way, content),
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,

@@ -33,7 +33,7 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容总结和下周计划,用 markdown 格式以分点叙述的形式输出:" + req.Content,
+		Prompt:           "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容、下周计划、本周总结,用 markdown 格式以分点叙述的形式输出:" + req.Content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
