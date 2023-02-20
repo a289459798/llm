@@ -18,6 +18,12 @@ type ReportRequest struct {
 	Content string `json:"content"`
 }
 
+type WorkRequest struct {
+	Use       string `json:"use"`
+	Introduce string `json:"introduce"`
+	Content   string `json:"content"`
+}
+
 type ReportResponse struct {
 	Data string `json:"data"`
 }
@@ -92,6 +98,11 @@ type GameResponse struct {
 
 type RegularRequest struct {
 	Content string `json:"content"`
+}
+
+type ExamRequest struct {
+	Content string `json:"content"`
+	Type    string `json:"type"`
 }
 
 type GenerateRequest struct {

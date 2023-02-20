@@ -59,6 +59,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/report/plot",
 					Handler: report.PlotHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/report/work",
+					Handler: report.WorkHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
@@ -164,6 +169,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/code/name",
 					Handler: code.NameHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/code/exam",
+					Handler: code.ExamHandler(serverCtx),
 				},
 			}...,
 		),

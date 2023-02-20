@@ -5,6 +5,11 @@ type(
         Content string `json:"content"`
     }
 
+    ExamRequest {
+        Content string `json:"content"`
+        Type string `json:"type"`
+    }
+
     GenerateRequest {
         Content string `json:"content"`
         Lang string `json:"lang,optional"`
@@ -36,4 +41,7 @@ service tools {
 
     @handler name
     post /code/name (NameRequest) returns (CodeResponse)
+
+    @handler exam
+    post /code/exam (ExamRequest) returns (CodeResponse)
 }

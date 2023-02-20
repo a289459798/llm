@@ -5,6 +5,12 @@ type(
         Content string `json:"content"`
     }
 
+    WorkRequest {
+        Use string `json:"use"`
+        Introduce string `json:"introduce"`
+        Content string `json:"content"`
+    }
+
     ReportResponse {
         Data string `json:"data"`
     }
@@ -24,4 +30,7 @@ service tools {
 
     @handler plot
     post /report/plot (ReportRequest) returns (ReportResponse)
+
+    @handler work
+    post /report/work (WorkRequest) returns (ReportResponse)
 }
