@@ -36,6 +36,7 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 
 	content := ""
 	if req.Content != "" {
+		req.Content = utils.Filter(req.Content)
 		content = "，真实原因是：" + req.Content
 	}
 

@@ -4,10 +4,7 @@ import (
 	"chatgpt-tools/common/utils"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
-	"chatgpt-tools/model"
-	"chatgpt-tools/service"
 	"context"
-	"encoding/json"
 	"errors"
 	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
@@ -31,6 +28,10 @@ func NewDayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DayLogic {
 }
 
 func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	req.Content = utils.Filter(req.Content)
+
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出:" + req.Content,
@@ -41,7 +42,7 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 		PresencePenalty:  0,
 		N:                1,
 	}
-	w.Header().Set("Content-Type", "text/event-stream")
+
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
@@ -81,12 +82,12 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "report/day",
-		Content: "",
-		Result:  "",
-	})
+	//uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	//service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+	//	Uid:     uint32(uid),
+	//	Type:    "report/day",
+	//	Content: "",
+	//	Result:  "",
+	//})
 	return
 }

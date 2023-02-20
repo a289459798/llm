@@ -31,6 +31,9 @@ func NewWeekLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WeekLogic {
 
 func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
+	w.Header().Set("Content-Type", "text/event-stream")
+	req.Content = utils.Filter(req.Content)
+
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容、下周计划、本周总结,用 markdown 格式以分点叙述的形式输出:" + req.Content,
@@ -42,7 +45,6 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		N:                1,
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()

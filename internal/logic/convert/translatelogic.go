@@ -33,6 +33,7 @@ func NewTranslateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Transla
 }
 
 func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseWriter) (resp *types.ConvertResponse, err error) {
+	req.Content = utils.Filter(req.Content)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("请把以下内容翻译成%s：%s", req.Lang, req.Content),

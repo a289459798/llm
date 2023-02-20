@@ -33,6 +33,8 @@ func NewWorkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WorkLogic {
 }
 
 func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
+	req.Content = utils.Filter(req.Content)
+
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("请帮生成一份完整的述职报告用于%s,我的基本信息是%s，我工作上我有以下信息%s，需要包含个人信息、工作职责、工作成果、工作总结、个人总结、工作计划、对公司的建议等，用 markdown 格式以分点叙述的形式输出", req.Use, req.Introduce, req.Content),
