@@ -28,5 +28,6 @@ ENV TZ Asia/Shanghai
 WORKDIR /app
 COPY --from=builder /app/tools /app/tools
 COPY --from=builder /app/etc /app/etc
+COPY --from=builder /app/data /app/data
 
 CMD ["./tools", "-f", "etc/tools-prod.yaml"]
