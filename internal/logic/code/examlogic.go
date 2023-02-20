@@ -33,6 +33,7 @@ func NewExamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ExamLogic {
 }
 
 func (l *ExamLogic) Exam(req *types.ExamRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
+	req.Content = utils.Filter(req.Content)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("请给我生成一份试题，主要内容是%s，分别包含%s，需要包含试题和答案，请用markdown的格式输出", req.Content, req.Type),

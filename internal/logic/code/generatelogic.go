@@ -33,7 +33,7 @@ func NewGenerateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Generate
 }
 
 func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-
+	req.Content = utils.Filter(req.Content)
 	prompt := ""
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	content := fmt.Sprintf("请用编程语言%s实现以下需求:%s，请提供代码和demo，用 markdown 的格式输出", req.Lang, req.Content)

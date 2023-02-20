@@ -33,6 +33,7 @@ func NewRegularLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegularLo
 }
 
 func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
+	req.Content = utils.Filter(req.Content)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("请用以下描述生成一个正则表达式：%s，并通过markdown格式输出", req.Content),

@@ -33,6 +33,7 @@ func NewNameLogic(ctx context.Context, svcCtx *svc.ServiceContext) *NameLogic {
 }
 
 func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
+	req.Content = utils.Filter(req.Content)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("生成命名，请给我生成一些%s的%s名，具体需求如下:%s", req.Lang, req.Type, req.Content),
