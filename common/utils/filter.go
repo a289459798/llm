@@ -8,7 +8,7 @@ import (
 func Filter(str string) string {
 	fmt.Println(str)
 	filter := sensitive.New()
-	filter.LoadWordDict("./data/sensitive_words_lines.txt")
+	filter.LoadWordDict("data/sensitive_words_lines.txt")
 	valid, _ := filter.Validate(str)
 	if valid {
 		return ""
