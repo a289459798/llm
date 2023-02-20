@@ -33,7 +33,15 @@ func NewExamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ExamLogic {
 }
 
 func (l *ExamLogic) Exam(req *types.ExamRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	req.Content = utils.Filter(req.Content)
+	w.Header().Set("Content-Type", "text/event-stream")
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
+	}
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("请给我生成一份试题，主要内容是%s，分别包含%s，需要包含试题和答案，请用markdown的格式输出", req.Content, req.Type),
@@ -45,7 +53,6 @@ func (l *ExamLogic) Exam(req *types.ExamRequest, w http.ResponseWriter) (resp *t
 		N:                1,
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()

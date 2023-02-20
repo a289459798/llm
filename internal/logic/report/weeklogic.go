@@ -32,7 +32,14 @@ func NewWeekLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WeekLogic {
 func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
 	w.Header().Set("Content-Type", "text/event-stream")
-	req.Content = utils.Filter(req.Content)
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
+	}
 
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,

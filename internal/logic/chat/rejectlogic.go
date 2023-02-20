@@ -35,9 +35,14 @@ func NewRejectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RejectLogi
 func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (resp *types.ChatResponse, err error) {
 
 	content := ""
-	if req.Content != "" {
-		req.Content = utils.Filter(req.Content)
-		content = "，真实原因是：" + req.Content
+	w.Header().Set("Content-Type", "text/event-stream")
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
 	}
 
 	gptReq := gogpt.CompletionRequest{
