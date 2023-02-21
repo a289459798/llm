@@ -48,7 +48,7 @@ type WatermarkRequest struct {
 type QiMingRequest struct {
 	First    string `json:"first"`
 	Number   uint16 `json:"number"`
-	Brithday string `json:"brithday"`
+	Birthday string `json:"birthday"`
 	Sex      string `json:"sex"`
 	Fix      string `json:"fix,optional"`
 	Other    string `json:"other,optional"`
@@ -60,7 +60,7 @@ type JieMengRequest struct {
 
 type SuanMingRequest struct {
 	Name     string `json:"name"`
-	Brithday string `json:"brithday"`
+	Birthday string `json:"birthday"`
 	Sex      string `json:"sex,optional"`
 	Content  string `json:"content,optional"`
 }
@@ -76,6 +76,11 @@ type YYQiMingRequest struct {
 	Name  string `json:"name"`
 	Sex   string `json:"sex"`
 	Other string `json:"other,optional"`
+}
+
+type HoroscopeRequest struct {
+	Birthday      string `json:"birthday,optional"`
+	Constellation string `json:"constellation,optional"`
 }
 
 type DivinationResponse struct {

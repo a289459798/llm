@@ -117,6 +117,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/divination/yyqiming",
 					Handler: divination.YyqimingHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/divination/horoscope",
+					Handler: divination.HoroscopeHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

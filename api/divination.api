@@ -4,7 +4,7 @@ type(
     QiMingRequest {
         First string `json:"first"`
         Number uint16 `json:"number"`
-        Brithday string `json:"brithday"`
+        Birthday string `json:"birthday"`
         Sex string `json:"sex"`
         Fix string `json:"fix,optional"`
         Other string `json:"other,optional"`
@@ -16,7 +16,7 @@ type(
 
     SuanMingRequest {
         Name string `json:"name"`
-        Brithday string `json:"brithday"`
+        Birthday string `json:"birthday"`
         Sex string `json:"sex,optional"`
         Content string `json:"content,optional"`
     }
@@ -32,6 +32,11 @@ type(
         Name string `json:"name"`
         Sex string `json:"sex"`
         Other string `json:"other,optional"`
+    }
+
+    HoroscopeRequest {
+        Birthday string `json:"birthday,optional"`
+        Constellation string `json:"constellation,optional"`
     }
 
     DivinationResponse {
@@ -59,4 +64,7 @@ service tools {
 
     @handler yyqiming
     post /divination/yyqiming (YYQiMingRequest) returns (DivinationResponse)
+
+    @handler horoscope
+    post /divination/horoscope (HoroscopeRequest) returns (DivinationResponse)
 }
