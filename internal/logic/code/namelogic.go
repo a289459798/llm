@@ -33,6 +33,15 @@ func NewNameLogic(ctx context.Context, svcCtx *svc.ServiceContext) *NameLogic {
 }
 
 func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
+	}
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("生成命名，请给我生成一些%s的%s名，具体需求如下:%s", req.Lang, req.Type, req.Content),
@@ -44,7 +53,6 @@ func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *t
 		N:                1,
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()

@@ -33,7 +33,15 @@ func NewGenerateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Generate
 }
 
 func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-
+	w.Header().Set("Content-Type", "text/event-stream")
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
+	}
 	prompt := ""
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	content := fmt.Sprintf("请用编程语言%s实现以下需求:%s，请提供代码和demo，用 markdown 的格式输出", req.Lang, req.Content)
@@ -63,7 +71,6 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 		N:                1,
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()

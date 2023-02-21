@@ -33,6 +33,16 @@ func NewWorkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WorkLogic {
 }
 
 func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
+	}
+
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           fmt.Sprintf("请帮生成一份完整的述职报告用于%s,我的基本信息是%s，我工作上我有以下信息%s，需要包含个人信息、工作职责、工作成果、工作总结、个人总结、工作计划、对公司的建议等，用 markdown 格式以分点叙述的形式输出", req.Use, req.Introduce, req.Content),
@@ -44,7 +54,6 @@ func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *t
 		N:                1,
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()

@@ -15,6 +15,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 COPY ./etc /app/etc
+COPY ./data /app/data
 RUN go build -ldflags="-s -w" -o /app/tools tools.go
 
 
@@ -27,5 +28,6 @@ ENV TZ Asia/Shanghai
 WORKDIR /app
 COPY --from=builder /app/tools /app/tools
 COPY --from=builder /app/etc /app/etc
+COPY --from=builder /app/data /app/data
 
 CMD ["./tools", "-f", "etc/tools-prod.yaml"]
