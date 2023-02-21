@@ -51,10 +51,14 @@ func (l *HoroscopeLogic) Horoscope(req *types.HoroscopeRequest, w http.ResponseW
 	record := &model.Record{}
 	l.svcCtx.Db.Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").Where("type = ?", "divination/horoscope").Where("content = ?", horoscope).Find(record)
 	if record.Result != "" {
-		w.Write([]byte(utils.EncodeURL(record.Result)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
+		for _, v := range record.Result {
+			w.Write([]byte(utils.EncodeURL(fmt.Sprintf("%c", v))))
+			if f, ok := w.(http.Flusher); ok {
+				f.Flush()
+			}
+			time.Sleep(100 * time.Millisecond)
 		}
+
 		return
 	}
 
