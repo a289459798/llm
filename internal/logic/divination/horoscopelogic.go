@@ -58,7 +58,7 @@ func (l *HoroscopeLogic) Horoscope(req *types.HoroscopeRequest, w http.ResponseW
 		return
 	}
 
-	prompt := fmt.Sprintf("详细介绍一下%s，%s的星座运势，包含爱情、事业、健康、总结等方面的信息，请用markdown格式输出", today, horoscope)
+	prompt := fmt.Sprintf("详细介绍一下%s，%s的运势，包含爱情、事业、健康、总结等方面的信息，请用markdown格式输出", today, horoscope)
 	gptReq := gogpt.CompletionRequest{
 		Model:            gogpt.GPT3TextDavinci003,
 		Prompt:           prompt,
