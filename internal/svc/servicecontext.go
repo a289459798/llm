@@ -39,14 +39,23 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		),
 	})
 
-	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Account{})
-	db.AutoMigrate(&model.Record{})
-	db.AutoMigrate(&model.Feedback{})
+	//db.AutoMigrate(&model.User{})
+	//db.AutoMigrate(&model.Account{})
+	//db.AutoMigrate(&model.Record{})
+	//db.AutoMigrate(&model.Feedback{})
+	db.AutoMigrate(&model.Apikey{})
+	apikey := &model.Apikey{}
+	db.Where("channel = ?", "openai").Where("status = ?", 1).Find(apikey)
+	var gptClient *gogpt.Client
+	if apikey.Ori != "" {
+		gptClient = gogpt.NewOrgClient(apikey.Key, apikey.Ori)
+	} else {
+		gptClient = gogpt.NewClient(apikey.Key)
+	}
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware().Handle,
-		GptClient:  gogpt.NewOrgClient(c.OpenAIKey, "org-uEVmBE7js3m3RFGSCuxyt4pm"),
+		GptClient:  gptClient,
 	}
 }
