@@ -88,7 +88,7 @@ func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *t
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "report/week",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 	return

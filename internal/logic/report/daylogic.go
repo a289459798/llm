@@ -85,7 +85,7 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "report/day",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 	return

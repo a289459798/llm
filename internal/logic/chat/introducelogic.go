@@ -98,7 +98,7 @@ func (l *IntroduceLogic) Introduce(req *types.IntroduceRequest, w http.ResponseW
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "chat/introduce",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 	return

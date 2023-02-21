@@ -89,7 +89,7 @@ func (l *SalaryLogic) Salary(req *types.SalaryRequest, w http.ResponseWriter) (r
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "chat/salary",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 	return

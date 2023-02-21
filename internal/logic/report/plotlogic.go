@@ -86,7 +86,7 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "report/plot",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 	return

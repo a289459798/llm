@@ -44,7 +44,7 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "image/create",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 

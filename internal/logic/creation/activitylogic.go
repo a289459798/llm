@@ -88,7 +88,7 @@ func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWrit
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "creation/activity",
-		Content: "",
+		Content: req.Content,
 		Result:  "",
 	})
 	return
