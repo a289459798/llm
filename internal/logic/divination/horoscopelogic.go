@@ -56,7 +56,7 @@ func (l *HoroscopeLogic) Horoscope(req *types.HoroscopeRequest, w http.ResponseW
 			if f, ok := w.(http.Flusher); ok {
 				f.Flush()
 			}
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(50 * time.Millisecond)
 		}
 
 		return
