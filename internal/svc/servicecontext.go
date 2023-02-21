@@ -55,7 +55,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
-		AuthAndUse: middleware.NewAuthAndUseMiddleware().Handle,
+		AuthAndUse: middleware.NewAuthAndUseMiddleware(c).Handle,
 		GptClient:  gptClient,
 	}
 }
