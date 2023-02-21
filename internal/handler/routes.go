@@ -213,6 +213,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/chat/reject",
 					Handler: chat.RejectHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/chat/pursue",
+					Handler: chat.PursueHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

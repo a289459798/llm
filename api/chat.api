@@ -19,6 +19,10 @@ type(
         Content string `json:"content"`
     }
 
+    PursueRequest {
+        Content string `json:"content"`
+    }
+
     ChatResponse {
         Data string `json:"data"`
     }
@@ -38,4 +42,7 @@ service tools {
 
     @handler reject
     post /chat/reject (RejectRequest) returns (ChatResponse)
+
+    @handler pursue
+    post /chat/pursue (PursueRequest) returns (ChatResponse)
 }

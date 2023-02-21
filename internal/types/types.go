@@ -151,6 +151,10 @@ type RejectRequest struct {
 	Content string `json:"content"`
 }
 
+type PursueRequest struct {
+	Content string `json:"content"`
+}
+
 type ChatResponse struct {
 	Data string `json:"data"`
 }
