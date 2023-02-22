@@ -101,7 +101,9 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
-
+	if result == "" {
+		return nil, errors.New("数据为空")
+	}
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "code/generate",

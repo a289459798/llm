@@ -50,6 +50,7 @@ func (l *YyqimingLogic) Yyqiming(req *types.YYQiMingRequest, w http.ResponseWrit
 		return nil, err
 	}
 	defer stream.Close()
+	result := ""
 	go func() {
 		for {
 			response, err := stream.Recv()
@@ -62,6 +63,7 @@ func (l *YyqimingLogic) Yyqiming(req *types.YYQiMingRequest, w http.ResponseWrit
 			}
 			if len(response.Choices) > 0 && response.Choices[0].Text != "" {
 				w.Write([]byte(response.Choices[0].Text))
+				result += response.Choices[0].Text
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
@@ -78,6 +80,9 @@ func (l *YyqimingLogic) Yyqiming(req *types.YYQiMingRequest, w http.ResponseWrit
 	case <-ctx.Done():
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
+	}
+	if result == "" {
+		return nil, errors.New("数据为空")
 	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{

@@ -66,7 +66,7 @@ func (ai *OpenAi) CreateImage(content string) (stream gogpt.ImageResponse, err e
 		Prompt:         content,
 		N:              1,
 		ResponseFormat: "b64_json",
-		Size:           "512x512",
+		Size:           "256x256",
 	}
 
 	return ai.getClient().CreateImage(ai.Ctx, gptReq)
@@ -76,7 +76,7 @@ func (ai *OpenAi) CreateEditImage(content string) (stream gogpt.ImageResponse, e
 	gptReq := gogpt.ImageEditRequest{
 		Prompt: content,
 		N:      1,
-		Size:   "512x512",
+		Size:   "256x256",
 	}
 
 	return ai.getClient().CreateEditImage(ai.Ctx, gptReq)

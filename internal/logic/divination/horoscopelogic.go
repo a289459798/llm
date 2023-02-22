@@ -110,6 +110,9 @@ func (l *HoroscopeLogic) Horoscope(req *types.HoroscopeRequest, w http.ResponseW
 		// 处理被取消
 		logx.Errorf("EventStream logic canceled")
 	}
+	if result == "" {
+		return nil, errors.New("数据为空")
+	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
