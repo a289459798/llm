@@ -33,6 +33,14 @@ func NewJiemengLogic(ctx context.Context, svcCtx *svc.ServiceContext) *JiemengLo
 }
 
 func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
+	}
 	prompt := "我昨天晚上做了一个梦，请帮我解一下这个梦的详细含义提供更多的信息，请用markdown格式输出，以下是做梦的大致内容:" + req.Content
 
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
