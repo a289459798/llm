@@ -2,13 +2,13 @@ package divination
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -42,16 +42,6 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 		content = "，还有以下内容参考：" + req.Content
 	}
 	prompt := fmt.Sprintf("请帮我算命，我叫%s，出生年月为%s%s%s，给一份详情的算命报告，包含八字分析、五行分析、命理分析、事业分析、爱情分析、财运分析等相关内容，请用markdown格式输出", req.Name, req.Birthday, sex, content)
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           prompt,
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
 
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
@@ -60,7 +50,7 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

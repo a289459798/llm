@@ -2,12 +2,12 @@ package report
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -41,23 +41,15 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		}
 		return
 	}
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我用以下内容完善拍摄剧本，包含故事概要和主题、人物设定、场景设定、故事结构和情节、台词和对白、拍摄风格和视觉效果、音效和音乐,用 markdown 格式以分点叙述的形式输出：" + req.Content,
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
+
+	prompt := "请帮我用以下内容完善拍摄剧本，包含故事概要和主题、人物设定、场景设定、故事结构和情节、台词和对白、拍摄风格和视觉效果、音效和音乐,用 markdown 格式以分点叙述的形式输出：" + req.Content
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

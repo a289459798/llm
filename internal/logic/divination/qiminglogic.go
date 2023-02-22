@@ -2,13 +2,13 @@ package divination
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -42,16 +42,6 @@ func (l *QimingLogic) Qiming(req *types.QiMingRequest, w http.ResponseWriter) (r
 		other = "，名字还需要符合" + req.Other
 	}
 	prompt := fmt.Sprintf("请帮我起一个包含%d个中文的名字，姓%s，出生年月为%s，性别为%s%s%s，请给我合适的名字以及他赋予的美好含义，请提供10个", req.Number, req.First, req.Birthday, req.Sex, fix, other)
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           prompt,
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
 
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
@@ -60,7 +50,7 @@ func (l *QimingLogic) Qiming(req *types.QiMingRequest, w http.ResponseWriter) (r
 
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

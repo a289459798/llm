@@ -2,13 +2,13 @@ package code
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -42,16 +42,8 @@ func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *t
 		}
 		return
 	}
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("生成命名，请给我生成一些%s的%s名，具体需求如下:%s", req.Lang, req.Type, req.Content),
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
+
+	prompt := fmt.Sprintf("生成命名，请给我生成一些%s的%s名，具体需求如下:%s", req.Lang, req.Type, req.Content)
 
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
@@ -59,7 +51,7 @@ func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *t
 
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

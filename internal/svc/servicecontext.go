@@ -3,8 +3,6 @@ package svc
 import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
-	"chatgpt-tools/model"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -19,7 +17,6 @@ type ServiceContext struct {
 	Config     config.Config
 	Db         *gorm.DB
 	AuthAndUse rest.Middleware
-	GptClient  *gogpt.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -44,18 +41,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.Record{})
 	//db.AutoMigrate(&model.Feedback{})
 	//db.AutoMigrate(&model.Apikey{})
-	apikey := &model.Apikey{}
-	db.Where("channel = ?", "openai").Where("status = ?", 1).Find(apikey)
-	var gptClient *gogpt.Client
-	if apikey.Ori != "" {
-		gptClient = gogpt.NewOrgClient(apikey.Key, apikey.Ori)
-	} else {
-		gptClient = gogpt.NewClient(apikey.Key)
-	}
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware(c).Handle,
-		GptClient:  gptClient,
 	}
 }

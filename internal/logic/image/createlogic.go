@@ -1,14 +1,13 @@
 package image
 
 import (
+	"chatgpt-tools/common/utils/sanmuai"
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
-	gogpt "github.com/sashabaranov/go-gpt3"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,14 +27,9 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 }
 
 func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse, err error) {
-	gptReq := gogpt.ImageRequest{
-		Prompt:         "帮我画一幅画，需要包含以下内容：" + req.Content,
-		N:              1,
-		ResponseFormat: "b64_json",
-		Size:           "512x512",
-	}
-	ctx := context.Background()
-	stream, err := l.svcCtx.GptClient.CreateImage(ctx, gptReq)
+
+	prompt := "帮我画一幅画，需要包含以下内容：" + req.Content
+	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateImage(prompt)
 	if err != nil {
 		return nil, err
 	}

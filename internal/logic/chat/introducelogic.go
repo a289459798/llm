@@ -2,13 +2,13 @@ package chat
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -43,25 +43,14 @@ func (l *IntroduceLogic) Introduce(req *types.IntroduceRequest, w http.ResponseW
 		content = fmt.Sprintf("在%s中%s做自我介绍，", req.Content, way)
 	}
 
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           fmt.Sprintf("请帮我写一份自我介绍演讲稿，%s我会用自己的价值与大家共同成长，我叫%s，来自%s，兴趣爱好是%s，请用mackdown的格式输出", content, req.Name, req.Native, req.Interest),
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
-
+	prompt := fmt.Sprintf("请帮我写一份自我介绍演讲稿，%s我会用自己的价值与大家共同成长，我叫%s，来自%s，兴趣爱好是%s，请用mackdown的格式输出", content, req.Name, req.Native, req.Interest)
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
-
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

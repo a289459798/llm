@@ -2,6 +2,7 @@ package report
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
@@ -9,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -42,16 +42,7 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 		return
 	}
 
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出:" + req.Content,
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
+	prompt := "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出:" + req.Content
 
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
@@ -59,7 +50,7 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

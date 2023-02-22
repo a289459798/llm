@@ -2,13 +2,13 @@ package divination
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -33,16 +33,7 @@ func NewJiemengLogic(ctx context.Context, svcCtx *svc.ServiceContext) *JiemengLo
 }
 
 func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
-	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
-		Prompt:           "我昨天晚上做了一个梦，请帮我解一下这个梦的详细含义提供更多的信息，请用markdown格式输出，以下是做梦的大致内容:" + req.Content,
-		MaxTokens:        1536,
-		Temperature:      0.7,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
-		N:                1,
-	}
+	prompt := "我昨天晚上做了一个梦，请帮我解一下这个梦的详细含义提供更多的信息，请用markdown格式输出，以下是做梦的大致内容:" + req.Content
 
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
@@ -51,7 +42,7 @@ func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter)
 
 	ch := make(chan struct{})
 
-	stream, err := l.svcCtx.GptClient.CreateCompletionStream(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
 	}

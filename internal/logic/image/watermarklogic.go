@@ -1,9 +1,9 @@
 package image
 
 import (
+	"chatgpt-tools/common/utils/sanmuai"
 	"context"
 	"fmt"
-	gogpt "github.com/sashabaranov/go-gpt3"
 	"image"
 	"image/png"
 	"net/http"
@@ -56,16 +56,9 @@ func (l *WatermarkLogic) Watermark(req *types.WatermarkRequest) (resp *types.Ima
 
 	//defer os.Remove("tmp/image.png")
 
-	gptReq := gogpt.ImageEditRequest{
-		Image:  out,
-		Mask:   out,
-		Prompt: fmt.Sprintf("在文字%s方加上文字大小为%d颜色为%s透明度为%f的水印，水印内容为:%s", req.Position, req.FontSize, req.Color, req.Opacity, req.Content),
-		N:      1,
-		Size:   "512x512",
-	}
+	prompt := fmt.Sprintf("在文字%s方加上文字大小为%d颜色为%s透明度为%f的水印，水印内容为:%s", req.Position, req.FontSize, req.Color, req.Opacity, req.Content)
 
-	ctx := context.Background()
-	stream, err := l.svcCtx.GptClient.CreateEditImage(ctx, gptReq)
+	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateEditImage(prompt)
 	if err != nil {
 		return nil, err
 	}
