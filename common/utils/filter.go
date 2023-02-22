@@ -11,5 +11,5 @@ func Filter(str string) string {
 	if valid {
 		return ""
 	}
-	return "施主请自重，三目无法回答此类问题"
+	return "人类的问题太深奥，三目无法回答此类问题"
 }
