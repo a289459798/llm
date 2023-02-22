@@ -41,7 +41,7 @@ func (l *QimingLogic) Qiming(req *types.QiMingRequest, w http.ResponseWriter) (r
 	if req.Other != "" {
 		other = "，名字还需要符合" + req.Other
 	}
-	prompt := fmt.Sprintf("请帮我起一个包含%d个中文的名字，姓%s，出生年月为%s，性别为%s%s%s，请给我合适的名字以及他赋予的美好含义，请提供10个", req.Number, req.First, req.Birthday, req.Sex, fix, other)
+	prompt := fmt.Sprintf("请帮我起一个包含%s个中文的名字，姓%s，出生年月为%s，性别为%s%s%s，请给我合适的名字以及他赋予的美好含义，请提供10个", req.Number, req.First, req.Birthday, req.Sex, fix, other)
 
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文

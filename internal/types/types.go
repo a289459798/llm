@@ -47,7 +47,7 @@ type WatermarkRequest struct {
 
 type QiMingRequest struct {
 	First    string `json:"first"`
-	Number   uint16 `json:"number"`
+	Number   string `json:"number"`
 	Birthday string `json:"birthday"`
 	Sex      string `json:"sex"`
 	Fix      string `json:"fix,optional"`
