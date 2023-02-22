@@ -43,7 +43,7 @@ func (l *ExamLogic) Exam(req *types.ExamRequest, w http.ResponseWriter) (resp *t
 		return
 	}
 
-	prompt := fmt.Sprintf("请给我生成一份试题，主要内容是%s，分别包含%s、编程题，每个题型需要5题，需要包含试题和答案，请用markdown的格式输出", req.Content, req.Type)
+	prompt := fmt.Sprintf("请给我生成一份试题，主要内容是%s，分别包含%s、编程题，每个题型需要3题，需要包含试题和答案，请用markdown的格式输出", req.Content, req.Type)
 
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
