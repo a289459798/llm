@@ -180,6 +180,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/code/exam",
 					Handler: code.ExamHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/code/playground",
+					Handler: code.PlaygroundHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

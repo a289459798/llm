@@ -22,6 +22,11 @@ type(
         Type string `json:"type"`
     }
 
+    PlaygroundRequest {
+        Content string `json:"content"`
+        Lang string `json:"lang,optional"`
+    }
+
     CodeResponse {
         Data string `json:"data"`
     }
@@ -44,4 +49,7 @@ service tools {
 
     @handler exam
     post /code/exam (ExamRequest) returns (CodeResponse)
+
+    @handler playground
+    post /code/playground (PlaygroundRequest) returns (CodeResponse)
 }

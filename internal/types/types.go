@@ -122,6 +122,11 @@ type NameRequest struct {
 	Type    string `json:"type"`
 }
 
+type PlaygroundRequest struct {
+	Content string `json:"content"`
+	Lang    string `json:"lang,optional"`
+}
+
 type CodeResponse struct {
 	Data string `json:"data"`
 }
