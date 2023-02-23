@@ -11,8 +11,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -45,8 +43,8 @@ type BDImageTaskResponse struct {
 }
 
 type BDImageTaskRequest struct {
-	Prompt string `json:"prompt"`
-	Image  string `json:"image"`
+	Prompt string                `json:"prompt"`
+	Image  *multipart.FileHeader `json:"image"`
 }
 
 type BDImageTask struct {
@@ -148,12 +146,12 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 		return
 	}
 
-	img, err := writer.CreateFormFile("image", filepath.Base(request.Image))
+	img, err := writer.CreateFormFile("image", request.Image.Filename)
 	if err != nil {
 		return
 	}
 
-	f, err := os.Open(request.Image)
+	f, err := request.Image.Open()
 	if err != nil {
 		return
 	}

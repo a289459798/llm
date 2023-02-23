@@ -2,17 +2,14 @@ package image
 
 import (
 	"chatgpt-tools/common/utils/sanmuai"
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
 	"errors"
-	"io"
 	"mime/multipart"
-	"os"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,18 +33,10 @@ func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*mu
 	if files == nil || len(files["image"]) == 0 {
 		return nil, errors.New("请上传图片")
 	}
-	filename := "data/caches/" + files["image"][0].Filename
-	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	file, _ := files["image"][0].Open()
-	io.Copy(f, file)
 
 	task, err := sanmuai.NewBaiduWX(l.ctx, l.svcCtx).Pic2Pic(&sanmuai.BDImageTaskRequest{
 		Prompt: prompt,
-		Image:  filename,
+		Image:  files["image"][0],
 	})
 	if err != nil {
 		return nil, err
