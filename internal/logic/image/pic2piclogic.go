@@ -33,16 +33,16 @@ func NewPic2picLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pic2picLo
 
 func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*multipart.FileHeader) (resp *types.ImageResponse, err error) {
 	prompt := req.Style
-	if files == nil || len(files["images"]) == 0 {
+	if files == nil || len(files["image"]) == 0 {
 		return nil, errors.New("请上传图片")
 	}
-	filename := "data/caches/" + files["images"][0].Filename
+	filename := "data/caches/" + files["image"][0].Filename
 	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
-	file, _ := files["images"][0].Open()
+	file, _ := files["image"][0].Open()
 	io.Copy(f, file)
 
 	task, err := sanmuai.NewBaiduWX(l.ctx, l.svcCtx).Pic2Pic(&sanmuai.BDImageTaskRequest{

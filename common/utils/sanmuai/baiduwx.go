@@ -12,6 +12,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -94,6 +95,7 @@ func (b *BaiduWX) getToken(key string, sec string) (token *BDTokenResponse, err 
 }
 
 func (b *BaiduWX) sendRequest(req *http.Request, v interface{}) error {
+	fmt.Println(req.Header.Get("Content-Type"))
 	res, err := b.HTTPClient.Do(req)
 	if err != nil {
 		return err
@@ -129,7 +131,7 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err = writer.WriteField("prompt", request.Prompt)
+	err = writer.WriteField("text", request.Prompt)
 	if err != nil {
 		return
 	}
@@ -145,7 +147,8 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 	if err != nil {
 		return
 	}
-	img, err := writer.CreateFormFile("image", request.Image)
+
+	img, err := writer.CreateFormFile("image", filepath.Base(request.Image))
 	if err != nil {
 		return
 	}
@@ -160,16 +163,17 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 	if err != nil {
 		return
 	}
-
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return
+	}
 
 	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("https://wenxin.baidu.com/moduleApi/portal/api/rest/1.0/ernievilg/v1/txt2img?access_token=%s", b.Token), body)
 	if err != nil {
 		return
 	}
 
-	req = req.WithContext(b.Ctx)
-	req.Header.Set("Content-Type", "application/form-data")
+	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	taskResponse := &BDImageTaskResponse{}
 	err = b.sendRequest(req, &taskResponse)
