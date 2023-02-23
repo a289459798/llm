@@ -9,6 +9,12 @@ type(
         Content string `json:"content"`
     }
 
+    DiaryRequest {
+        City string `json:"city"`
+        Weather string `json:"weather"`
+        Content string `json:"content"`
+    }
+
     CreationResponse {
         Data string `json:"data"`
     }
@@ -22,4 +28,7 @@ type(
 service tools {
     @handler activity
     post /creation/activity (ActivityRequest) returns (CreationResponse)
+
+    @handler diary
+    post /creation/diary (DiaryRequest) returns (CreationResponse)
 }

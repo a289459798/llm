@@ -199,6 +199,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/creation/activity",
 					Handler: creation.ActivityHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/creation/diary",
+					Handler: creation.DiaryHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

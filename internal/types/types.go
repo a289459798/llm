@@ -139,6 +139,12 @@ type ActivityRequest struct {
 	Content string `json:"content"`
 }
 
+type DiaryRequest struct {
+	City    string `json:"city"`
+	Weather string `json:"weather"`
+	Content string `json:"content"`
+}
+
 type CreationResponse struct {
 	Data string `json:"data"`
 }
