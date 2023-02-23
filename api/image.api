@@ -9,6 +9,10 @@ type(
         Url string `json:"url"`
     }
 
+    Pic2picRequest {
+        Style string `form:"style"`
+    }
+
     WatermarkRequest {
         Url string `json:"url"`
         Content string `json:"content"`
@@ -30,4 +34,7 @@ service tools {
 
     @handler watermark
     post /images/watermark (ImageRequest) returns (ImageResponse)
+
+    @handler pic2pic
+    post /images/pic2pic (Pic2picRequest) returns (ImageResponse)
 }

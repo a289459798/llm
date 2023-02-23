@@ -4,7 +4,6 @@ import (
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/model"
 	"context"
-	"fmt"
 	gogpt "github.com/sashabaranov/go-gpt3"
 )
 
@@ -23,7 +22,6 @@ func NewOpenAi(c context.Context, svcCtx *svc.ServiceContext) *OpenAi {
 func (ai *OpenAi) getClient() *gogpt.Client {
 	apikey := &model.Apikey{}
 	ai.SvcCtx.Db.Where("channel = ?", "openai").Where("status = ?", 1).Order("rand()").Limit(1).Find(apikey)
-	fmt.Println(apikey.Key)
 	if apikey.Ori != "" {
 		return gogpt.NewOrgClient(apikey.Key, apikey.Ori)
 	} else {

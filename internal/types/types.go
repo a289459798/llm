@@ -36,6 +36,10 @@ type ImageResponse struct {
 	Url string `json:"url"`
 }
 
+type Pic2picRequest struct {
+	Style string `form:"style"`
+}
+
 type WatermarkRequest struct {
 	Url      string  `json:"url"`
 	Content  string  `json:"content"`

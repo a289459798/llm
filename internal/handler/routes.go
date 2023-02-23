@@ -83,6 +83,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/images/watermark",
 					Handler: image.WatermarkHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/pic2pic",
+					Handler: image.Pic2picHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
