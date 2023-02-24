@@ -6,7 +6,6 @@ import (
 	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
-	"encoding/json"
 	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,18 +26,17 @@ func NewPic2pictaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pic2p
 }
 
 func (l *Pic2pictaskLogic) Pic2pictask(req *types.Pic2picTaskRequest) (resp *types.ImageResponse, err error) {
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 
 	task := req.Task
-	record := &model.Record{}
-	l.svcCtx.Db.Where("uid = ?", uid).Where("type = ?", "image/pic2pic").Where("content = ?", task).Find(&record)
-	if record.Content == "" {
+	record := &model.Pic2Pic{}
+	l.svcCtx.Db.Where("task_id = ?", task).Find(&record)
+	if record.TaskId == "" {
 		return nil, errors.New("图片任务不存在")
 	}
 
-	if record.Result != "" {
+	if record.Url != "" {
 		return &types.ImageResponse{
-			Url: record.Result,
+			Url: record.Url,
 		}, nil
 	}
 
@@ -53,9 +51,9 @@ func (l *Pic2pictaskLogic) Pic2pictask(req *types.Pic2picTaskRequest) (resp *typ
 		}, nil
 	}
 
-	record.Result = img.ImgUrls[0]["image"]
+	record.Url = img.ImgUrls[0]["image"]
 	l.svcCtx.Db.Save(record)
 	return &types.ImageResponse{
-		Url: record.Result,
+		Url: record.Url,
 	}, nil
 }

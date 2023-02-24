@@ -33,7 +33,8 @@ type ImageRequest struct {
 }
 
 type ImageResponse struct {
-	Url string `json:"url"`
+	Url  string `json:"url"`
+	Task string `json:"task"`
 }
 
 type Pic2picRequest struct {
@@ -41,7 +42,7 @@ type Pic2picRequest struct {
 }
 
 type Pic2picTaskRequest struct {
-	Task string `json:"task"`
+	Task string `form:"task"`
 }
 
 type WatermarkRequest struct {

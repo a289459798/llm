@@ -7,8 +7,11 @@ import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"mime/multipart"
 	"strconv"
 
@@ -31,9 +34,36 @@ func NewPic2picLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pic2picLo
 
 func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*multipart.FileHeader) (resp *types.ImageResponse, err error) {
 	prompt := req.Style
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	if files == nil || len(files["image"]) == 0 {
 		return nil, errors.New("请上传图片")
 	}
+
+	f, err := files["image"][0].Open()
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return nil, err
+	}
+	hash := md5.Sum(content)
+	md5String := fmt.Sprintf("%x", hash)
+
+	pic2pic := &model.Pic2Pic{}
+
+	l.svcCtx.Db.Where("image_hash = ?", md5String).Where("prompt = ?", prompt).Find(&pic2pic)
+	if pic2pic.ID > 0 {
+		return &types.ImageResponse{
+			Url:  pic2pic.Url,
+			Task: pic2pic.TaskId,
+		}, nil
+	}
+
+	pic2pic.Uid = uint32(uid)
+	pic2pic.Prompt = prompt
+	pic2pic.ImageHash = md5String
 
 	task, err := sanmuai.NewBaiduWX(l.ctx, l.svcCtx).Pic2Pic(&sanmuai.BDImageTaskRequest{
 		Prompt: prompt,
@@ -43,15 +73,15 @@ func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*mu
 		return nil, err
 	}
 
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "image/pic2pic",
 		Content: strconv.Itoa(task.TaskId),
 		Result:  "",
 	})
-
+	pic2pic.TaskId = strconv.Itoa(task.TaskId)
+	l.svcCtx.Db.Create(&pic2pic)
 	return &types.ImageResponse{
-		Url: strconv.Itoa(task.TaskId),
+		Task: strconv.Itoa(task.TaskId),
 	}, nil
 }
