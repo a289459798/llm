@@ -60,8 +60,10 @@ type BDImageTaskResultResponse struct {
 }
 
 type BDImageTaskResult struct {
-	Status  int                 `json:"status"`
-	ImgUrls []map[string]string `json:"imgUrls"`
+	Status     int                 `json:"status"`
+	ImgUrls    []map[string]string `json:"imgUrls"`
+	CreateTime string              `json:"createTime"`
+	Waiting    string              `json:"waiting"`
 }
 
 func NewBaiduWX(c context.Context, svcCtx *svc.ServiceContext) *BaiduWX {
