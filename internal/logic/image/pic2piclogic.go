@@ -80,6 +80,7 @@ func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*mu
 		Result:  "",
 	})
 	pic2pic.TaskId = strconv.Itoa(task.TaskId)
+	pic2pic.AppKeyId = uint32(task.AppKeyId)
 	l.svcCtx.Db.Create(&pic2pic)
 	return &types.ImageResponse{
 		Task: strconv.Itoa(task.TaskId),

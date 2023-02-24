@@ -21,6 +21,7 @@ type BaiduWX struct {
 	SvcCtx     *svc.ServiceContext
 	HTTPClient *http.Client
 	Token      string
+	AppKeyId   int
 }
 
 type ErrorResponse struct {
@@ -50,7 +51,8 @@ type BDImageTaskRequest struct {
 }
 
 type BDImageTask struct {
-	TaskId int `json:"taskId"`
+	TaskId   int `json:"taskId"`
+	AppKeyId int `json:"appKeyId"`
 }
 
 type BDImageTaskResultResponse struct {
@@ -75,10 +77,15 @@ func NewBaiduWX(c context.Context, svcCtx *svc.ServiceContext) *BaiduWX {
 	}
 }
 
-func (b *BaiduWX) getClient() error {
+func (b *BaiduWX) getClient(id int) error {
 	apikey := &model.Apikey{}
-	b.SvcCtx.Db.Where("channel = ?", "baidu").Where("status = ?", 1).Order("rand()").Limit(1).Find(apikey)
-
+	db := b.SvcCtx.Db.Where("channel = ?", "baidu")
+	if id > 0 {
+		db.Where("id = ?", id)
+	} else {
+		db.Where("status = ?", 1).Order("rand()")
+	}
+	db.Limit(1).Find(apikey)
 	if apikey.Token == "" || time.Now().Unix()-apikey.UpdateAt.Unix() > 85400 {
 		token, err := b.getToken(apikey.Key, apikey.Secret)
 		if err != nil {
@@ -89,10 +96,13 @@ func (b *BaiduWX) getClient() error {
 		}
 		b.Token = token.Data
 		apikey.Token = token.Data
+		apikey.UpdateAt = time.Now()
 		b.SvcCtx.Db.Save(&apikey)
 	} else {
 		b.Token = apikey.Token
 	}
+	fmt.Println(apikey.ID)
+	b.AppKeyId = int(apikey.ID)
 	return nil
 }
 
@@ -108,7 +118,6 @@ func (b *BaiduWX) getToken(key string, sec string) (token *BDTokenResponse, err 
 }
 
 func (b *BaiduWX) sendRequest(req *http.Request, v interface{}) error {
-	fmt.Println(req.Header.Get("Content-Type"))
 	res, err := b.HTTPClient.Do(req)
 	if err != nil {
 		return err
@@ -142,7 +151,7 @@ func escapeQuotes(s string) string {
 
 func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err error) {
 
-	e := b.getClient()
+	e := b.getClient(0)
 	if e != nil {
 		err = e
 		return
@@ -204,15 +213,16 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 		return
 	}
 	task = BDImageTask{
-		TaskId: taskResponse.Data.TaskId,
+		TaskId:   taskResponse.Data.TaskId,
+		AppKeyId: b.AppKeyId,
 	}
 	return
 
 }
 
-func (b *BaiduWX) Pic2PicTask(taskId string) (res BDImageTaskResult, err error) {
+func (b *BaiduWX) Pic2PicTask(taskId string, appKeyId int) (res BDImageTaskResult, err error) {
 
-	e := b.getClient()
+	e := b.getClient(appKeyId)
 	if e != nil {
 		err = e
 		return
