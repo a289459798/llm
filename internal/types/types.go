@@ -40,6 +40,10 @@ type Pic2picRequest struct {
 	Style string `form:"style"`
 }
 
+type Pic2picTaskRequest struct {
+	Task string `json:"task"`
+}
+
 type WatermarkRequest struct {
 	Url      string  `json:"url"`
 	Content  string  `json:"content"`

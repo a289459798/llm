@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 	"mime/multipart"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -46,11 +47,11 @@ func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*mu
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "image/pic2pic",
-		Content: string(task.TaskId),
+		Content: strconv.Itoa(task.TaskId),
 		Result:  "",
 	})
 
 	return &types.ImageResponse{
-		Url: string(task.TaskId),
+		Url: strconv.Itoa(task.TaskId),
 	}, nil
 }

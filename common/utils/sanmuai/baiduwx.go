@@ -11,6 +11,8 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"strings"
 	"time"
 )
 
@@ -49,6 +51,17 @@ type BDImageTaskRequest struct {
 
 type BDImageTask struct {
 	TaskId int `json:"taskId"`
+}
+
+type BDImageTaskResultResponse struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data BDImageTaskResult `json:"data"`
+}
+
+type BDImageTaskResult struct {
+	Status  int                 `json:"status"`
+	ImgUrls []map[string]string `json:"imgUrls"`
 }
 
 func NewBaiduWX(c context.Context, svcCtx *svc.ServiceContext) *BaiduWX {
@@ -119,6 +132,12 @@ func (b *BaiduWX) sendRequest(req *http.Request, v interface{}) error {
 	return nil
 }
 
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+func escapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
+
 func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err error) {
 
 	e := b.getClient()
@@ -146,7 +165,10 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 		return
 	}
 
-	img, err := writer.CreateFormFile("image", request.Image.Filename)
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "image", request.Image.Filename))
+	h.Set("Content-Type", "image/jpeg")
+	img, err := writer.CreatePart(h)
 	if err != nil {
 		return
 	}
@@ -175,7 +197,6 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 
 	taskResponse := &BDImageTaskResponse{}
 	err = b.sendRequest(req, &taskResponse)
-	fmt.Println(taskResponse)
 	if taskResponse.Code != 0 {
 		err = errors.New(taskResponse.Msg)
 		return
@@ -183,6 +204,32 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 	task = BDImageTask{
 		TaskId: taskResponse.Data.TaskId,
 	}
+	return
+
+}
+
+func (b *BaiduWX) Pic2PicTask(taskId string) (res BDImageTaskResult, err error) {
+
+	e := b.getClient()
+	if e != nil {
+		err = e
+		return
+	}
+
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("https://wenxin.baidu.com/moduleApi/portal/api/rest/1.0/ernievilg/v1/getImg?access_token=%s&taskId=%s", b.Token, taskId), nil)
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	taskResponse := &BDImageTaskResultResponse{}
+	err = b.sendRequest(req, &taskResponse)
+	if taskResponse.Code != 0 {
+		err = errors.New(taskResponse.Msg)
+		return
+	}
+	res = taskResponse.Data
 	return
 
 }

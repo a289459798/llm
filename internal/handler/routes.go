@@ -88,6 +88,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/images/pic2pic",
 					Handler: image.Pic2picHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/images/pic2pic/task",
+					Handler: image.Pic2pictaskHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

@@ -13,6 +13,10 @@ type(
         Style string `form:"style"`
     }
 
+    Pic2picTaskRequest {
+        task string `json:"task"`
+    }
+
     WatermarkRequest {
         Url string `json:"url"`
         Content string `json:"content"`
@@ -37,4 +41,7 @@ service tools {
 
     @handler pic2pic
     post /images/pic2pic (Pic2picRequest) returns (ImageResponse)
+
+    @handler pic2pictask
+    get /images/pic2pic/task (Pic2picTaskRequest) returns (ImageResponse)
 }
