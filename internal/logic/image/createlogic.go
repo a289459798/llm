@@ -1,6 +1,7 @@
 package image
 
 import (
+	"chatgpt-tools/common/utils"
 	"chatgpt-tools/common/utils/sanmuai"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -8,7 +9,7 @@ import (
 	"chatgpt-tools/service"
 	"context"
 	"encoding/json"
-
+	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,7 +29,11 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse, err error) {
 
-	prompt := "帮我画一幅画，需要包含以下内容：" + req.Content
+	valid := utils.Filter(req.Content)
+	if valid != "" {
+		return nil, errors.New(valid)
+	}
+	prompt := "帮我生成一张图片，图片里面需要包含以下内容：" + req.Content
 	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateImage(prompt)
 	if err != nil {
 		return nil, err
