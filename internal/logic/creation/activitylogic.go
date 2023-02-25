@@ -49,7 +49,7 @@ func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWrit
 
 	ch := make(chan struct{})
 
-	prompt := fmt.Sprintf("请帮我完善一份策划方案，活动类型是%s，活动主要目的%s，时间周期为%s，主要针对%s，以下是主要活动内容：%s，需要提供完整的活动方案，包括但不限于前期准备、活动的实施方案、活动过程跟踪、效果不及预期的方案、活动效果、需要的支持等，请用mackdown的格式输出", req.Way, req.Target, req.Period, req.User, req.Content)
+	prompt := fmt.Sprintf("请帮我完善一份策划方案，活动类型是%s，活动主要目的%s，时间周期为%s，主要针对%s，以下是主要活动内容：%s，需要提供完整的活动方案，包括但不限于前期准备、活动的实施方案、活动过程跟踪、效果不及预期的方案、活动效果、需要的支持等，请用mackdown的格式输出", req.Way, req.Target, req.Date, req.User, req.Content)
 	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err

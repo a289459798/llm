@@ -143,7 +143,7 @@ type CodeResponse struct {
 type ActivityRequest struct {
 	Way     string `json:"way"`
 	Target  string `json:"target"`
-	Period  string `json:"period"`
+	Date    string `json:"date"`
 	User    string `json:"user"`
 	Content string `json:"content"`
 }
