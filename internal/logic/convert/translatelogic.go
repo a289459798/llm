@@ -33,14 +33,6 @@ func NewTranslateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Transla
 
 func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseWriter) (resp *types.ConvertResponse, err error) {
 	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
-	}
 
 	prompt := fmt.Sprintf("请把以下内容翻译成%s：\"%s\"", req.Lang, req.Content)
 
