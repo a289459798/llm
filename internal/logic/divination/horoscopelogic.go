@@ -114,6 +114,11 @@ func (l *HoroscopeLogic) Horoscope(req *types.HoroscopeRequest, w http.ResponseW
 		return nil, errors.New("数据为空")
 	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+
+	if !strings.Contains(result, "总结") {
+		result = ""
+	}
+
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "divination/horoscope",

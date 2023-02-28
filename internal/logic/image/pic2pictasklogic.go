@@ -40,7 +40,7 @@ func (l *Pic2pictaskLogic) Pic2pictask(req *types.Pic2picTaskRequest) (resp *typ
 		}, nil
 	}
 
-	img, err := sanmuai.NewBaiduWX(l.ctx, l.svcCtx).Pic2PicTask(task)
+	img, err := sanmuai.NewBaiduWX(l.ctx, l.svcCtx).Pic2PicTask(task, int(record.AppKeyId))
 	if err != nil {
 		return nil, err
 	}

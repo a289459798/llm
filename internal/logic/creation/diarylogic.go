@@ -75,7 +75,7 @@ func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp
 		weekDay = "六"
 		break
 	}
-	prompt := fmt.Sprintf("今天是%s，星期%s，%s的天气%s，大致内容是：%s，请帮我写一份完整了日记，字数不能少于300字，请用mackdown的格式输出", time.Now().Format("01-02"), weekDay, req.City, req.Weather, req.Content)
+	prompt := fmt.Sprintf("今天是%s，星期%s，%s的天气%s，大致内容是：%s，请帮我写一份完整了日记，字数不能少于300字，请用mackdown的格式输出", time.Now().Format("2006-01-02"), weekDay, req.City, req.Weather, req.Content)
 	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
 	if err != nil {
 		return nil, err
