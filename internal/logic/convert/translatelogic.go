@@ -3,6 +3,8 @@ package convert
 import (
 	"chatgpt-tools/common/utils"
 	"chatgpt-tools/common/utils/sanmuai"
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
@@ -11,9 +13,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -43,7 +42,7 @@ func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseW
 		return
 	}
 
-	prompt := fmt.Sprintf("%s，用%s怎么说", req.Content, req.Lang)
+	prompt := fmt.Sprintf("请把以下内容翻译成%s：\"%s\"", req.Lang, req.Content)
 
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
