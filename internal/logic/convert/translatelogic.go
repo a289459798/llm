@@ -43,7 +43,7 @@ func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseW
 		return
 	}
 
-	prompt := fmt.Sprintf("请把以下内容翻译成%s：%s", req.Lang, req.Content)
+	prompt := fmt.Sprintf("%s，用%s怎么说", req.Content, req.Lang)
 
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
