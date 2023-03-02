@@ -209,6 +209,9 @@ func (b *BaiduWX) Pic2Pic(request *BDImageTaskRequest) (task BDImageTask, err er
 	taskResponse := &BDImageTaskResponse{}
 	err = b.sendRequest(req, &taskResponse)
 	if taskResponse.Code != 0 {
+		if taskResponse.Msg == "暂不支持创作该内容，请修改后再试" {
+			taskResponse.Msg = "内容不合规，请重新选择图片再试"
+		}
 		err = errors.New(taskResponse.Msg)
 		return
 	}
