@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -36,13 +37,24 @@ func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseW
 
 	prompt := fmt.Sprintf("请把以下内容翻译成%s：\"%s\"", req.Lang, req.Content)
 
+	message := []gogpt.ChatCompletionMessage{
+		{
+			Role:    "system",
+			Content: "帮我翻译",
+		},
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +70,8 @@ func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseW
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}

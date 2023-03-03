@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 	"time"
@@ -76,7 +77,19 @@ func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp
 		break
 	}
 	prompt := fmt.Sprintf("今天是%s，星期%s，%s的天气%s，大致内容是：%s，请帮我写一份完整了日记，字数不能少于300字，请用mackdown的格式输出", time.Now().Format("2006-01-02"), weekDay, req.City, req.Weather, req.Content)
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+
+	message := []gogpt.ChatCompletionMessage{
+		{
+			Role:    "system",
+			Content: "帮我写一篇日记",
+		},
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +105,8 @@ func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}

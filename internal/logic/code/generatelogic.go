@@ -63,7 +63,7 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 				Content: v.Content,
 			})
 			message = append(message, gogpt.ChatCompletionMessage{
-				Role:    "system",
+				Role:    "assistant",
 				Content: v.Result,
 			})
 		}
