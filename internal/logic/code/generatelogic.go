@@ -37,7 +37,11 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		return nil, errors.New(valid)
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
 	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	content := fmt.Sprintf("请用编程语言%s实现以下需求:%s，请提供代码和demo，用 markdown 的格式输出", req.Lang, req.Content)

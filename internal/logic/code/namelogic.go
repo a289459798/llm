@@ -36,7 +36,11 @@ func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *t
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		return nil, errors.New(valid)
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
 	}
 
 	prompt := fmt.Sprintf("生成命名，请给我生成一些%s的%s名，具体需求如下:%s", req.Lang, req.Type, req.Content)

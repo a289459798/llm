@@ -192,3 +192,11 @@ type TranslateRequest struct {
 type ConvertResponse struct {
 	Data string `json:"data"`
 }
+
+type ValidRequest struct {
+	Content string `json:"content"`
+}
+
+type ValidResponse struct {
+	Data string `json:"data"`
+}

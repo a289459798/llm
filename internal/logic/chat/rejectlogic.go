@@ -38,7 +38,11 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		return nil, errors.New(valid)
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
 	}
 
 	prompt := fmt.Sprintf("收到了一个%s消息，我希望能通过%s的态度回绝对方，%s，请用mackdown的格式输出", req.Type, req.Way, content)
