@@ -35,11 +35,7 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+		return nil, errors.New(valid)
 	}
 
 	prompt := "请帮我用以下内容完善拍摄剧本，包含故事概要和主题、人物设定、场景设定、故事结构和情节、台词和对白、拍摄风格和视觉效果、音效和音乐,用 markdown 格式以分点叙述的形式输出：" + req.Content

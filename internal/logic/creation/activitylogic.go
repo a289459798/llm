@@ -36,11 +36,7 @@ func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWrit
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+		return nil, errors.New(valid)
 	}
 
 	// 创建上下文

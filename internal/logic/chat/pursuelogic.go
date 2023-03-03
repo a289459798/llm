@@ -36,11 +36,7 @@ func (l *PursueLogic) Pursue(req *types.PursueRequest, w http.ResponseWriter) (r
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+		return nil, errors.New(valid)
 	}
 
 	prompt := fmt.Sprintf("有一个人我喜欢TA很久了，但是我不知道TA对我的想法，害怕表白之后被拒绝以后可能连朋友都做不成，TA的情况是%s，能不能教教我怎么才能追到她，需要包含具体的计划、步骤、行动等，请用mackdown的格式输出并包含计划、步骤、技巧、以及拒绝后的方案", req.Content)

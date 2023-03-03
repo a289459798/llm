@@ -36,11 +36,7 @@ func (l *PlaygroundLogic) Playground(req *types.PlaygroundRequest, w http.Respon
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+		return nil, errors.New(valid)
 	}
 
 	prompt := fmt.Sprintf("请帮我运行一下%s代码，用 markdown 的格式输出::\n%s", req.Lang, req.Content)

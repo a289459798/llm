@@ -36,11 +36,7 @@ func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter)
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+		return nil, errors.New(valid)
 	}
 
 	prompt := fmt.Sprintf("请用以下描述生成一个正则表达式：%s，并通过markdown格式输出", req.Content)

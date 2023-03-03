@@ -12,5 +12,5 @@ func Filter(str string) string {
 	if valid {
 		return ""
 	}
-	return fmt.Sprintf("存在一下违禁词：%s\n人类的问题太深奥，三目无法回答此类问题。", s)
+	return fmt.Sprintf("存在一下违禁词：%s", s)
 }
