@@ -36,7 +36,11 @@ func (l *ExamLogic) Exam(req *types.ExamRequest, w http.ResponseWriter) (resp *t
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		return nil, errors.New(valid)
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
 	}
 
 	prompt := fmt.Sprintf("请给我生成一份试题，主要内容是%s，分别包含%s、编程题，每个题型需要3题，需要包含试题和答案，请用markdown的格式输出", req.Content, req.Type)

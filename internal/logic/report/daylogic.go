@@ -35,7 +35,11 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		return nil, errors.New(valid)
+		w.Write([]byte(utils.EncodeURL(valid)))
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		return
 	}
 
 	prompt := "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出:" + req.Content

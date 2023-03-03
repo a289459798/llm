@@ -1,0 +1,20 @@
+syntax = "v1"
+
+type(
+    ValidRequest {
+        Content string `json:"content"`
+    }
+
+    ValidResponse {
+        Data string `json:"data"`
+    }
+)
+
+@server(
+    jwt: Auth
+    group: common
+)
+service tools {
+    @handler validText
+    post /common/valid/text (ValidRequest) returns (ValidResponse)
+}

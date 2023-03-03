@@ -18,4 +18,5 @@ import (
 	"api/creation.api"
 	"api/chat.api"
 	"api/convert.api"
+	"api/common.api"
 )

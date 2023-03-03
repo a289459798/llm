@@ -6,6 +6,7 @@ import (
 
 	chat "chatgpt-tools/internal/handler/chat"
 	code "chatgpt-tools/internal/handler/code"
+	common "chatgpt-tools/internal/handler/common"
 	convert "chatgpt-tools/internal/handler/convert"
 	creation "chatgpt-tools/internal/handler/creation"
 	divination "chatgpt-tools/internal/handler/divination"
@@ -259,6 +260,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/common/valid/text",
+				Handler: common.ValidTextHandler(serverCtx),
+			},
+		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 }
