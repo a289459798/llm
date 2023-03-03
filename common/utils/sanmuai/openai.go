@@ -59,6 +59,21 @@ func (ai *OpenAi) CreateCompletion(content string) (stream gogpt.CompletionRespo
 	return ai.getClient().CreateCompletion(ai.Ctx, gptReq)
 }
 
+func (ai *OpenAi) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
+	gptReq := gogpt.ChatCompletionRequest{
+		Model:            gogpt.GPT3Dot5Turbo,
+		Messages:         content,
+		MaxTokens:        1536,
+		Temperature:      0.7,
+		TopP:             1,
+		FrequencyPenalty: 0,
+		PresencePenalty:  0,
+		N:                1,
+	}
+
+	return ai.getClient().CreateChatCompletionStream(ai.Ctx, gptReq)
+}
+
 func (ai *OpenAi) CreateChatCompletion(content []gogpt.ChatCompletionMessage) (stream gogpt.ChatCompletionResponse, err error) {
 	gptReq := gogpt.ChatCompletionRequest{
 		Model:            gogpt.GPT3Dot5Turbo,

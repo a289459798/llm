@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
 
@@ -38,31 +39,48 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 	if valid != "" {
 		return nil, errors.New(valid)
 	}
-	prompt := ""
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	content := fmt.Sprintf("请用编程语言%s实现以下需求:%s，请提供代码和demo，用 markdown 的格式输出", req.Lang, req.Content)
+
+	message := []gogpt.ChatCompletionMessage{
+		{
+			Role:    "system",
+			Content: "编程问题咨询",
+		},
+	}
+
 	if req.ChatId != "" {
 		var records []model.Record
 
 		l.svcCtx.Db.Where("uid = ?", uid).Where("chat_id = ?", req.ChatId).Order("id asc").Find(&records)
-		if len(records) > 0 {
-			prompt = ""
-			for _, v := range records {
-				prompt += v.Content + "\n\n"
-				prompt += v.Result + "\n\n"
-			}
-			content = fmt.Sprintf("%s，用%s语言", req.Content, req.Lang)
+		for _, v := range records {
+			message = append(message, gogpt.ChatCompletionMessage{
+				Role:    "user",
+				Content: v.Content,
+			})
+			message = append(message, gogpt.ChatCompletionMessage{
+				Role:    "system",
+				Content: v.Result,
+			})
 		}
+		content = fmt.Sprintf("%s，用%s语言", req.Content, req.Lang)
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "user",
+			Content: fmt.Sprintf("%s，用%s语言", req.Content, req.Lang),
+		})
+	} else {
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "user",
+			Content: content,
+		})
 	}
-	prompt += content
-
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -78,8 +96,8 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
