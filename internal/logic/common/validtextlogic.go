@@ -27,7 +27,7 @@ func NewValidTextLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ValidTe
 func (l *ValidTextLogic) ValidText(req *types.ValidRequest) (resp *types.ValidResponse, err error) {
 	valid := utils.Filter(req.Content)
 	if valid != "" {
-		return nil, errors.New(req.Content)
+		return nil, errors.New(valid)
 	}
 	return
 }
