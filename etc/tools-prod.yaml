@@ -4,6 +4,15 @@ Port: 8899
 Mode: pro
 
 Timeout: 0
+
+Log:
+  ServiceName: "tools-api"
+  Mode: "file"
+  Level: error
+  Compress: false
+  KeepDays: 0
+  StackCooldownMillis: 100
+
 OpenAIKey: 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
 
 Mysql:
