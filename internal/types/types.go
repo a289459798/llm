@@ -154,6 +154,13 @@ type DiaryRequest struct {
 	Content string `json:"content"`
 }
 
+type ArticleRequest struct {
+	Subject string `json:"subject"`
+	Type    string `json:"type"`
+	Number  string `json:"number"`
+	Content string `json:"content"`
+}
+
 type CreationResponse struct {
 	Data string `json:"data"`
 }

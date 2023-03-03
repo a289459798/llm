@@ -15,6 +15,13 @@ type(
         Content string `json:"content"`
     }
 
+    ArticleRequest {
+        Subject string `json:"subject"`
+        Type string `json:"type"`
+        Number string `json:"number"`
+        Content string `json:"content"`
+    }
+
     CreationResponse {
         Data string `json:"data"`
     }
@@ -31,4 +38,7 @@ service tools {
 
     @handler diary
     post /creation/diary (DiaryRequest) returns (CreationResponse)
+
+    @handler article
+    post /creation/article (ArticleRequest) returns (CreationResponse)
 }

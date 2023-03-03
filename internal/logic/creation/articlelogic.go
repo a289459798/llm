@@ -3,6 +3,8 @@ package creation
 import (
 	"chatgpt-tools/common/utils"
 	"chatgpt-tools/common/utils/sanmuai"
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
@@ -12,29 +14,25 @@ import (
 	gogpt "github.com/sashabaranov/go-gpt3"
 	"io"
 	"net/http"
-	"time"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type DiaryLogic struct {
+type ArticleLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewDiaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiaryLogic {
-	return &DiaryLogic{
+func NewArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ArticleLogic {
+	return &ArticleLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp *types.CreationResponse, err error) {
+func (l *ArticleLogic) Article(req *types.ArticleRequest, w http.ResponseWriter) (resp *types.CreationResponse, err error) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Content)
 	if valid != "" {
@@ -51,37 +49,12 @@ func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp
 
 	ch := make(chan struct{})
 
-	week := int(time.Now().Weekday())
-	weekDay := "未知"
-	switch week {
-	case 0:
-		weekDay = "日"
-		break
-	case 1:
-		weekDay = "一"
-		break
-	case 2:
-		weekDay = "二"
-		break
-	case 3:
-		weekDay = "三"
-		break
-	case 4:
-		weekDay = "四"
-		break
-	case 5:
-		weekDay = "五"
-		break
-	case 6:
-		weekDay = "六"
-		break
-	}
-	prompt := fmt.Sprintf("今天是%s，星期%s，%s的天气%s，大致内容是：%s，请帮我写一份完整了日记，字数不能少于300字", time.Now().Format("2006-01-02"), weekDay, req.City, req.Weather, req.Content)
+	prompt := fmt.Sprintf("帮我写一篇作文，字数不能少于%s字，文章类型是%s，文章的主题是%s，还有有以下补充说明：%s", req.Number, req.Type, req.Subject, req.Content)
 
 	message := []gogpt.ChatCompletionMessage{
 		{
 			Role:    "system",
-			Content: "帮我写一篇日记",
+			Content: "帮我写一篇作文",
 		},
 		{
 			Role:    "user",
@@ -130,7 +103,7 @@ func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
-		Type:    "creation/activity",
+		Type:    "creation/article",
 		Content: req.Content,
 		Result:  "",
 	})
