@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"strconv"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,6 +36,15 @@ func NewPic2picLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pic2picLo
 func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*multipart.FileHeader) (resp *types.ImageResponse, err error) {
 	prompt := req.Style
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+
+	// 次数限制
+	today := time.Now().Format("2006-01-02")
+	var total int64
+	l.svcCtx.Db.Where("uid = ?", uid).Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").Count(&total)
+	if total >= 3 {
+		return nil, errors.New("测试阶段，每天限使用3次")
+	}
+
 	if files == nil || len(files["image"]) == 0 {
 		return nil, errors.New("请上传图片")
 	}
