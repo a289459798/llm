@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -240,6 +241,7 @@ func (b *BaiduWX) Pic2PicTask(taskId string, appKeyId int) (res BDImageTaskResul
 
 	taskResponse := &BDImageTaskResultResponse{}
 	err = b.sendRequest(req, &taskResponse)
+	logx.Info(taskResponse)
 	if taskResponse.Code != 0 {
 		err = errors.New(taskResponse.Msg)
 		return
