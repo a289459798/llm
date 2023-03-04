@@ -40,7 +40,7 @@ func (l *Pic2picLogic) Pic2pic(req *types.Pic2picRequest, files map[string][]*mu
 	// 次数限制
 	today := time.Now().Format("2006-01-02")
 	var total int64
-	l.svcCtx.Db.Where("uid = ?", uid).Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").Count(&total)
+	l.svcCtx.Db.Model(&model.Pic2Pic{}).Where("uid = ?", uid).Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").Count(&total)
 	if total >= 3 {
 		return nil, errors.New("测试阶段，每天限使用3次")
 	}
