@@ -241,7 +241,7 @@ func (b *BaiduWX) Pic2PicTask(taskId string, appKeyId int) (res BDImageTaskResul
 
 	taskResponse := &BDImageTaskResultResponse{}
 	err = b.sendRequest(req, &taskResponse)
-	logx.Info(taskResponse)
+	logx.Error(taskResponse)
 	if taskResponse.Code != 0 {
 		err = errors.New(taskResponse.Msg)
 		return
