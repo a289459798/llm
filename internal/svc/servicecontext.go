@@ -45,6 +45,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.Apikey{})
 	//db.AutoMigrate(&model.Pic2Pic{})
 	db.AutoMigrate(&model.AccountRecord{})
+	db.AutoMigrate(&model.ShareRecord{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,

@@ -32,6 +32,10 @@ type TaskRequest struct {
 	Type string `json:"type,options=share|ad"`
 }
 
+type TaskShareFollowRequest struct {
+	OpenId string `json:"openId"`
+}
+
 type ReportRequest struct {
 	Content string `json:"content"`
 }

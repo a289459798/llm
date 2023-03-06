@@ -31,6 +31,10 @@ type TaskRequest {
     Type string `json:"type,options=share|ad"`
 }
 
+type TaskShareFollowRequest {
+    OpenId string  `json:"openId"`
+}
+
 @server(
     group: user
 )
@@ -59,4 +63,7 @@ service tools {
 
     @handler taskComplete
     post /users/tasks (TaskRequest) returns (TaskResponse)
+
+    @handler taskShareFollow
+    post /users/tasks/follow (TaskShareFollowRequest) returns (TaskResponse)
 }

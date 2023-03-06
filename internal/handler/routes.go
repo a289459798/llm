@@ -57,6 +57,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/users/tasks",
 					Handler: usertask.TaskCompleteHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/users/tasks/follow",
+					Handler: usertask.TaskShareFollowHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
