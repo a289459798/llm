@@ -47,7 +47,6 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	if user.ID == 0 {
 		user.OpenId = session.OpenID
 		user.UnionId = session.UnionID
-		user.Amount = 100
 		l.svcCtx.Db.Create(&user)
 	}
 
@@ -64,8 +63,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	}
 
 	return &types.InfoResponse{
-		Amount: user.Amount,
-		Token:  tokenString,
-		Uid:    user.ID,
+		Token: tokenString,
+		Uid:   user.ID,
 	}, nil
 }

@@ -13,6 +13,20 @@ type InfoResponse {
     Uid uint32 `json:"uid"`
 }
 
+type Task {
+    Title string `json:"title"`
+    Status bool `json:"status"`
+    Total int `json:"amount"`
+    CompleteNumber int `json:"completeNumber"`
+    Type string `json:"type"`
+    Amount int `json:"amount"`
+}
+
+type TaskResponse {
+    Content string `json:"content"`
+    List []Task `json:"list"`
+}
+
 @server(
     group: user
 )
@@ -28,4 +42,13 @@ service tools {
 service tools {
     @handler userInfo
     get /users (InfoRequest) returns (InfoResponse)
+}
+
+@server(
+    jwt: Auth
+    group: user/task
+)
+service tools {
+    @handler taskList
+    get /users/tasks (InfoRequest) returns (TaskResponse)
 }

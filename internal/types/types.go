@@ -14,6 +14,20 @@ type InfoResponse struct {
 	Uid    uint32 `json:"uid"`
 }
 
+type Task struct {
+	Title          string `json:"title"`
+	Status         bool   `json:"status"`
+	Total          int    `json:"amount"`
+	CompleteNumber int    `json:"completeNumber"`
+	Type           string `json:"type"`
+	Amount         int    `json:"amount"`
+}
+
+type TaskResponse struct {
+	Content string `json:"content"`
+	List    []Task `json:"list"`
+}
+
 type ReportRequest struct {
 	Content string `json:"content"`
 }

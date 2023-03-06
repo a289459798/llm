@@ -14,6 +14,7 @@ import (
 	image "chatgpt-tools/internal/handler/image"
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
+	usertask "chatgpt-tools/internal/handler/user/task"
 	"chatgpt-tools/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -36,6 +37,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/users",
 				Handler: user.UserInfoHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/tasks",
+				Handler: usertask.TaskListHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
