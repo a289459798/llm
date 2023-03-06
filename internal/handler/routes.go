@@ -44,13 +44,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/users/tasks",
-				Handler: usertask.TaskListHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/tasks",
+					Handler: usertask.TaskListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/users/tasks",
+					Handler: usertask.TaskCompleteHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 

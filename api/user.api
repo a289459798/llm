@@ -27,6 +27,10 @@ type TaskResponse {
     List []Task `json:"list"`
 }
 
+type TaskRequest {
+    Type string `json:"type,options=share|ad"`
+}
+
 @server(
     group: user
 )
@@ -46,9 +50,13 @@ service tools {
 
 @server(
     jwt: Auth
+    middleware: Sign
     group: user/task
 )
 service tools {
     @handler taskList
     get /users/tasks (InfoRequest) returns (TaskResponse)
+
+    @handler taskComplete
+    post /users/tasks (TaskRequest) returns (TaskResponse)
 }

@@ -18,6 +18,7 @@ type ServiceContext struct {
 	Config     config.Config
 	Db         *gorm.DB
 	AuthAndUse rest.Middleware
+	Sign       rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -48,5 +49,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:     c,
 		Db:         db,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware(c, db).Handle,
+		Sign:       middleware.NewAuthAndUseMiddleware(c, db).Handle,
 	}
 }

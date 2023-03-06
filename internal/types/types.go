@@ -28,6 +28,10 @@ type TaskResponse struct {
 	List    []Task `json:"list"`
 }
 
+type TaskRequest struct {
+	Type string `json:"type,options=share|ad"`
+}
+
 type ReportRequest struct {
 	Content string `json:"content"`
 }
