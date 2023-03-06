@@ -17,4 +17,9 @@ func NewRecord(db *gorm.DB) *Record {
 
 func (r *Record) Insert(record *model.Record) {
 	r.DB.Create(record)
+
+	r.DB.Transaction(func(tx *gorm.DB) error {
+
+		return nil
+	})
 }

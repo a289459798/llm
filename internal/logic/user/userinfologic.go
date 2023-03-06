@@ -1,7 +1,10 @@
 package user
 
 import (
+	"chatgpt-tools/model"
 	"context"
+	"encoding/json"
+	"time"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -24,7 +27,10 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 }
 
 func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoResponse, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
+	return &types.InfoResponse{
+		Amount: amount.ChatAmount - amount.ChatUse,
+		Uid:    uint32(uid),
+	}, nil
 }
