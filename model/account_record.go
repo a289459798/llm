@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type AccountRecord struct {
 	ID            uint32    `gorm:"primary_key" json:"id"`
@@ -12,4 +15,13 @@ type AccountRecord struct {
 	CurrentAmount uint32    `json:"current_amount"`
 	CreatedAt     time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt      time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
+}
+type AccountRecordModel struct {
+	DB *gorm.DB
+}
+
+func NewAccountRecord(db *gorm.DB) *AccountRecordModel {
+	return &AccountRecordModel{
+		DB: db,
+	}
 }

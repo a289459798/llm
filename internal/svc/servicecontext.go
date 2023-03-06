@@ -47,6 +47,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
-		AuthAndUse: middleware.NewAuthAndUseMiddleware(c).Handle,
+		AuthAndUse: middleware.NewAuthAndUseMiddleware(c, db).Handle,
 	}
 }
