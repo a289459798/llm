@@ -221,3 +221,6 @@ type ValidRequest struct {
 type ValidResponse struct {
 	Data string `json:"data"`
 }
+
+type WeChatCallbackResponse struct {
+}

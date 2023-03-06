@@ -18,4 +18,9 @@ type Config struct {
 		AppId     string
 		AppSecret string
 	}
+	OfficialAccount struct {
+		AppId     string
+		AppSecret string
+		Token     string
+	}
 }

@@ -15,6 +15,7 @@ import (
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
 	usertask "chatgpt-tools/internal/handler/user/task"
+	wechat "chatgpt-tools/internal/handler/wechat"
 	"chatgpt-tools/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -294,5 +295,15 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/wechat/callback/subscribe",
+				Handler: wechat.SubscribeCallHandler(serverCtx),
+			},
+		},
 	)
 }

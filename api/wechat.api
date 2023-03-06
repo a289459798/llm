@@ -1,0 +1,13 @@
+syntax = "v1"
+
+type WeChatCallbackResponse {
+
+}
+
+@server(
+    group: wechat
+)
+service tools {
+    @handler subscribeCall
+    post /wechat/callback/subscribe  returns (WeChatCallbackResponse)
+}
