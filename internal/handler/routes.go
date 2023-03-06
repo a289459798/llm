@@ -275,6 +275,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/common/valid/text",
 				Handler: common.ValidTextHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/common/valid/chat",
+				Handler: common.ValidChatHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)

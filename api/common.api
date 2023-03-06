@@ -17,4 +17,7 @@ type(
 service tools {
     @handler validText
     post /common/valid/text (ValidRequest) returns (ValidResponse)
+
+    @handler validChat
+    post /common/valid/chat (ValidRequest) returns (ValidResponse)
 }
