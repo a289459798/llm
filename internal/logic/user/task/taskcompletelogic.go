@@ -52,9 +52,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 	var add uint32 = 5
 	if req.Type == "share" && total >= 3 {
 		return nil, errors.New("已超过最大任务次数")
-	}
-
-	if req.Type == "ad" {
+	} else if req.Type == "ad" && total == 0 {
 		add = 10
 	}
 
