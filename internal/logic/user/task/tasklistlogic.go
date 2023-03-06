@@ -77,12 +77,12 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 				Amount:         10,
 			},
 			{
-				Title:          "关注公众号",
-				Status:         subscribeCount > 0,
+				Title:          "打开小程序",
+				Status:         true,
 				Total:          1,
-				CompleteNumber: int(subscribeCount),
-				Type:           "subscribe",
-				Amount:         20,
+				CompleteNumber: 1,
+				Type:           "open",
+				Amount:         10,
 			},
 		},
 	}, nil

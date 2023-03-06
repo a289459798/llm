@@ -31,7 +31,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 	a.DB.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).Find(&account)
 	if account.ID == 0 {
 		account.Uid = uid
-		account.ChatAmount = 20
+		account.ChatAmount = 10
 		account.ChatUse = 0
 		account.Date = date
 		a.DB.Create(&account)

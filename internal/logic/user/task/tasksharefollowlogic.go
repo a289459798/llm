@@ -41,7 +41,6 @@ func (l *TaskShareFollowLogic) TaskShareFollow(req *types.TaskShareFollowRequest
 	l.svcCtx.Db.Model(&model.ShareRecord{}).
 		Where("uid = ?", user.ID).
 		Where("follow_id = ?", uid).
-		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
 		Count(&total)
 	if total > 0 {
 		return nil, errors.New("重复推荐")
