@@ -50,6 +50,17 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		},
 	}
 
+	// 默认训练数据
+
+	// 根据模版提问
+	msg := req.Message
+	if req.TemplateId > 0 {
+		template := &model.ChatTemplate{}
+		l.svcCtx.Db.Where("id = ?", req.TemplateId).Where("is_del = 0").Find(&template)
+		if template.Question != "" {
+			msg = template.Question
+		}
+	}
 	if req.ChatId != "" {
 		var records []model.Record
 
@@ -68,7 +79,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "user",
-		Content: req.Message,
+		Content: msg,
 	})
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
@@ -117,7 +128,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "chat/chat",
-		Content: req.Message,
+		Content: msg,
 		Result:  result,
 		ChatId:  req.ChatId,
 	})
