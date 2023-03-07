@@ -220,7 +220,13 @@ type ChatRequest struct {
 }
 
 type ChatHistoryResponse struct {
-	ChatId string `json:"chatId"`
+	ChatId  string        `json:"chatId"`
+	History []ChatHistory `json:"history"`
+}
+
+type ChatHistory struct {
+	Q string `json:"q"`
+	A string `json:"a"`
 }
 
 type ChatTemplateResponse struct {

@@ -56,6 +56,12 @@ type (
 
     ChatHistoryResponse {
         ChatId string `json:"chatId"`
+        History []ChatHistory `json:"history"`
+    }
+
+    ChatHistory{
+        Q string `json:"q"`
+        A string `json:"a"`
     }
 
     ChatTemplateResponse {

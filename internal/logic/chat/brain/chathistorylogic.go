@@ -37,9 +37,24 @@ func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err e
 		Select("chat_id").Find(&record)
 
 	chatId := ""
+	history := []types.ChatHistory{}
 	if record.ChatId != "" {
 		chatId = record.ChatId
+		records := []model.Record{}
+		l.svcCtx.Db.Where("uid = ?", uid).
+			Where("chat_id = ?", chatId).
+			Order("id desc").
+			Limit(3).
+			Find(&records)
+		for _, m := range records {
+			history = append([]types.ChatHistory{
+				{
+					Q: m.Content,
+					A: m.Result,
+				},
+			}, history...)
+		}
 	}
 
-	return &types.ChatHistoryResponse{ChatId: chatId}, nil
+	return &types.ChatHistoryResponse{ChatId: chatId, History: history}, nil
 }
