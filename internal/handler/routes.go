@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	chat "chatgpt-tools/internal/handler/chat"
+	chatbrain "chatgpt-tools/internal/handler/chat/brain"
 	code "chatgpt-tools/internal/handler/code"
 	common "chatgpt-tools/internal/handler/common"
 	convert "chatgpt-tools/internal/handler/convert"
@@ -274,6 +275,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/chat/pursue",
 					Handler: chat.PursueHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/chat/chat",
+					Handler: chatbrain.ChatHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/chat/chat/history",
+					Handler: chatbrain.ChatHistoryHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/chat/chat/template",
+					Handler: chatbrain.ChatTemplateHandler(serverCtx),
 				},
 			}...,
 		),

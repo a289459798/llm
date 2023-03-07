@@ -213,6 +213,25 @@ type ChatResponse struct {
 	Data string `json:"data"`
 }
 
+type ChatRequest struct {
+	ChatId     string `json:"chatId"`
+	TemplateId uint32 `json:"templateId"`
+	Message    string `json:"message"`
+}
+
+type ChatHistoryResponse struct {
+	ChatId string `json:"chatId"`
+}
+
+type ChatTemplateResponse struct {
+	List []ChatTemplate `json:"list"`
+}
+
+type ChatTemplate struct {
+	TemplateId uint32 `json:"templateId"`
+	Message    string `json:"message"`
+}
+
 type TranslateRequest struct {
 	Content string `json:"content"`
 	Lang    string `json:"lang"`

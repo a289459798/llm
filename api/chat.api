@@ -46,3 +46,41 @@ service tools {
     @handler pursue
     post /chat/pursue (PursueRequest) returns (ChatResponse)
 }
+
+type (
+    ChatRequest {
+        ChatId string `json:"chatId"`
+        TemplateId uint32 `json:"templateId"`
+        Message string `json:"message"`
+    }
+
+    ChatHistoryResponse {
+        ChatId string `json:"chatId"`
+    }
+
+    ChatTemplateResponse {
+        List []ChatTemplate `json:"list"`
+    }
+
+    ChatTemplate {
+        TemplateId uint32 `json:"templateId"`
+        Message string `json:"message"`
+    }
+
+)
+
+@server(
+    jwt: Auth
+    middleware: AuthAndUse
+    group: chat/brain
+)
+service tools {
+    @handler chat
+    post /chat/chat (ChatRequest) returns (ChatResponse)
+
+    @handler chatHistory
+    get /chat/chat/history returns (ChatHistoryResponse)
+
+    @handler chatTemplate
+    get /chat/chat/template returns (ChatTemplateResponse)
+}
