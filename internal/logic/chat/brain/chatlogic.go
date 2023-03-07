@@ -91,6 +91,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		Role:    "user",
 		Content: msg,
 	})
+
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
@@ -159,11 +160,11 @@ func getStudy() []map[string]string {
 		},
 		{
 			"role":    "user",
-			"content": fmt.Sprintf("在接下来的对话中，问你日期和时间相关信息的的时候，你要回答”今天是%s。“，不要回答其他信息", time.Now().Format("2016-01-02 15:04:05")),
+			"content": fmt.Sprintf("在接下来的对话中，问你日期和时间相关信息的的时候，你要回答”今天是%s。“，不要回答其他信息", time.Now().Format("2006-01-02")),
 		},
 		{
 			"role":    "assistant",
-			"content": fmt.Sprintf("好的，下次您问我“日期和时间”的时候，我会回答”今天是%s。“", time.Now().Format("2016-01-02 15:04:05")),
+			"content": fmt.Sprintf("好的，下次您问我“日期和时间”的时候，我会回答”今天是%s。“", time.Now().Format("2006-01-02")),
 		},
 	}
 }
