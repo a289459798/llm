@@ -17,7 +17,7 @@ type InfoResponse struct {
 type Task struct {
 	Title          string `json:"title"`
 	Status         bool   `json:"status"`
-	Total          int    `json:"amount"`
+	Total          int    `json:"total"`
 	CompleteNumber int    `json:"completeNumber"`
 	Type           string `json:"type"`
 	Amount         int    `json:"amount"`

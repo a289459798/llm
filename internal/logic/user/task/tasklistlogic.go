@@ -39,13 +39,16 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 		Group("type").
 		Scan(&result)
 
-	shareCount := 0
-	adCount := 0
+	var shareCount int64
+	var adCount int64
+	var openAmount int64
 	for _, m := range result {
 		if m["type"] == "share" {
-			shareCount = m["count"].(int)
+			shareCount = m["count"].(int64)
 		} else if m["type"] == "ad" {
-			adCount = m["ad"].(int)
+			adCount = m["count"].(int64)
+		} else if m["type"] == "open" {
+			openAmount = m["count"].(int64)
 		}
 	}
 
@@ -64,25 +67,25 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 				Title:          "分享",
 				Status:         shareCount == 3,
 				Total:          3,
-				CompleteNumber: shareCount,
+				CompleteNumber: int(shareCount),
 				Type:           "share",
 				Amount:         5,
 			},
 			{
 				Title:          "看广告",
-				Status:         false,
-				Total:          9999,
-				CompleteNumber: adCount,
+				Status:         adCount == 10,
+				Total:          10,
+				CompleteNumber: int(adCount),
 				Type:           "ad",
 				Amount:         10,
 			},
 			{
 				Title:          "打开小程序",
-				Status:         true,
+				Status:         openAmount > 0,
 				Total:          1,
 				CompleteNumber: 1,
 				Type:           "open",
-				Amount:         10,
+				Amount:         int(openAmount),
 			},
 		},
 	}, nil
