@@ -2,6 +2,7 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"math"
 	"time"
 )
 
@@ -30,8 +31,23 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 	account := &Account{}
 	a.DB.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).Find(&account)
 	if account.ID == 0 {
+		var amount uint32 = 10
+		// 获取连续天数
+		firstAccount := &Account{}
+		a.DB.Where("uid = ?", uid).Order("id desc").Find(&firstAccount)
+		if firstAccount.ID > 0 {
+			var total int64
+			a.DB.Model(&Account{}).Where("uid = ?", uid).Count(&total)
+			t, _ := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
+			t2, _ := time.Parse("2006-01-02", firstAccount.Date.Format("2006-01-02"))
+			d := t.Sub(t2)
+			day := int64(math.Ceil(d.Hours() / 24))
+			if day == total {
+				amount += uint32(total)
+			}
+		}
 		account.Uid = uid
-		account.ChatAmount = 10
+		account.ChatAmount = amount
 		account.ChatUse = 0
 		account.Date = date
 		a.DB.Create(&account)
