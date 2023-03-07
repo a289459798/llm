@@ -33,5 +33,7 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 	if amount.ChatAmount <= amount.ChatUse {
 		return nil, errors.New("次数已用完")
 	}
-	return
+	return &types.ValidResponse{
+		Data: string(amount.ChatAmount - amount.ChatUse),
+	}, nil
 }
