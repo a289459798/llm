@@ -31,7 +31,9 @@ func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err e
 	record := &model.Record{}
 	today := time.Now().Format("2006-01-02")
 	l.svcCtx.Db.Where("uid = ?", uid).
-		Order("id desc").Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
+		Order("id desc").
+		Where("type = ?", "chat/chat").
+		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
 		Select("chat_id").Find(&record)
 
 	chatId := ""
