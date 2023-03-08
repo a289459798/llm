@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strconv"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -34,6 +35,6 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 		return nil, errors.New("次数已用完")
 	}
 	return &types.ValidResponse{
-		Data: string(amount.ChatAmount - amount.ChatUse),
+		Data: strconv.Itoa(int(amount.ChatAmount) - int(amount.ChatUse)),
 	}, nil
 }
