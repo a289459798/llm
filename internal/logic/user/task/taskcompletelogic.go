@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,7 +29,7 @@ func NewTaskCompleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Task
 	}
 }
 
-func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request) (resp *types.TaskResponse, err error) {
+func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request) (resp *types.TaskCompleteResponse, err error) {
 	timestamp := r.Header.Get("timestamp")
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	accountRecord := &model.AccountRecord{}
@@ -50,30 +49,37 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		Count(&total)
 
 	var add uint32 = 5
-	if req.Type == "share" && total >= 3 {
+	if (req.Type == "share" && total >= 3) || (req.Type == "ad" && total >= 10) {
 		return nil, errors.New("已超过最大任务次数")
 	} else if req.Type == "ad" && total == 0 {
 		add = 10
 	}
 
-	l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		// 增加次数
-		amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
-		amount.ChatAmount += add
-		tx.Save(&amount)
+	tx := l.svcCtx.Db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	// 增加次数
+	amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
+	amount.ChatAmount += add
+	tx.Save(&amount)
 
-		// 记录
-		t, _ := strconv.Atoi(timestamp)
-		tx.Create(&model.AccountRecord{
-			Uid:           uint32(uid),
-			RecordId:      uint32(t),
-			Way:           1,
-			Type:          req.Type,
-			Amount:        add,
-			CurrentAmount: amount.ChatAmount - amount.ChatUse,
-		})
-		return nil
+	// 记录
+	t, _ := strconv.Atoi(timestamp)
+	tx.Create(&model.AccountRecord{
+		Uid:           uint32(uid),
+		RecordId:      uint32(t),
+		Way:           1,
+		Type:          req.Type,
+		Amount:        add,
+		CurrentAmount: amount.ChatAmount - amount.ChatUse,
 	})
+	tx.Commit()
 
-	return
+	return &types.TaskCompleteResponse{
+		Total:  amount.ChatAmount - amount.ChatUse,
+		Amount: add,
+	}, nil
 }

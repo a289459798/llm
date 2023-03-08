@@ -26,6 +26,14 @@ type Task struct {
 type TaskResponse struct {
 	Content string `json:"content"`
 	List    []Task `json:"list"`
+	Max     int    `json:"max"`
+	Have    int    `json:"have"`
+	Tips    string `json:"tips"`
+}
+
+type TaskCompleteResponse struct {
+	Total  uint32 `json:"total"`
+	Amount uint32 `json:"amount"`
 }
 
 type TaskRequest struct {

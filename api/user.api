@@ -25,6 +25,14 @@ type Task {
 type TaskResponse {
     Content string `json:"content"`
     List []Task `json:"list"`
+    Max int `json:"max"`
+    Have int `json:"have"`
+    Tips string `json:"tips"`
+}
+
+type TaskCompleteResponse {
+    Total uint32 `json:"total"`
+    Amount uint32 `json:"amount"`
 }
 
 type TaskRequest {
@@ -62,7 +70,7 @@ service tools {
     get /users/tasks (InfoRequest) returns (TaskResponse)
 
     @handler taskComplete
-    post /users/tasks (TaskRequest) returns (TaskResponse)
+    post /users/tasks (TaskRequest) returns (TaskCompleteResponse)
 
     @handler taskShareFollow
     post /users/tasks/follow (TaskShareFollowRequest) returns (TaskResponse)
