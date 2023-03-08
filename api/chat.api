@@ -77,16 +77,23 @@ type (
 
 @server(
     jwt: Auth
+    middleware: Sign
+    group: chat/brain
+)
+service tools {
+    @handler chatHistory
+    get /chat/chat/history returns (ChatHistoryResponse)
+
+    @handler chatTemplate
+    get /chat/chat/template returns (ChatTemplateResponse)
+}
+
+@server(
+    jwt: Auth
     middleware: AuthAndUse
     group: chat/brain
 )
 service tools {
     @handler chat
     post /chat/chat (ChatRequest) returns (ChatResponse)
-
-    @handler chatHistory
-    get /chat/chat/history returns (ChatHistoryResponse)
-
-    @handler chatTemplate
-    get /chat/chat/template returns (ChatTemplateResponse)
 }

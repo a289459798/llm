@@ -51,6 +51,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:     c,
 		Db:         db,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware(c, db).Handle,
-		Sign:       middleware.NewAuthAndUseMiddleware(c, db).Handle,
+		Sign:       middleware.NewSignMiddleware(c).Handle,
 	}
 }

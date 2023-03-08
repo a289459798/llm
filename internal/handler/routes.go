@@ -283,13 +283,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Middleware{serverCtx.Sign},
 			[]rest.Route{
-				{
-					Method:  http.MethodPost,
-					Path:    "/chat/chat",
-					Handler: chatbrain.ChatHandler(serverCtx),
-				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/chat/chat/history",
@@ -299,6 +294,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/chat/chat/template",
 					Handler: chatbrain.ChatTemplateHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/chat/chat",
+					Handler: chatbrain.ChatHandler(serverCtx),
 				},
 			}...,
 		),

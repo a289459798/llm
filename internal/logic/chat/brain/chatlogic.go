@@ -74,7 +74,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	if req.ChatId != "" {
 		var records []model.Record
 
-		l.svcCtx.Db.Where("uid = ?", uid).Where("chat_id = ?", req.ChatId).Order("id asc").Find(&records)
+		l.svcCtx.Db.Raw("(select id, content, result from gpt_record where uid = ? and chat_id = ? order by id asc limit 5) UNION (select id, content, result from gpt_record where uid = ? and chat_id = ? order by id desc limit 25)", uid, req.ChatId, uid, req.ChatId).Scan(&records)
 		for _, v := range records {
 			message = append(message, gogpt.ChatCompletionMessage{
 				Role:    "user",
