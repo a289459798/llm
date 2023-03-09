@@ -4,6 +4,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -28,22 +29,26 @@ func NewChatHistoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatH
 
 func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	record := &model.Record{}
 	today := time.Now().Format("2006-01-02")
-	l.svcCtx.Db.Where("uid = ?", uid).
+	totalRecord := &struct {
+		ChatId string
+		Count  int
+	}{}
+	l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).
 		Order("id desc").
 		Where("type = ?", "chat/chat").
 		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
-		Select("chat_id").Find(&record)
+		Group("chat_id").
+		Select("chat_id, count(*) as count").Find(&totalRecord)
+	fmt.Println(totalRecord)
 
 	chatId := ""
 	history := []types.ChatHistory{}
-	if record.ChatId != "" {
-		chatId = record.ChatId
+	if totalRecord.Count >= 5 {
+		chatId = totalRecord.ChatId
 		records := []model.Record{}
-		l.svcCtx.Db.Select("chat_id, content, result, count(*) as count").Where("uid = ?", uid).
+		l.svcCtx.Db.Where("uid = ?", uid).
 			Where("chat_id = ?", chatId).
-			Having("count > 5").
 			Order("id desc").
 			Limit(3).
 			Find(&records)
