@@ -12,6 +12,7 @@ type InfoResponse struct {
 	Token  string `json:"token"`
 	Amount uint32 `json:"amount"`
 	Uid    uint32 `json:"uid"`
+	OpenId string `json:"openId"`
 }
 
 type Task struct {

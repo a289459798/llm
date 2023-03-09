@@ -29,8 +29,12 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
+
+	user := &model.User{}
+	l.svcCtx.Db.Where("id = ?", uid).First(user)
 	return &types.InfoResponse{
 		Amount: amount.ChatAmount - amount.ChatUse,
 		Uid:    uint32(uid),
+		OpenId: user.OpenId,
 	}, nil
 }

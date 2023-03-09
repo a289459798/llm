@@ -63,7 +63,8 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	}
 
 	return &types.InfoResponse{
-		Token: tokenString,
-		Uid:   user.ID,
+		Token:  tokenString,
+		Uid:    user.ID,
+		OpenId: user.OpenId,
 	}, nil
 }
