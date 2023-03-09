@@ -41,8 +41,9 @@ func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err e
 	if record.ChatId != "" {
 		chatId = record.ChatId
 		records := []model.Record{}
-		l.svcCtx.Db.Where("uid = ?", uid).
+		l.svcCtx.Db.Select("chat_id, content, result, count(*) as count").Where("uid = ?", uid).
 			Where("chat_id = ?", chatId).
+			Having("count > 5").
 			Order("id desc").
 			Limit(3).
 			Find(&records)
