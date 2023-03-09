@@ -84,7 +84,12 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 				Total:          10,
 				CompleteNumber: int(adCount),
 				Type:           "ad",
-				Amount:         10,
+				Amount: func(count int) int {
+					if count > 0 {
+						return 5
+					}
+					return 10
+				}(int(adCount)),
 			},
 			{
 				Title:          "打开小程序",
