@@ -35,7 +35,7 @@ func NewTranslateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Transla
 func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseWriter) (resp *types.ConvertResponse, err error) {
 	w.Header().Set("Content-Type", "text/event-stream")
 
-	prompt := fmt.Sprintf("请把以下内容翻译成%s：\"%s\"", req.Lang, req.Content)
+	prompt := fmt.Sprintf("请把\"%s\"翻译成%s，输出结果只需要包含译文", req.Content, req.Lang)
 
 	message := []gogpt.ChatCompletionMessage{
 		{
