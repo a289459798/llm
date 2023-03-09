@@ -25,3 +25,8 @@ Auth:
 MiniApp:
   AppId: wxab342e753dfef0b0
   AppSecret: 2351083d4bddd18289afb3644f1f1de8
+
+OfficialAccount:
+  AppId: wxf5faec580b47b6c9
+  AppSecret: a513dc278106d9f8f1ba375b7c3046e8
+  Token: sdfsdfsdsdf
