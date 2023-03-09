@@ -19,11 +19,9 @@ func DiaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := creation.NewDiaryLogic(r.Context(), svcCtx)
-		resp, err := l.Diary(&req, w)
+		_, err := l.Diary(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

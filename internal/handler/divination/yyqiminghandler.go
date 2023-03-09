@@ -19,11 +19,9 @@ func YyqimingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := divination.NewYyqimingLogic(r.Context(), svcCtx)
-		resp, err := l.Yyqiming(&req, w)
+		_, err := l.Yyqiming(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

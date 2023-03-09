@@ -19,11 +19,9 @@ func JiemengHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := divination.NewJiemengLogic(r.Context(), svcCtx)
-		resp, err := l.Jiemeng(&req, w)
+		_, err := l.Jiemeng(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

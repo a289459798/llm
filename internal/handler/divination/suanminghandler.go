@@ -19,11 +19,9 @@ func SuanmingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := divination.NewSuanmingLogic(r.Context(), svcCtx)
-		resp, err := l.Suanming(&req, w)
+		_, err := l.Suanming(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

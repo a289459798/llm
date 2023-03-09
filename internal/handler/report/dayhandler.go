@@ -19,11 +19,9 @@ func DayHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := report.NewDayLogic(r.Context(), svcCtx)
-		resp, err := l.Day(&req, w)
+		_, err := l.Day(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

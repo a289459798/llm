@@ -19,11 +19,9 @@ func ArticleHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := creation.NewArticleLogic(r.Context(), svcCtx)
-		resp, err := l.Article(&req, w)
+		_, err := l.Article(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

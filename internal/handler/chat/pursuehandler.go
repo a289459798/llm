@@ -19,11 +19,9 @@ func PursueHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := chat.NewPursueLogic(r.Context(), svcCtx)
-		resp, err := l.Pursue(&req, w)
+		_, err := l.Pursue(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

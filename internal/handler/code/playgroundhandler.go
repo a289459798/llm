@@ -19,11 +19,9 @@ func PlaygroundHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := code.NewPlaygroundLogic(r.Context(), svcCtx)
-		resp, err := l.Playground(&req, w)
+		_, err := l.Playground(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

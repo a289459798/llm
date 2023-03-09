@@ -19,11 +19,9 @@ func GenerateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := code.NewGenerateLogic(r.Context(), svcCtx)
-		resp, err := l.Generate(&req, w)
+		_, err := l.Generate(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

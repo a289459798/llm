@@ -19,11 +19,9 @@ func TranslateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := convert.NewTranslateLogic(r.Context(), svcCtx)
-		resp, err := l.Translate(&req, w)
+		_, err := l.Translate(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

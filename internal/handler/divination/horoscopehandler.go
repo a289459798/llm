@@ -19,11 +19,9 @@ func HoroscopeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := divination.NewHoroscopeLogic(r.Context(), svcCtx)
-		resp, err := l.Horoscope(&req, w)
+		_, err := l.Horoscope(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }
