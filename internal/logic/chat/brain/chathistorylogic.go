@@ -4,7 +4,6 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -40,7 +39,6 @@ func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err e
 		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
 		Group("chat_id").
 		Select("chat_id, count(*) as count").Find(&totalRecord)
-	fmt.Println(totalRecord)
 
 	chatId := ""
 	history := []types.ChatHistory{}

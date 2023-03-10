@@ -19,11 +19,9 @@ func WorkHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := report.NewWorkLogic(r.Context(), svcCtx)
-		resp, err := l.Work(&req, w)
+		_, err := l.Work(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

@@ -19,11 +19,9 @@ func QimingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := divination.NewQimingLogic(r.Context(), svcCtx)
-		resp, err := l.Qiming(&req, w)
+		_, err := l.Qiming(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

@@ -19,11 +19,9 @@ func IntroduceHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := chat.NewIntroduceLogic(r.Context(), svcCtx)
-		resp, err := l.Introduce(&req, w)
+		_, err := l.Introduce(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

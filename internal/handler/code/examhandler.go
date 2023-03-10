@@ -19,11 +19,9 @@ func ExamHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := code.NewExamLogic(r.Context(), svcCtx)
-		resp, err := l.Exam(&req, w)
+		_, err := l.Exam(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

@@ -19,11 +19,9 @@ func NameHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := code.NewNameLogic(r.Context(), svcCtx)
-		resp, err := l.Name(&req, w)
+		_, err := l.Name(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

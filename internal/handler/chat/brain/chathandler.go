@@ -19,11 +19,9 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := brain.NewChatLogic(r.Context(), svcCtx)
-		resp, err := l.Chat(&req, w)
+		_, err := l.Chat(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

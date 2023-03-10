@@ -19,11 +19,9 @@ func RegularHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := code.NewRegularLogic(r.Context(), svcCtx)
-		resp, err := l.Regular(&req, w)
+		_, err := l.Regular(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

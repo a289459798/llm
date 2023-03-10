@@ -19,11 +19,9 @@ func PlotHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := report.NewPlotLogic(r.Context(), svcCtx)
-		resp, err := l.Plot(&req, w)
+		_, err := l.Plot(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

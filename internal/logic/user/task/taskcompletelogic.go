@@ -76,10 +76,34 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		Amount:        add,
 		CurrentAmount: amount.ChatAmount - amount.ChatUse,
 	})
+
+	l.svcCtx.Db.Model(&model.AccountRecord{}).
+		Where("uid = ?", uid).
+		Where("type in (?, ?)", "ad", "share").
+		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
+		Count(&total)
+
+	welfare := 0
+	if total == 13 {
+		amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
+		amount.ChatAmount += 10000
+		tx.Save(&amount)
+
+		tx.Create(&model.AccountRecord{
+			Uid:           uint32(uid),
+			RecordId:      uint32(t),
+			Way:           1,
+			Type:          "welfare",
+			Amount:        10000,
+			CurrentAmount: amount.ChatAmount - amount.ChatUse,
+		})
+
+	}
+
 	tx.Commit()
 
 	return &types.TaskCompleteResponse{
 		Total:  amount.ChatAmount - amount.ChatUse,
-		Amount: add,
+		Amount: add + uint32(welfare),
 	}, nil
 }

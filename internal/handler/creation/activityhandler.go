@@ -19,11 +19,9 @@ func ActivityHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := creation.NewActivityLogic(r.Context(), svcCtx)
-		resp, err := l.Activity(&req, w)
+		_, err := l.Activity(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

@@ -19,11 +19,9 @@ func GsqimingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := divination.NewGsqimingLogic(r.Context(), svcCtx)
-		resp, err := l.Gsqiming(&req, w)
+		_, err := l.Gsqiming(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

@@ -19,11 +19,9 @@ func SalaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := chat.NewSalaryLogic(r.Context(), svcCtx)
-		resp, err := l.Salary(&req, w)
+		_, err := l.Salary(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }

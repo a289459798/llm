@@ -18,11 +18,9 @@ func WeekHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := report.NewWeekLogic(r.Context(), svcCtx)
-		resp, err := l.Week(&req, w)
+		_, err := l.Week(&req, w)
 		if err != nil {
 			errorx.Error(w, err.Error())
-		} else {
-			httpx.OkJson(w, resp)
 		}
 	}
 }
