@@ -83,10 +83,12 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
 		Count(&total)
 
-	welfare := 0
-	if total == 13 {
+	var welfare uint32 = 0
+
+	if total == 12 {
+		welfare = 10000
 		amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
-		amount.ChatAmount += 10000
+		amount.ChatAmount += welfare
 		tx.Save(&amount)
 
 		tx.Create(&model.AccountRecord{
@@ -104,6 +106,6 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 
 	return &types.TaskCompleteResponse{
 		Total:  amount.ChatAmount - amount.ChatUse,
-		Amount: add + uint32(welfare),
+		Amount: add + welfare,
 	}, nil
 }
