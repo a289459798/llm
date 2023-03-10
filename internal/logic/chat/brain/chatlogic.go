@@ -159,7 +159,7 @@ func getStudy() []map[string]string {
 		},
 		{
 			"role":    "user",
-			"content": fmt.Sprintf("在接下来的对话中，关于今天的日期都是:%s, 问你日期和时间相关信息的的时候，你要回答”今天是%s。“，不要回答其他信息", time.Now().Format("2006-01-02"), time.Now().Format("2006-01-02")),
+			"content": fmt.Sprintf("你记住今天的日期是%s， 接下来的对话中和今天相关的日期都要用这个日期（比如星座、新闻），不要回答我不知道今天的日期", time.Now().Format("2006-01-02")),
 		},
 		{
 			"role":    "assistant",
