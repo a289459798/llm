@@ -34,8 +34,9 @@ type TaskResponse struct {
 }
 
 type TaskCompleteResponse struct {
-	Total  uint32 `json:"total"`
-	Amount uint32 `json:"amount"`
+	Total   uint32 `json:"total"`
+	Amount  uint32 `json:"amount"`
+	Welfare uint32 `json:"welfare"`
 }
 
 type TaskRequest struct {

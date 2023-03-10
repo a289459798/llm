@@ -35,6 +35,7 @@ type TaskResponse {
 type TaskCompleteResponse {
     Total uint32 `json:"total"`
     Amount uint32 `json:"amount"`
+    Welfare uint32 `json:"welfare"`
 }
 
 type TaskRequest {
