@@ -42,7 +42,7 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 
 	var shareCount int64
 	var adCount int64
-	var openAmount int64
+	var openAmount int
 	var total int
 	for _, m := range result {
 		t, _ := strconv.Atoi(m["total"].(string))
@@ -52,7 +52,7 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 		} else if m["type"] == "ad" {
 			adCount = m["count"].(int64)
 		} else if m["type"] == "open" {
-			openAmount = m["count"].(int64)
+			openAmount, _ = strconv.Atoi(m["total"].(string))
 		}
 	}
 
@@ -68,7 +68,7 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 		Max:     10000 + 30 + 55 + 10,
 		Have:    total,
 		Tips:    "限时福利：今日完成所有任务额外可得10000次",
-		Content: "分享每次可获得5次，被分享人第一次打开可额外获得5次，\n分享任务每天可做3次，通过分享最多可获得30次\n\n完整看完激励视频第一次获得10次，之后每个视频奖励5次\n，每天最多完成10次\n\n打开小程序即可获得10次，连续登录额外奖励对应的连续\n次数，坚持使用100年，当天可获得36500次\n\n以上所得次数仅限当天有效",
+		Content: "每天打开小程序即可获得10次，连续登录额外奖励对应的连续次数，坚持使用100年，当天可获得36500次\n分享后可获得5次，链接被新用户打开可额外获得5次，分享任务每天可做3次，通过分享最多可获得30次\n每天第一次看激励视频获得10次，之后每个视频奖励5次，每天最多完成10次\n\n以上所得次数仅限当天有效",
 		List: []types.Task{
 			{
 				Title:          "分享",
@@ -77,6 +77,7 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 				CompleteNumber: int(shareCount),
 				Type:           "share",
 				Amount:         5,
+				Max:            30,
 			},
 			{
 				Title:          "看广告",
@@ -90,6 +91,7 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 					}
 					return 10
 				}(int(adCount)),
+				Max: 55,
 			},
 			{
 				Title:          "打开小程序",
@@ -97,7 +99,8 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 				Total:          1,
 				CompleteNumber: 1,
 				Type:           "open",
-				Amount:         int(openAmount),
+				Amount:         openAmount,
+				Max:            36500,
 			},
 		},
 	}, nil

@@ -22,6 +22,7 @@ type Task struct {
 	CompleteNumber int    `json:"completeNumber"`
 	Type           string `json:"type"`
 	Amount         int    `json:"amount"`
+	Max            int    `json:"max"`
 }
 
 type TaskResponse struct {
