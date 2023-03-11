@@ -43,8 +43,8 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 
 	showAd := false
 	var total int64
-	l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).Where("type = ?", req.Content).Count(&total)
-	if total > 0 && (total%5 == 0) {
+	l.svcCtx.Db.Model(&model.Record{}).Where("type = ?", req.Content).Count(&total)
+	if total%5 == 0 {
 		showAd = true
 	}
 	return &types.ValidResponse{
