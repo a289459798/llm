@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -42,11 +43,12 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 	}
 
 	showAd := false
-	var total int64
-	l.svcCtx.Db.Model(&model.Record{}).Where("type = ?", req.Content).Count(&total)
-	if total%5 == 0 {
+
+	randomNum := rand.Intn(10) + 1
+	if randomNum > 4 {
 		showAd = true
 	}
+
 	return &types.ValidResponse{
 		Data:    strconv.Itoa(int(amount.ChatAmount) - int(amount.ChatUse)),
 		ShowAd:  showAd,
