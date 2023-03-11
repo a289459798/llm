@@ -263,8 +263,9 @@ type ValidRequest struct {
 }
 
 type ValidResponse struct {
-	Data   string `json:"data"`
-	ShowAd bool   `json:"showAd"`
+	Data    string `json:"data"`
+	ShowAd  bool   `json:"showAd"`
+	Consume int    `json:"consume"`
 }
 
 type WeChatCallbackResponse struct {

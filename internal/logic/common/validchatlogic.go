@@ -31,9 +31,16 @@ func NewValidChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ValidCh
 func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
-	if amount.ChatAmount <= amount.ChatUse {
+
+	consume := 1
+	if req.Content == "image/create" {
+		consume = 3
+	}
+
+	if amount.ChatAmount < (amount.ChatUse + uint32(consume)) {
 		return nil, errors.New("次数已用完")
 	}
+
 	showAd := false
 	var total int64
 	l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).Where("type = ?", req.Content).Count(&total)
@@ -41,7 +48,8 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 		showAd = true
 	}
 	return &types.ValidResponse{
-		Data:   strconv.Itoa(int(amount.ChatAmount) - int(amount.ChatUse)),
-		ShowAd: showAd,
+		Data:    strconv.Itoa(int(amount.ChatAmount) - int(amount.ChatUse)),
+		ShowAd:  showAd,
+		Consume: consume,
 	}, nil
 }
