@@ -21,8 +21,12 @@ func (r *Record) Insert(record *model.Record) {
 
 	r.DB.Transaction(func(tx *gorm.DB) error {
 		// 消耗次数
+		var chatUse uint32 = 1
+		if record.Type == "image/create" {
+			chatUse = 3
+		}
 		amount := model.NewAccount(tx).GetAccount(record.Uid, time.Now())
-		amount.ChatUse += 1
+		amount.ChatUse += chatUse
 		tx.Save(&amount)
 
 		// 记录
