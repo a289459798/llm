@@ -35,7 +35,7 @@ func (r *Record) Insert(record *model.Record) {
 			RecordId:      record.ID,
 			Way:           0,
 			Type:          record.Type,
-			Amount:        1,
+			Amount:        chatUse,
 			CurrentAmount: amount.ChatAmount - amount.ChatUse,
 		})
 		return nil
