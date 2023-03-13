@@ -32,7 +32,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 	a.DB.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).Find(&account)
 	if account.ID == 0 {
 		a.DB.Transaction(func(tx *gorm.DB) error {
-			var amount uint32 = 10
+			var amount uint32 = 5
 			// 获取连续天数
 			yesterdayAccount := &Account{}
 			tx.Where("uid = ?", uid).Where("date = ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")).Find(&yesterdayAccount)
