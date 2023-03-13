@@ -36,19 +36,19 @@ func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err e
 	l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).
 		Order("id desc").
 		Where("type = ?", "chat/chat").
-		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
+		Where("created_at between ? and ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")+" 00:00:00", today+" 23:59:59").
 		Group("chat_id").
 		Select("chat_id, count(*) as count").Find(&totalRecord)
 
 	chatId := ""
 	history := []types.ChatHistory{}
-	if totalRecord.Count >= 5 {
+	if totalRecord.Count >= 3 {
 		chatId = totalRecord.ChatId
 		records := []model.Record{}
 		l.svcCtx.Db.Where("uid = ?", uid).
 			Where("chat_id = ?", chatId).
 			Order("id desc").
-			Limit(3).
+			Limit(2).
 			Find(&records)
 		for _, m := range records {
 			history = append([]types.ChatHistory{
