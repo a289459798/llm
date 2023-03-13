@@ -38,15 +38,16 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		),
 	})
 
-	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Account{})
+	//db.AutoMigrate(&model.User{})
+	//db.AutoMigrate(&model.Account{})
 	//db.AutoMigrate(&model.Record{})
 	//db.AutoMigrate(&model.Feedback{})
 	//db.AutoMigrate(&model.Apikey{})
 	//db.AutoMigrate(&model.Pic2Pic{})
-	db.AutoMigrate(&model.AccountRecord{})
-	db.AutoMigrate(&model.ShareRecord{})
-	db.AutoMigrate(&model.ChatTemplate{})
+	//db.AutoMigrate(&model.AccountRecord{})
+	//db.AutoMigrate(&model.ShareRecord{})
+	//db.AutoMigrate(&model.ChatTemplate{})
+	db.AutoMigrate(&model.Contraband{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,

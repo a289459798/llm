@@ -36,7 +36,7 @@ func NewChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatLogic {
 
 func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *types.ChatResponse, err error) {
 	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Message)
+	valid := utils.Filter(req.Message, l.svcCtx.Db)
 	if valid != "" {
 		w.Write([]byte(utils.EncodeURL(valid)))
 		if f, ok := w.(http.Flusher); ok {

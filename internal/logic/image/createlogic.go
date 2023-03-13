@@ -30,7 +30,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse, err error) {
 
-	valid := utils.Filter(req.Content)
+	valid := utils.Filter(req.Content, l.svcCtx.Db)
 	if valid != "" {
 		return nil, errors.New(valid)
 	}

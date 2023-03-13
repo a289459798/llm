@@ -34,7 +34,7 @@ func NewDayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DayLogic {
 func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
 	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content)
+	valid := utils.Filter(req.Content, l.svcCtx.Db)
 	if valid != "" {
 		w.Write([]byte(utils.EncodeURL(valid)))
 		if f, ok := w.(http.Flusher); ok {

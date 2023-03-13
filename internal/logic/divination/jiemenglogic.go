@@ -33,7 +33,7 @@ func NewJiemengLogic(ctx context.Context, svcCtx *svc.ServiceContext) *JiemengLo
 }
 
 func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
-	valid := utils.Filter(req.Content)
+	valid := utils.Filter(req.Content, l.svcCtx.Db)
 	if valid != "" {
 		w.Write([]byte(utils.EncodeURL(valid)))
 		if f, ok := w.(http.Flusher); ok {
