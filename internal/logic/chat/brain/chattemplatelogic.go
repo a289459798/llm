@@ -3,6 +3,7 @@ package brain
 import (
 	"chatgpt-tools/model"
 	"context"
+	"fmt"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -24,10 +25,14 @@ func NewChatTemplateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Chat
 	}
 }
 
-func (l *ChatTemplateLogic) ChatTemplate() (resp *types.ChatTemplateResponse, err error) {
+func (l *ChatTemplateLogic) ChatTemplate(req types.ChatTemplateRequest) (resp *types.ChatTemplateResponse, err error) {
 
 	template := []model.ChatTemplate{}
-	l.svcCtx.Db.Where("is_del = 0").Order("sort desc").Select("id, title").Find(&template)
+	query := "type is null"
+	if req.Type != "" {
+		query = fmt.Sprintf("type='%s'", req.Type)
+	}
+	l.svcCtx.Db.Where(query).Where("is_del = 0").Order("sort desc").Select("id, title").Find(&template)
 
 	list := []types.ChatTemplate{}
 	for _, chatTemplate := range template {

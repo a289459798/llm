@@ -64,7 +64,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 
 	// 设置专属机器人
 	ai := &model.AI{}
-	l.svcCtx.Db.Where("uid = ?", uid).Preload("Role").Find(&ai)
+	l.svcCtx.Db.Where("uid = ?", uid).Where("status = 1").Preload("Role").Find(&ai)
 	if ai.ID > 0 {
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "user",

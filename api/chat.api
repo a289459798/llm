@@ -73,6 +73,10 @@ type (
         Message string `json:"message"`
     }
 
+    ChatTemplateRequest {
+        Type string `json:"type,optional"`
+    }
+
 )
 
 @server(
@@ -85,7 +89,7 @@ service tools {
     get /chat/chat/history returns (ChatHistoryResponse)
 
     @handler chatTemplate
-    get /chat/chat/template returns (ChatTemplateResponse)
+    get /chat/chat/template(ChatTemplateRequest) returns (ChatTemplateResponse)
 }
 
 @server(

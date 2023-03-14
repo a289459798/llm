@@ -48,6 +48,7 @@ func (l *AiEditLogic) AiEdit(req *types.AIEditRequest, files map[string][]*multi
 	ai.Name = req.Name
 	ai.Call = req.Call
 	ai.RoleId = req.RoleId
+	ai.Status = req.Status
 	if files != nil && len(files["photo"]) > 0 {
 		// 上传图片
 		f, err := files["photo"][0].Open()

@@ -57,6 +57,7 @@ type AIEditRequest {
     Name string `form:"name"`
     Call string `form:"call"`
     RoleId uint32 `form:"roleId"`
+    Status bool `form:"status"`
 }
 
 @server(

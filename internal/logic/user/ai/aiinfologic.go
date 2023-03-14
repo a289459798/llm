@@ -27,7 +27,7 @@ func NewAiInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AiInfoLogi
 func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	ai := &model.AI{}
-	l.svcCtx.Db.Where("uid = ?", uid).Preload("Role").Find(&ai)
+	l.svcCtx.Db.Where("uid = ?", uid).Where("status = 1").Preload("Role").Find(&ai)
 	if ai.ID == 0 {
 		return nil, nil
 	}

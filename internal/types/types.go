@@ -58,6 +58,7 @@ type AIEditRequest struct {
 	Name   string `form:"name"`
 	Call   string `form:"call"`
 	RoleId uint32 `form:"roleId"`
+	Status bool   `form:"status"`
 }
 
 type ReportRequest struct {
@@ -260,6 +261,10 @@ type ChatTemplateResponse struct {
 type ChatTemplate struct {
 	TemplateId uint32 `json:"templateId"`
 	Message    string `json:"message"`
+}
+
+type ChatTemplateRequest struct {
+	Type string `json:"type,optional"`
 }
 
 type TranslateRequest struct {
