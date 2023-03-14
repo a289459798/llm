@@ -10,7 +10,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	gogpt "github.com/sashabaranov/go-openai"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
 	"net/http"

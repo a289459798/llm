@@ -26,6 +26,10 @@ type(
         FontSize uint `json:"fontSize"`
         Color string `json:"color"`
     }
+
+    ImageEditRequest {
+        Content string `form:"content"`
+    }
 )
 
 @server(
@@ -39,6 +43,9 @@ service tools {
 
     @handler watermark
     post /images/watermark (ImageRequest) returns (ImageResponse)
+
+    @handler edit
+    post /images/edit (ImageEditRequest) returns (ImageResponse)
 
     @handler pic2pic
     post /images/pic2pic (Pic2picRequest) returns (ImageResponse)

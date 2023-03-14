@@ -34,7 +34,7 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
 	consume := 1
-	if req.Content == "image/create" {
+	if req.Content == "image/create" || req.Content == "image/edit" {
 		consume = 3
 	}
 

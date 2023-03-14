@@ -4,7 +4,8 @@ import (
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/model"
 	"context"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	gogpt "github.com/sashabaranov/go-openai"
+	"os"
 )
 
 type OpenAi struct {
@@ -100,8 +101,9 @@ func (ai *OpenAi) CreateImage(content string) (stream gogpt.ImageResponse, err e
 	return ai.getClient().CreateImage(ai.Ctx, gptReq)
 }
 
-func (ai *OpenAi) CreateEditImage(content string) (stream gogpt.ImageResponse, err error) {
+func (ai *OpenAi) CreateEditImage(file *os.File, content string) (stream gogpt.ImageResponse, err error) {
 	gptReq := gogpt.ImageEditRequest{
+		Image:  file,
 		Prompt: content,
 		N:      1,
 		Size:   "256x256",

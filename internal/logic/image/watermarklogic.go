@@ -58,7 +58,7 @@ func (l *WatermarkLogic) Watermark(req *types.WatermarkRequest) (resp *types.Ima
 
 	prompt := fmt.Sprintf("在文字%s方加上文字大小为%d颜色为%s透明度为%f的水印，水印内容为:%s", req.Position, req.FontSize, req.Color, req.Opacity, req.Content)
 
-	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateEditImage(prompt)
+	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateEditImage(nil, prompt)
 	if err != nil {
 		return nil, err
 	}

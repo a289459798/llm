@@ -101,6 +101,10 @@ type WatermarkRequest struct {
 	Color    string  `json:"color"`
 }
 
+type ImageEditRequest struct {
+	Content string `form:"content"`
+}
+
 type QiMingRequest struct {
 	First    string `json:"first"`
 	Number   string `json:"number"`

@@ -6,7 +6,7 @@ import (
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"context"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	gogpt "github.com/sashabaranov/go-openai"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

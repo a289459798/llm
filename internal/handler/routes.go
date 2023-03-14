@@ -130,6 +130,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/images/edit",
+					Handler: image.EditHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/images/pic2pic",
 					Handler: image.Pic2picHandler(serverCtx),
 				},
