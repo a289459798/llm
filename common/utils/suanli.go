@@ -7,6 +7,11 @@ func GetSuanLi(t string) int {
 	case "image/edit":
 		suanli = 3
 		break
+	case "creation/article":
+	case "code/generate":
+	case "code/exam":
+		suanli = 2
+		break
 	}
 	return suanli
 }
