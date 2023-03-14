@@ -7,7 +7,7 @@ import (
 type ChatTemplate struct {
 	ID        uint32    `gorm:"primary_key" json:"id"`
 	Title     string    `json:"title" gorm:"type:varchar(50)" `
-	Question  string    `json:"question" gorm:"type:varchar(255)" `
+	Question  string    `json:"question" gorm:"type:text" `
 	Answer    string    `json:"answer" gorm:"type:varchar(255)" `
 	Type      string    `json:"type" gorm:"type:varchar(50);index:idx_type" `
 	Welcome   string    `json:"welcome" gorm:"type:varchar(50);" `
