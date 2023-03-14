@@ -74,7 +74,7 @@ type (
     }
 
     ChatTemplateRequest {
-        Type string `json:"type,optional"`
+        Type string `form:"type,optional"`
     }
 
 )

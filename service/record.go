@@ -1,6 +1,7 @@
 package service
 
 import (
+	"chatgpt-tools/common/utils"
 	"chatgpt-tools/model"
 	"gorm.io/gorm"
 	"time"
@@ -21,10 +22,7 @@ func (r *Record) Insert(record *model.Record) {
 
 	r.DB.Transaction(func(tx *gorm.DB) error {
 		// 消耗次数
-		var chatUse uint32 = 1
-		if record.Type == "image/create" || record.Type == "image/edit" {
-			chatUse = 3
-		}
+		chatUse := uint32(utils.GetSuanLi(record.Type))
 		amount := model.NewAccount(tx).GetAccount(record.Uid, time.Now())
 		amount.ChatUse += chatUse
 		tx.Save(&amount)

@@ -1,6 +1,7 @@
 package common
 
 import (
+	"chatgpt-tools/common/utils"
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
@@ -33,10 +34,7 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
-	consume := 1
-	if req.Content == "image/create" || req.Content == "image/edit" {
-		consume = 3
-	}
+	consume := utils.GetSuanLi(req.Content)
 
 	if amount.ChatAmount < (amount.ChatUse + uint32(consume)) {
 		return nil, errors.New("次数已用完")

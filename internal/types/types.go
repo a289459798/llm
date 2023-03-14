@@ -268,7 +268,7 @@ type ChatTemplate struct {
 }
 
 type ChatTemplateRequest struct {
-	Type string `json:"type,optional"`
+	Type string `form:"type,optional"`
 }
 
 type TranslateRequest struct {
