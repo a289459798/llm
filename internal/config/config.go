@@ -23,4 +23,10 @@ type Config struct {
 		AppSecret string
 		Token     string
 	}
+	Qiniu struct {
+		Domain string
+		Bucket string
+		Ak     string
+		SK     string
+	}
 }

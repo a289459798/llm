@@ -19,7 +19,8 @@ func AiEditHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := ai.NewAiEditLogic(r.Context(), svcCtx)
-		resp, err := l.AiEdit(&req)
+		uploadedFiles := r.MultipartForm.File
+		resp, err := l.AiEdit(&req, uploadedFiles)
 		if err != nil {
 			errorx.Error(w, err.Error())
 		} else {

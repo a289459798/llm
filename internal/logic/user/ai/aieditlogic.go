@@ -5,6 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/sms/bytes"
+	"github.com/qiniu/go-sdk/v7/storage"
+	"io/ioutil"
+	"mime/multipart"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -26,7 +32,7 @@ func NewAiEditLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AiEditLogi
 	}
 }
 
-func (l *AiEditLogic) AiEdit(req *types.AIEditRequest) (resp *types.AIInfoResponse, err error) {
+func (l *AiEditLogic) AiEdit(req *types.AIEditRequest, files map[string][]*multipart.FileHeader) (resp *types.AIInfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 
 	if req.RoleId > 0 {
@@ -40,9 +46,38 @@ func (l *AiEditLogic) AiEdit(req *types.AIEditRequest) (resp *types.AIInfoRespon
 	l.svcCtx.Db.Where("uid = ?", uid).Find(&ai)
 	ai.Uid = uint32(uid)
 	ai.Name = req.Name
-	ai.Image = req.Photo
 	ai.Call = req.Call
 	ai.RoleId = req.RoleId
+	if files != nil && len(files["photo"]) > 0 {
+		// 上传图片
+		f, err := files["photo"][0].Open()
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+		content, err := ioutil.ReadAll(f)
+		key := fmt.Sprintf("photo/uid-%d", uid)
+		putPolicy := storage.PutPolicy{
+			Scope: l.svcCtx.Config.Qiniu.Bucket,
+		}
+		mac := qbox.NewMac(l.svcCtx.Config.Qiniu.Ak, l.svcCtx.Config.Qiniu.SK)
+		upToken := putPolicy.UploadToken(mac)
+		cfg := storage.Config{}
+		// 空间对应的机房
+		cfg.Region = &storage.ZoneHuadong
+		// 上传是否使用CDN上传加速
+		cfg.UseCdnDomains = false
+		// 构建表单上传的对象
+		formUploader := storage.NewFormUploader(&cfg)
+		ret := storage.PutRet{}
+		dataLen := int64(len(content))
+		err = formUploader.Put(context.Background(), &ret, upToken, key, bytes.NewReader(content), dataLen, &storage.PutExtra{})
+		if err != nil {
+			return nil, err
+		}
+		ai.Image = fmt.Sprintf("%s%s", l.svcCtx.Config.Qiniu.Domain, ret.Key)
+	}
+
 	if ai.ID == 0 {
 		l.svcCtx.Db.Create(ai)
 	} else {

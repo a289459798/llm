@@ -55,10 +55,9 @@ type AIInfoResponse struct {
 }
 
 type AIEditRequest struct {
-	Name   string `json:"name"`
-	Photo  string `json:"photo"`
-	Call   string `json:"call"`
-	RoleId uint32 `json:"roleId"`
+	Name   string `form:"name"`
+	Call   string `form:"call"`
+	RoleId uint32 `form:"roleId"`
 }
 
 type ReportRequest struct {

@@ -30,3 +30,9 @@ OfficialAccount:
   AppId: wxf5faec580b47b6c9
   AppSecret: a513dc278106d9f8f1ba375b7c3046e8
   Token: sdfsdfsdsdf
+
+Qiniu:
+  Domain: http://img.smuai.com/
+  Bucket: sanmuai
+  AK: XV5w_I55zuLV-GolzDF7c2KdKOT77EyRlcZLInFZ
+  SK: yoEkRdotk9oubPkXFmLK0m_2unpvsKUikjCqOGCC
