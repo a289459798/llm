@@ -62,6 +62,31 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		})
 	}
 
+	// 设置专属机器人
+	ai := &model.AI{}
+	l.svcCtx.Db.Where("uid = ?", uid).Preload("Role").Find(&ai)
+	if ai.ID > 0 {
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "user",
+			Content: fmt.Sprintf("记住我说的话，在接下来的对话中你将是我的专属AI，名字叫%s，同时你需要称呼我：%s", ai.Name, ai.Call),
+		})
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "assistant",
+			Content: fmt.Sprintf("好的，在接下来的对话中我的名字叫%s，我称呼你为%s", ai.Name, ai.Call),
+		})
+		if ai.RoleId > 0 {
+			// 角色语气
+			message = append(message, gogpt.ChatCompletionMessage{
+				Role:    "user",
+				Content: ai.Role.Question,
+			})
+			message = append(message, gogpt.ChatCompletionMessage{
+				Role:    "assistant",
+				Content: ai.Role.Answer,
+			})
+		}
+	}
+
 	// 根据模版提问
 	msg := req.Message
 	if req.TemplateId > 0 {

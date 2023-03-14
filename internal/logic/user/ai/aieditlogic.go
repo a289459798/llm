@@ -29,10 +29,12 @@ func NewAiEditLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AiEditLogi
 func (l *AiEditLogic) AiEdit(req *types.AIEditRequest) (resp *types.AIInfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 
-	template := &model.ChatTemplate{}
-	l.svcCtx.Db.Where("id = ?", req.RoleId).Find(&template)
-	if template.ID == 0 {
-		return nil, errors.New("角色不存在")
+	if req.RoleId > 0 {
+		template := &model.ChatTemplate{}
+		l.svcCtx.Db.Where("id = ?", req.RoleId).Find(&template)
+		if template.ID == 0 {
+			return nil, errors.New("角色不存在")
+		}
 	}
 	ai := &model.AI{}
 	l.svcCtx.Db.Where("uid = ?", uid).Find(&ai)
