@@ -60,7 +60,8 @@ func (l *AiEditLogic) AiEdit(req *types.AIEditRequest, files map[string][]*multi
 			content, err := ioutil.ReadAll(f)
 			key := fmt.Sprintf("photo/uid-%d", uid)
 			putPolicy := storage.PutPolicy{
-				Scope: l.svcCtx.Config.Qiniu.Bucket,
+				Scope:      fmt.Sprintf("%s:%s", l.svcCtx.Config.Qiniu.Bucket, key),
+				InsertOnly: 0,
 			}
 			mac := qbox.NewMac(l.svcCtx.Config.Qiniu.Ak, l.svcCtx.Config.Qiniu.SK)
 			upToken := putPolicy.UploadToken(mac)
@@ -81,6 +82,7 @@ func (l *AiEditLogic) AiEdit(req *types.AIEditRequest, files map[string][]*multi
 		}
 	}
 
+	l.svcCtx.Db.Exec("SET FOREIGN_KEY_CHECKS = 0;")
 	if ai.ID == 0 {
 		l.svcCtx.Db.Create(ai)
 	} else {

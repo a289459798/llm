@@ -28,14 +28,21 @@ func NewAiInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AiInfoLogi
 func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	ai := &model.AI{}
-	l.svcCtx.Db.Where("uid = ?", uid).Where("status = 1").Preload("Role").Find(&ai)
+	l.svcCtx.Db.Where("uid = ?", uid).Preload("Role").Find(&ai)
 	if ai.ID == 0 {
 		return nil, nil
 	}
 	return &types.AIInfoResponse{
-		Name:    ai.Name,
-		Photo:   fmt.Sprintf("%s?imageMogr2/thumbnail/200x200/blur/1x0/quality/75", ai.Image),
+		Name: ai.Name,
+		Photo: func(img string) string {
+			if img != "" {
+				return fmt.Sprintf("%s?imageMogr2/thumbnail/200x200/blur/1x0/quality/75", img)
+			}
+			return ""
+		}(ai.Image),
 		Welcome: ai.Role.Welcome,
 		Call:    ai.Call,
+		Status:  ai.Status,
+		RoleId:  ai.RoleId,
 	}, nil
 }
