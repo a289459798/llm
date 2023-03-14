@@ -47,6 +47,20 @@ type TaskShareFollowRequest struct {
 	OpenId string `json:"openId"`
 }
 
+type AIInfoResponse struct {
+	Name    string `json:"name"`
+	Photo   string `json:"photo"`
+	Call    string `json:"call"`
+	Welcome string `json:"welcome"`
+}
+
+type AIEditRequest struct {
+	Name   string `json:"name"`
+	Photo  string `json:"photo"`
+	Call   string `json:"call"`
+	RoleId uint32 `json:"roleId"`
+}
+
 type ReportRequest struct {
 	Content string `json:"content"`
 }

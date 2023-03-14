@@ -46,6 +46,20 @@ type TaskShareFollowRequest {
     OpenId string  `json:"openId"`
 }
 
+type AIInfoResponse {
+    Name string `json:"name"`
+    Photo string `json:"photo"`
+    Call string `json:"call"`
+    Welcome string `json:"welcome"`
+}
+
+type AIEditRequest {
+    Name string `json:"name"`
+    Photo string `json:"photo"`
+    Call string `json:"call"`
+    RoleId uint32 `json:"roleId"`
+}
+
 @server(
     group: user
 )
@@ -77,4 +91,16 @@ service tools {
 
     @handler taskShareFollow
     post /users/tasks/follow (TaskShareFollowRequest) returns (TaskResponse)
+}
+
+@server(
+    jwt: Auth
+    group: user/ai
+)
+service tools {
+    @handler aiInfo
+    get /users/ai (InfoRequest) returns (AIInfoResponse)
+
+    @handler aiEdit
+    post /users/ai (AIEditRequest) returns (AIInfoResponse)
 }

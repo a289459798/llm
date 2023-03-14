@@ -15,6 +15,7 @@ import (
 	image "chatgpt-tools/internal/handler/image"
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
+	userai "chatgpt-tools/internal/handler/user/ai"
 	usertask "chatgpt-tools/internal/handler/user/task"
 	wechat "chatgpt-tools/internal/handler/wechat"
 	"chatgpt-tools/internal/svc"
@@ -65,6 +66,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/ai",
+				Handler: userai.AiInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/ai",
+				Handler: userai.AiEditHandler(serverCtx),
+			},
+		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 
