@@ -50,33 +50,35 @@ func (l *AiEditLogic) AiEdit(req *types.AIEditRequest, files map[string][]*multi
 	ai.RoleId = req.RoleId
 	ai.Status = req.Status
 	if files != nil && len(files["photo"]) > 0 {
-		// 上传图片
-		f, err := files["photo"][0].Open()
-		if err != nil {
-			return nil, err
+		if files["photo"][0].Filename != "ai-default-avatar.png" {
+			// 上传图片
+			f, err := files["photo"][0].Open()
+			if err != nil {
+				return nil, err
+			}
+			defer f.Close()
+			content, err := ioutil.ReadAll(f)
+			key := fmt.Sprintf("photo/uid-%d", uid)
+			putPolicy := storage.PutPolicy{
+				Scope: l.svcCtx.Config.Qiniu.Bucket,
+			}
+			mac := qbox.NewMac(l.svcCtx.Config.Qiniu.Ak, l.svcCtx.Config.Qiniu.SK)
+			upToken := putPolicy.UploadToken(mac)
+			cfg := storage.Config{}
+			// 空间对应的机房
+			cfg.Region = &storage.ZoneHuadong
+			// 上传是否使用CDN上传加速
+			cfg.UseCdnDomains = false
+			// 构建表单上传的对象
+			formUploader := storage.NewFormUploader(&cfg)
+			ret := storage.PutRet{}
+			dataLen := int64(len(content))
+			err = formUploader.Put(context.Background(), &ret, upToken, key, bytes.NewReader(content), dataLen, &storage.PutExtra{})
+			if err != nil {
+				return nil, err
+			}
+			ai.Image = fmt.Sprintf("%s%s", l.svcCtx.Config.Qiniu.Domain, ret.Key)
 		}
-		defer f.Close()
-		content, err := ioutil.ReadAll(f)
-		key := fmt.Sprintf("photo/uid-%d", uid)
-		putPolicy := storage.PutPolicy{
-			Scope: l.svcCtx.Config.Qiniu.Bucket,
-		}
-		mac := qbox.NewMac(l.svcCtx.Config.Qiniu.Ak, l.svcCtx.Config.Qiniu.SK)
-		upToken := putPolicy.UploadToken(mac)
-		cfg := storage.Config{}
-		// 空间对应的机房
-		cfg.Region = &storage.ZoneHuadong
-		// 上传是否使用CDN上传加速
-		cfg.UseCdnDomains = false
-		// 构建表单上传的对象
-		formUploader := storage.NewFormUploader(&cfg)
-		ret := storage.PutRet{}
-		dataLen := int64(len(content))
-		err = formUploader.Put(context.Background(), &ret, upToken, key, bytes.NewReader(content), dataLen, &storage.PutExtra{})
-		if err != nil {
-			return nil, err
-		}
-		ai.Image = fmt.Sprintf("%s%s", l.svcCtx.Config.Qiniu.Domain, ret.Key)
 	}
 
 	if ai.ID == 0 {
