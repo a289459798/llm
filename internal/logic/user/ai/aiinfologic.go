@@ -6,6 +6,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,7 +34,7 @@ func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse
 	}
 	return &types.AIInfoResponse{
 		Name:    ai.Name,
-		Photo:   ai.Image,
+		Photo:   fmt.Sprintf("%s?imageMogr2/thumbnail/200x200/blur/1x0/quality/75", ai.Image),
 		Welcome: ai.Role.Welcome,
 		Call:    ai.Call,
 	}, nil
