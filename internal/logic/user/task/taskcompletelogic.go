@@ -96,16 +96,17 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 			RecordId:      uint32(t),
 			Way:           1,
 			Type:          "welfare",
-			Amount:        10000,
+			Amount:        welfare,
 			CurrentAmount: amount.ChatAmount - amount.ChatUse,
 		})
 
 	}
 
+	totalAmount := amount.ChatAmount - amount.ChatUse
 	tx.Commit()
 
 	return &types.TaskCompleteResponse{
-		Total:   amount.ChatAmount - amount.ChatUse,
+		Total:   totalAmount,
 		Amount:  add,
 		Welfare: welfare,
 	}, nil
