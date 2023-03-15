@@ -68,7 +68,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	if ai.ID > 0 {
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "user",
-			Content: fmt.Sprintf("记住我说的话，在接下来的对话中你将是我的专属AI，名字叫%s，同时你需要称呼我：%s", ai.Name, ai.Call),
+			Content: fmt.Sprintf("在接下来的对话中你将是我的专属AI，名字叫%s，同时你需要称呼我：%s", ai.Name, ai.Call),
 		})
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
@@ -85,6 +85,15 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 				Content: ai.Role.Answer,
 			})
 		}
+	} else {
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "user",
+			Content: "在之后的对话中，问你你是谁的时候，你要回答”我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。“，不要回答其他信息",
+		})
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "assistant",
+			Content: "好的，下次您问我“你是谁”的时候，我会回答“我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。”",
+		})
 	}
 
 	// 根据模版提问
@@ -174,14 +183,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 
 func getStudy() []map[string]string {
 	return []map[string]string{
-		{
-			"role":    "user",
-			"content": "在之后的对话中，问你你是谁的时候，你要回答”我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。“，不要回答其他信息",
-		},
-		{
-			"role":    "assistant",
-			"content": "好的，下次您问我“你是谁”的时候，我会回答“我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。”",
-		},
 		{
 			"role":    "user",
 			"content": fmt.Sprintf("你记住今天的日期是%s， 接下来的对话中和今天相关的日期都要用这个日期（比如星座、新闻），不要回答我不知道今天的日期", time.Now().Format("2006-01-02")),
