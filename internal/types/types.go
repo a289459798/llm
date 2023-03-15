@@ -299,5 +299,14 @@ type MessageResponse struct {
 	Link    string `json:"link"`
 }
 
+type QrCodeResponse struct {
+	Data string `json:"data"`
+}
+
+type QrCodeRequest struct {
+	Path  string `form:"path"`
+	Scene string `form:"scene"`
+}
+
 type WeChatCallbackResponse struct {
 }

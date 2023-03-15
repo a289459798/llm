@@ -17,6 +17,15 @@ type(
         Content string `json:"content"`
         Link string `json:"link"`
     }
+
+    QrCodeResponse {
+        Data string `json:"data"`
+    }
+
+    QrCodeRequest {
+        Path string `form:"path"`
+        Scene string `form:"scene"`
+    }
 )
 
 @server(
@@ -32,4 +41,7 @@ service tools {
 
     @handler message
     get /common/message returns (MessageResponse)
+
+    @handler qrcode
+    get /common/qrcode(QrCodeRequest) returns (QrCodeResponse)
 }

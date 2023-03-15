@@ -367,6 +367,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/common/message",
 				Handler: common.MessageHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/common/qrcode",
+				Handler: common.QrcodeHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
