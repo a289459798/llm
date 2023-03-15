@@ -292,5 +292,12 @@ type ValidResponse struct {
 	Consume int    `json:"consume"`
 }
 
+type MessageResponse struct {
+	Id      uint32 `json:"id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Link    string `json:"link"`
+}
+
 type WeChatCallbackResponse struct {
 }

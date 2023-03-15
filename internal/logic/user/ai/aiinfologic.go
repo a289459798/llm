@@ -40,9 +40,14 @@ func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse
 			}
 			return ""
 		}(ai.Image),
-		Welcome: ai.Role.Welcome,
-		Call:    ai.Call,
-		Status:  ai.Status,
-		RoleId:  ai.RoleId,
+		Welcome: func(welcome string) string {
+			if welcome == "" {
+				return fmt.Sprintf("👋  %s你好，我是你的专属AI%s，你有任何问题都可以问我～", ai.Call, ai.Name)
+			}
+			return fmt.Sprintf(welcome, ai.Call, ai.Name)
+		}(ai.Role.Welcome),
+		Call:   ai.Call,
+		Status: ai.Status,
+		RoleId: ai.RoleId,
 	}, nil
 }

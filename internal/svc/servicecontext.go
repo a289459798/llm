@@ -49,6 +49,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	db.AutoMigrate(&model.ChatTemplate{})
 	//db.AutoMigrate(&model.Contraband{})
 	db.AutoMigrate(&model.AI{})
+	db.AutoMigrate(&model.Message{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,

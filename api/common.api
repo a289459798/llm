@@ -10,6 +10,13 @@ type(
         ShowAd bool `json:"showAd"`
         Consume int `json:"consume"`
     }
+
+    MessageResponse {
+        Id uint32 `json:"id"`
+        Title string `json:"title"`
+        Content string `json:"content"`
+        Link string `json:"link"`
+    }
 )
 
 @server(
@@ -22,4 +29,7 @@ service tools {
 
     @handler validChat
     post /common/valid/chat (ValidRequest) returns (ValidResponse)
+
+    @handler message
+    get /common/message returns (MessageResponse)
 }
