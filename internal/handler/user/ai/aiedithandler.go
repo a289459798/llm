@@ -2,6 +2,7 @@ package ai
 
 import (
 	"chatgpt-tools/common/errorx"
+	"mime/multipart"
 	"net/http"
 
 	"chatgpt-tools/internal/logic/user/ai"
@@ -19,7 +20,10 @@ func AiEditHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := ai.NewAiEditLogic(r.Context(), svcCtx)
-		uploadedFiles := r.MultipartForm.File
+		var uploadedFiles map[string][]*multipart.FileHeader
+		if r.MultipartForm != nil {
+			uploadedFiles = r.MultipartForm.File
+		}
 		resp, err := l.AiEdit(&req, uploadedFiles)
 		if err != nil {
 			errorx.Error(w, err.Error())
