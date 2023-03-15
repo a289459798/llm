@@ -32,7 +32,7 @@ func (ai *OpenAi) getClient() *gogpt.Client {
 
 func (ai *OpenAi) CreateCompletionStream(content string) (stream *gogpt.CompletionStream, err error) {
 	gptReq := gogpt.CompletionRequest{
-		Model:            gogpt.GPT3TextDavinci003,
+		Model:            gogpt.GPT4,
 		Prompt:           content,
 		MaxTokens:        1536,
 		Temperature:      0.7,
