@@ -122,8 +122,13 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
-		Role:    "user",
-		Content: msg,
+		Role: "user",
+		Content: func() string {
+			if ai.ID > 0 {
+				return fmt.Sprintf("%s。用%s的语气", msg, ai.Role.Question)
+			}
+			return msg
+		}(),
 	})
 
 	// 创建上下文
