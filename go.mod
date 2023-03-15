@@ -36,7 +36,7 @@ require (
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/qiniu/go-sdk/v7 v7.14.0 // indirect
 	github.com/sashabaranov/go-gpt3 v1.3.2 // indirect
-	github.com/sashabaranov/go-openai v1.5.1-0.20230315064603-1a123fe221b5 // indirect
+	github.com/sashabaranov/go-openai v1.5.1 // indirect
 	github.com/silenceper/wechat/v2 v2.1.4 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
