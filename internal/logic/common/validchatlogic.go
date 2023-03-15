@@ -34,7 +34,7 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
-	consume := utils.GetSuanLi(req.Content)
+	consume := utils.GetSuanLi(req.Content, uint32(uid), l.svcCtx.Db)
 
 	if amount.ChatAmount < (amount.ChatUse + uint32(consume)) {
 		return nil, errors.New("次数已用完")
