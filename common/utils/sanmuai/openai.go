@@ -62,7 +62,7 @@ func (ai *OpenAi) CreateCompletion(content string) (stream gogpt.CompletionRespo
 
 func (ai *OpenAi) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
 	gptReq := gogpt.ChatCompletionRequest{
-		Model:            gogpt.GPT3Dot5Turbo,
+		Model:            gogpt.GPT4,
 		Messages:         content,
 		MaxTokens:        2536,
 		Temperature:      0.7,
