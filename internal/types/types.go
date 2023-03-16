@@ -54,6 +54,7 @@ type AIInfoResponse struct {
 	Welcome string `json:"welcome"`
 	Status  bool   `json:"status"`
 	RoleId  uint32 `json:"roleId"`
+	ShowAd  bool   `json:"showAd"`
 }
 
 type AIEditRequest struct {

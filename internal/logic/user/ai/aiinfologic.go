@@ -30,7 +30,9 @@ func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse
 	ai := &model.AI{}
 	l.svcCtx.Db.Where("uid = ?", uid).Preload("Role").Find(&ai)
 	if ai.ID == 0 {
-		return nil, nil
+		return &types.AIInfoResponse{
+			ShowAd: false,
+		}, nil
 	}
 	return &types.AIInfoResponse{
 		Name: ai.Name,
@@ -49,5 +51,6 @@ func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse
 		Call:   ai.Call,
 		Status: ai.Status,
 		RoleId: ai.RoleId,
+		ShowAd: true,
 	}, nil
 }
