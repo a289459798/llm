@@ -108,7 +108,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	if req.ChatId != "" {
 		var records []model.Record
 
-		l.svcCtx.Db.Raw("select id, content, result from gpt_record where uid = ? and chat_id = ? order by id desc limit 2", uid, req.ChatId, uid, req.ChatId).Scan(&records)
+		l.svcCtx.Db.Raw("select id, content, result from gpt_record where uid = ? and chat_id = ? order by id desc limit 2", uid, req.ChatId).Scan(&records)
 		for _, v := range records {
 			message = append(message, gogpt.ChatCompletionMessage{
 				Role:    "user",
@@ -155,6 +155,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
 				result += response.Choices[0].Delta.Content
+				fmt.Println(response.Choices[0].Delta.Content)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
