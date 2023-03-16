@@ -125,7 +125,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		Role: "user",
 		Content: func() string {
 			if ai.ID > 0 {
-				return fmt.Sprintf("%s。用%s的语气回复，简洁一点", msg, ai.Role.Question)
+				return fmt.Sprintf("%s。用%s的语气回复", msg, ai.Role.Question)
 			}
 			return msg
 		}(),
