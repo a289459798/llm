@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,7 +37,7 @@ func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse
 		Name: ai.Name,
 		Photo: func(img string) string {
 			if img != "" {
-				return fmt.Sprintf("%s?imageMogr2/thumbnail/200x200/blur/1x0/quality/75", img)
+				return fmt.Sprintf("%s?imageMogr2/thumbnail/200x200/blur/1x0/quality/75&_=%d", img, time.Now().Unix())
 			}
 			return ""
 		}(ai.Image),
