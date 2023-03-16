@@ -94,8 +94,8 @@ func (ai *OpenAi) CreateImage(content string) (stream gogpt.ImageResponse, err e
 	gptReq := gogpt.ImageRequest{
 		Prompt:         content,
 		N:              1,
-		ResponseFormat: "b64_json",
-		Size:           "256x256",
+		ResponseFormat: "url",
+		Size:           "512x512",
 	}
 
 	return ai.getClient().CreateImage(ai.Ctx, gptReq)
