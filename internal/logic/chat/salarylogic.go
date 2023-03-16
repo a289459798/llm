@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
 
@@ -46,13 +47,24 @@ func (l *SalaryLogic) Salary(req *types.SalaryRequest, w http.ResponseWriter) (r
 
 	prompt := fmt.Sprintf("我需要告诉领导需要给我加薪了，我需要如何和他沟通呢？已经有一段时间没有加薪了，而且个人在岗位上也有不错的成绩，克服了一些困难，加薪后的可以更好的为公司做出更大的贡献，还有包含以下内容：%s，请用mackdown的格式输出并包含沟通的内容、技巧、以及拒绝后的方案", req.Content)
 
+	message := []gogpt.ChatCompletionMessage{
+		{
+			Role:    "system",
+			Content: "我想要申请加薪",
+		},
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -68,8 +80,8 @@ func (l *SalaryLogic) Salary(req *types.SalaryRequest, w http.ResponseWriter) (r
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}

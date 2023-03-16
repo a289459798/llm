@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
 
@@ -45,12 +46,23 @@ func (l *PursueLogic) Pursue(req *types.PursueRequest, w http.ResponseWriter) (r
 
 	prompt := fmt.Sprintf("有一个人我喜欢TA很久了，但是我不知道TA对我的想法，害怕表白之后被拒绝以后可能连朋友都做不成，TA的情况是%s，能不能教教我怎么才能追到她，需要包含具体的计划、步骤、行动等，请用mackdown的格式输出并包含计划、步骤、技巧、以及拒绝后的方案", req.Content)
 
+	message := []gogpt.ChatCompletionMessage{
+		{
+			Role:    "system",
+			Content: "请帮我写一份追求计划",
+		},
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +78,8 @@ func (l *PursueLogic) Pursue(req *types.PursueRequest, w http.ResponseWriter) (r
 				break
 			}
 			if len(response.Choices) > 0 {
-				result += response.Choices[0].Text
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
+				result += response.Choices[0].Delta.Content
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
 
@@ -47,6 +48,17 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 
 	prompt := fmt.Sprintf("收到了一个%s消息，我希望能通过%s的态度回绝对方，%s，请用mackdown的格式输出", req.Type, req.Way, content)
 
+	message := []gogpt.ChatCompletionMessage{
+		{
+			Role:    "system",
+			Content: "请教我怎么拒绝",
+		},
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
 	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
 	// 创建上下文
 	ctx, cancel := context.WithCancel(l.ctx)
@@ -54,7 +66,7 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -70,8 +82,8 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
