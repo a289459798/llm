@@ -93,8 +93,8 @@ func (ai *OpenAi) CreateChatCompletion(content []gogpt.ChatCompletionMessage) (s
 func (ai *OpenAi) CreateImage(content string) (stream gogpt.ImageResponse, err error) {
 	gptReq := gogpt.ImageRequest{
 		Prompt:         content,
-		N:              1,
-		ResponseFormat: "url",
+		N:              3,
+		ResponseFormat: "b64_json",
 		Size:           "512x512",
 	}
 
