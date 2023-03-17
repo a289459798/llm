@@ -10,6 +10,7 @@ func GetSuanLi(t string, uid uint32, db *gorm.DB) int {
 	switch t {
 	case "image/create":
 	case "image/edit":
+	case "image/createMulti":
 		suanli = 3
 		break
 	case "creation/article":

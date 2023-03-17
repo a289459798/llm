@@ -27,6 +27,10 @@ type(
         Color string `json:"color"`
     }
 
+    ImageMultiResponse {
+        Url []string `json:"url"`
+    }
+
     ImageEditRequest {
         Content string `form:"content"`
     }
@@ -40,6 +44,9 @@ type(
 service tools {
     @handler create
     post /images/create (ImageRequest) returns (ImageResponse)
+
+    @handler createMulti
+    post /images/create/multi (ImageRequest) returns (ImageMultiResponse)
 
     @handler watermark
     post /images/watermark (ImageRequest) returns (ImageResponse)

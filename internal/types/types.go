@@ -106,6 +106,10 @@ type WatermarkRequest struct {
 	Color    string  `json:"color"`
 }
 
+type ImageMultiResponse struct {
+	Url []string `json:"url"`
+}
+
 type ImageEditRequest struct {
 	Content string `form:"content"`
 }

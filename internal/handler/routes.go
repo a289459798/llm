@@ -125,6 +125,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/images/create/multi",
+					Handler: image.CreateMultiHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/images/watermark",
 					Handler: image.WatermarkHandler(serverCtx),
 				},
