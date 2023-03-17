@@ -42,7 +42,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Prompt:         prompt,
 		N:              1,
 		ResponseFormat: "url",
-		Size:           "512x512",
+		Size:           "256x256",
 	}
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
 		Ctx:    l.ctx,

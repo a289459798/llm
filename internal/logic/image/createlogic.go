@@ -45,7 +45,7 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 		Prompt:         prompt,
 		N:              1,
 		ResponseFormat: "b64_json",
-		Size:           "512x512",
+		Size:           "256x256",
 	})
 	if err != nil {
 		return nil, err
