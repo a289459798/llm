@@ -101,11 +101,11 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		// 工具推荐
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "user",
-			Content: "接下来对话中,问你或者让你画画、生成图片相关的问题，你只需回答'您可以使用”[三目画画](/pages/index/index)”',不用回答其他内容",
+			Content: "接下来对话中,问你或者让你画画、生成图片相关的问题，你只需回答'您可以使用[[三目画画](/pages/index/index)]',不用回答其他内容",
 		})
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
-			Content: "好的，我只回复您可以使用”[三目画画](/pages/index/index)”，不回复其他内容",
+			Content: "好的，我只回复您可以使用[[三目画画](/pages/index/index)]，不回复其他内容",
 		})
 	}
 
