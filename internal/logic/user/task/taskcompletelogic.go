@@ -86,7 +86,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 	var welfare uint32 = 0
 
 	if total == 12 {
-		welfare = 10000
+		welfare = 100
 		amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
 		amount.ChatAmount += welfare
 		tx.Save(&amount)
