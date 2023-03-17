@@ -41,7 +41,7 @@ type TaskCompleteResponse {
 
 type TaskRequest {
     Type string `json:"type,options=share|ad"`
-    Status bool `json:"status"`
+    Status bool `json:"status,optional"`
 }
 
 type TaskShareFollowRequest {
