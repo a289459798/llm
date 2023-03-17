@@ -142,6 +142,16 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		return nil, err
 	}
 	defer stream.Close()
+
+	if stream.GetResponse().StatusCode != 200 {
+		l.svcCtx.Db.Create(&model.Error{
+			Uid:      uint32(uid),
+			Type:     "chat/chat",
+			Question: msg,
+			Error:    fmt.Sprintf("code: %d, error: %s", stream.GetResponse().StatusCode, stream.GetResponse().Status),
+		})
+	}
+
 	result := ""
 	go func() {
 		for {

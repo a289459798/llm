@@ -46,10 +46,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.Pic2Pic{})
 	//db.AutoMigrate(&model.AccountRecord{})
 	//db.AutoMigrate(&model.ShareRecord{})
-	db.AutoMigrate(&model.ChatTemplate{})
+	//db.AutoMigrate(&model.ChatTemplate{})
 	//db.AutoMigrate(&model.Contraband{})
-	db.AutoMigrate(&model.AI{})
-	db.AutoMigrate(&model.Message{})
+	//db.AutoMigrate(&model.AI{})
+	//db.AutoMigrate(&model.Message{})
+	db.AutoMigrate(&model.Error{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
