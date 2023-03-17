@@ -10,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	gogpt "github.com/sashabaranov/go-openai"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,29 +37,31 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 
 	prompt := "帮我生成一张图片，图片里面需要包含以下内容：" + req.Content
-	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateImage(gogpt.ImageRequest{
+
+	imageCreate := sanmuai.ImageCreate{
 		Prompt:         prompt,
 		N:              1,
 		ResponseFormat: "url",
 		Size:           "512x512",
+	}
+	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
+		Ctx:    l.ctx,
+		SvcCtx: l.svcCtx,
 	})
+
+	stream, err := ai.CreateImage(imageCreate)
 	if err != nil {
 		return nil, err
-	}
-
-	res := []string{}
-	for _, datum := range stream.Data {
-		res = append(res, datum.URL)
 	}
 
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "image/createMulti",
 		Content: req.Content,
-		Result:  strings.Join(res, ","),
+		Result:  strings.Join(stream, ","),
 	})
 
 	return &types.ImageMultiResponse{
-		Url: res,
+		Url: stream,
 	}, nil
 }

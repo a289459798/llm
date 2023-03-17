@@ -90,8 +90,25 @@ func (ai *OpenAi) CreateChatCompletion(content []gogpt.ChatCompletionMessage) (s
 	return ai.getClient().CreateChatCompletion(ai.Ctx, gptReq)
 }
 
-func (ai *OpenAi) CreateImage(req gogpt.ImageRequest) (stream gogpt.ImageResponse, err error) {
-	return ai.getClient().CreateImage(ai.Ctx, req)
+func (ai *OpenAi) CreateImage(req ImageCreate) (stream []string, err error) {
+	res, err := ai.getClient().CreateImage(ai.Ctx, gogpt.ImageRequest{
+		Prompt:         req.Prompt,
+		N:              req.N,
+		Size:           req.Size,
+		ResponseFormat: req.ResponseFormat,
+	})
+	if err != nil {
+		return
+	}
+	for _, datum := range res.Data {
+		stream = append(stream, func() string {
+			if req.ResponseFormat == "url" {
+				return datum.URL
+			}
+			return datum.B64JSON
+		}())
+	}
+	return
 }
 
 func (ai *OpenAi) CreateEditImage(file *os.File, content string) (stream gogpt.ImageResponse, err error) {

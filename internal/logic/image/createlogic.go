@@ -10,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	gogpt "github.com/sashabaranov/go-openai"
 	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 )
@@ -42,7 +41,7 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 	}
 
 	prompt := "帮我生成一张图片，图片里面需要包含以下内容：" + req.Content
-	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateImage(gogpt.ImageRequest{
+	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateImage(sanmuai.ImageCreate{
 		Prompt:         prompt,
 		N:              1,
 		ResponseFormat: "b64_json",
@@ -60,6 +59,6 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 	})
 
 	return &types.ImageResponse{
-		Url: stream.Data[0].B64JSON,
+		Url: stream[0],
 	}, nil
 }

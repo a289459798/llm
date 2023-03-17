@@ -82,6 +82,7 @@ type ReportResponse struct {
 
 type ImageRequest struct {
 	Content string `json:"content"`
+	Model   string `json:"model,optional"`
 }
 
 type ImageResponse struct {
