@@ -38,7 +38,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		),
 	})
 
-	//db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.User{})
 	//db.AutoMigrate(&model.Account{})
 	//db.AutoMigrate(&model.Record{})
 	//db.AutoMigrate(&model.Feedback{})
@@ -50,7 +50,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.Contraband{})
 	//db.AutoMigrate(&model.AI{})
 	//db.AutoMigrate(&model.Message{})
-	db.AutoMigrate(&model.Error{})
+	//db.AutoMigrate(&model.Error{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,

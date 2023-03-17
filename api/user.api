@@ -12,6 +12,7 @@ type InfoResponse {
     Amount uint32 `json:"amount"`
     Uid uint32 `json:"uid"`
     OpenId string `json:"openId"`
+    Vip bool `json:"vip"`
 }
 
 type Task {
@@ -40,6 +41,7 @@ type TaskCompleteResponse {
 
 type TaskRequest {
     Type string `json:"type,options=share|ad"`
+    Status bool `json:"status"`
 }
 
 type TaskShareFollowRequest {

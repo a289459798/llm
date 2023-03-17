@@ -13,6 +13,7 @@ type InfoResponse struct {
 	Amount uint32 `json:"amount"`
 	Uid    uint32 `json:"uid"`
 	OpenId string `json:"openId"`
+	Vip    bool   `json:"vip"`
 }
 
 type Task struct {
@@ -40,7 +41,8 @@ type TaskCompleteResponse struct {
 }
 
 type TaskRequest struct {
-	Type string `json:"type,options=share|ad"`
+	Type   string `json:"type,options=share|ad"`
+	Status bool   `json:"status"`
 }
 
 type TaskShareFollowRequest struct {

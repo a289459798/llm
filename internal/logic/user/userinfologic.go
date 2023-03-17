@@ -32,9 +32,14 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 
 	user := &model.User{}
 	l.svcCtx.Db.Where("id = ?", uid).First(user)
+	vip := false
+	if user.VipExpiry.Unix() > time.Now().Unix() {
+		vip = true
+	}
 	return &types.InfoResponse{
 		Amount: amount.ChatAmount - amount.ChatUse,
 		Uid:    uint32(uid),
 		OpenId: user.OpenId,
+		Vip:    vip,
 	}, nil
 }
