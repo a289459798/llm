@@ -12,6 +12,7 @@ import (
 	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -93,6 +94,18 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
 			Content: "好的，下次您问我“你是谁”的时候，我会回答“我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。”",
+		})
+	}
+
+	if strings.Contains(req.Message, "画") || strings.Contains(req.Message, "图片") || strings.Contains(req.Message, "照片") {
+		// 工具推荐
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "user",
+			Content: "如果问你画画、生成图片相关的内容，你只需回答'您可以使用三目画画',不用回答其他内容",
+		})
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "assistant",
+			Content: "好的，我只回复'您可以使用三目画画'，不回复其他内容",
 		})
 	}
 
