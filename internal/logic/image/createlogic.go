@@ -40,7 +40,7 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 		return nil, errors.New("次数已用完")
 	}
 
-	prompt := "帮我生成一张图片，图片里面需要包含以下内容：" + req.Content
+	prompt := "帮我生成一张图片，图片里面需要包含以下内容：" + req.Content + "，不能露点"
 	stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateImage(sanmuai.ImageCreate{
 		Prompt:         prompt,
 		N:              1,
