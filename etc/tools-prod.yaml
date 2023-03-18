@@ -10,7 +10,7 @@ Log:
   Mode: "file"
   Level: error
   Compress: false
-  KeepDays: 0
+  KeepDays: 10
   StackCooldownMillis: 100
 
 OpenAIKey: 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
