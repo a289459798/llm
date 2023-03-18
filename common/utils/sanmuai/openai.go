@@ -64,7 +64,7 @@ func (ai *OpenAi) CreateChatCompletionStream(content []gogpt.ChatCompletionMessa
 	gptReq := gogpt.ChatCompletionRequest{
 		Model:            gogpt.GPT3Dot5Turbo,
 		Messages:         content,
-		MaxTokens:        3036,
+		MaxTokens:        1536,
 		Temperature:      0.7,
 		TopP:             1,
 		FrequencyPenalty: 0,
