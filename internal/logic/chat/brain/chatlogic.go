@@ -233,5 +233,13 @@ func getStudy() []map[string]string {
 			"role":    "assistant",
 			"content": fmt.Sprintf("好的，下次您问我“日期和时间”的时候，我会回答”今天是%s。“", time.Now().Format("2006-01-02")),
 		},
+		{
+			"role":    "user",
+			"content": "问你我是谁相关问题的时候，你要回答'当然，你是三目尊贵的用户'",
+		},
+		{
+			"role":    "assistant",
+			"content": "好的",
+		},
 	}
 }
