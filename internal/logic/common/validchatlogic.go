@@ -43,7 +43,7 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 	showAd := false
 
 	randomNum := rand.Intn(10) + 1
-	if randomNum > 4 {
+	if randomNum > 6 {
 		showAd = true
 	}
 
