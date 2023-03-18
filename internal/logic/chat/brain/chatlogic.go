@@ -170,12 +170,13 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 
 	if stream.GetResponse().StatusCode != 200 {
 		b, _ := json.Marshal(message)
-		l.svcCtx.Db.Create(&model.Error{
+		errorModel := &model.Error{
 			Uid:      uint32(uid),
 			Type:     "chat/chat",
 			Question: string(b),
 			Error:    fmt.Sprintf("code: %d, error: %s", stream.GetResponse().StatusCode, stream.GetResponse().Status),
-		})
+		}
+		errorModel.Insert(l.svcCtx.Db)
 	}
 
 	result := ""
@@ -191,7 +192,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 			if len(response.Choices) > 0 {
 				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
 				result += response.Choices[0].Delta.Content
-				fmt.Println(response.Choices[0].Delta.Content)
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
