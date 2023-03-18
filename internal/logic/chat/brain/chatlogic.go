@@ -109,6 +109,18 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		})
 	}
 
+	if strings.Contains(req.Message, "人工") || strings.Contains(req.Message, "客服") {
+		// 工具推荐
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "user",
+			Content: "接下来对话中,问你人工客服或是在线客服等相关问题，你就回复'可以通过右下角加群后联系客服'",
+		})
+		message = append(message, gogpt.ChatCompletionMessage{
+			Role:    "assistant",
+			Content: "好的",
+		})
+	}
+
 	// 根据模版提问
 	msg := req.Message
 	if req.TemplateId > 0 {
