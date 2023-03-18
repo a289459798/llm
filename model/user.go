@@ -7,7 +7,7 @@ type User struct {
 	OpenId    string    `gorm:"type:varchar(64)" json:"open_id"`
 	UnionId   string    `gorm:"type:varchar(64)"json:"union_id"`
 	Subscribe bool      `json:"subscribe"`
-	VipExpiry time.Time `json:"vip_expiry"`
+	VipExpiry time.Time `json:"vip_expiry" gorm:"type:date"`
 	CreatedAt time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt  time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
 }
