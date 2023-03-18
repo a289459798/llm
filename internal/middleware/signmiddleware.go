@@ -29,11 +29,11 @@ func (m *SignMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			timestamp := r.Header.Get("timestamp")
 			sign := r.Header.Get("sign")
 			if timestamp == "" {
-				errorx.BadRequest(w, "参数错误")
+				errorx.BadRequest(w, "参数错误 timestamp")
 				return
 			}
 			if sign == "" {
-				errorx.BadRequest(w, "参数错误")
+				errorx.BadRequest(w, "参数错误 sign")
 				return
 			}
 
@@ -41,7 +41,7 @@ func (m *SignMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			t1 := int64(t / 1000)
 
 			if time.Now().Unix()-t1 > 60 {
-				errorx.BadRequest(w, "参数错误")
+				errorx.BadRequest(w, "参数错误 时间过期")
 				return
 			}
 
@@ -50,7 +50,7 @@ func (m *SignMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			newSign := hex.EncodeToString(md5sum[:16])
 
 			if newSign != sign {
-				errorx.BadRequest(w, "参数错误")
+				errorx.BadRequest(w, "参数错误 验签失败")
 				return
 			}
 		}
