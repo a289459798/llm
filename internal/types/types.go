@@ -14,6 +14,7 @@ type InfoResponse struct {
 	Uid    uint32 `json:"uid"`
 	OpenId string `json:"openId"`
 	Vip    bool   `json:"vip"`
+	Code   string `json:"code"`
 }
 
 type Task struct {

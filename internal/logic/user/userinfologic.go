@@ -4,6 +4,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -36,10 +37,12 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	if user.VipExpiry.Unix() > time.Now().Unix() {
 		vip = true
 	}
+
 	return &types.InfoResponse{
 		Amount: amount.ChatAmount - amount.ChatUse,
 		Uid:    uint32(uid),
 		OpenId: user.OpenId,
 		Vip:    vip,
+		Code:   fmt.Sprintf("%b", uid),
 	}, nil
 }
