@@ -80,11 +80,16 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 				Max:            30,
 			},
 			{
-				Title:          "看广告",
-				Status:         adCount == 10,
-				Total:          10,
-				CompleteNumber: int(adCount),
-				Type:           "ad",
+				Title:  "看广告",
+				Status: adCount >= 10,
+				Total:  10,
+				CompleteNumber: func() int {
+					if adCount > 10 {
+						return 10
+					}
+					return int(adCount)
+				}(),
+				Type: "ad",
 				Amount: func(count int) int {
 					if count > 0 {
 						return 5
