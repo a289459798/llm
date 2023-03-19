@@ -222,7 +222,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	fmt.Println(result)
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "chat/chat",
