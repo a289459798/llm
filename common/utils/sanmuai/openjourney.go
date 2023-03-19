@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
 	"strconv"
 	"strings"
@@ -94,6 +95,11 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 		err = errors.New("timeout")
 	}
 	timer.Stop()
+	return
+}
+
+func (ai *Journey) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
+	err = errors.New("该模型不支持会话")
 	return
 }
 

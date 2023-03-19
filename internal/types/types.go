@@ -257,6 +257,8 @@ type ChatRequest struct {
 	ChatId     string `json:"chatId"`
 	TemplateId uint32 `json:"templateId"`
 	Message    string `json:"message"`
+	Model      string `json:"model,optional"`
+	Platform   string `json:"platform,optional"`
 }
 
 type ChatHistoryResponse struct {

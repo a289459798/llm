@@ -172,7 +172,11 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
+	aiModel := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
+		Ctx:    l.ctx,
+		SvcCtx: l.svcCtx,
+	})
+	stream, err := aiModel.CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -223,11 +227,13 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		return nil, errors.New("数据为空")
 	}
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "chat/chat",
-		Content: msg,
-		Result:  result,
-		ChatId:  req.ChatId,
+		Uid:      uint32(uid),
+		Type:     "chat/chat",
+		Content:  msg,
+		Result:   result,
+		ChatId:   req.ChatId,
+		Model:    req.Model,
+		Platform: req.Platform,
 	})
 
 	return
