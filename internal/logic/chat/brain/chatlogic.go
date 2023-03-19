@@ -9,10 +9,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/engine"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -33,6 +36,12 @@ func NewChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatLogic {
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
+}
+
+type ChatRule struct {
+	P string
+	Q string
+	A string
 }
 
 func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *types.ChatResponse, err error) {
@@ -97,27 +106,28 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		})
 	}
 
-	if strings.Contains(req.Message, "画") || strings.Contains(req.Message, "图片") || strings.Contains(req.Message, "照片") {
-		// 工具推荐
-		message = append(message, gogpt.ChatCompletionMessage{
-			Role:    "user",
-			Content: "接下来对话中,问你或者让你画画、生成图片相关的问题，你只需回答'您可以使用[三目画画]',不用回答其他内容",
-		})
-		message = append(message, gogpt.ChatCompletionMessage{
-			Role:    "assistant",
-			Content: "好的，我只回复您可以使用[三目画画]，不回复其他内容",
-		})
+	// 规则引擎
+	dctx := ast.NewDataContext()
+	chatRule := &ChatRule{
+		P: req.Message,
+		Q: "",
+		A: "",
 	}
-
-	if strings.Contains(req.Message, "人工") || strings.Contains(req.Message, "客服") {
-		// 工具推荐
+	dctx.Add("ChatRule", chatRule)
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	_ = rb.BuildRuleFromResource("chat_rule", "0.1.1", pkg.NewFileResource("data/chat.grl"))
+	kb := lib.NewKnowledgeBaseInstance("chat_rule", "0.1.1")
+	engine := &engine.GruleEngine{MaxCycle: 1}
+	engine.Execute(dctx, kb)
+	if chatRule.Q != "" {
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "user",
-			Content: "接下来对话中,问你人工客服或是在线客服等相关问题，你就回复'可以通过右下角加群后联系客服'",
+			Content: chatRule.Q,
 		})
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
-			Content: "好的",
+			Content: chatRule.A,
 		})
 	}
 
@@ -212,6 +222,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
+	fmt.Println(result)
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "chat/chat",

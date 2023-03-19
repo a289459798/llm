@@ -1,0 +1,17 @@
+rule 画画 "画画" salience 10 {
+    when
+        StringContains(ChatRule.P, '画') || StringContains(ChatRule.P, '图片') || StringContains(ChatRule.P, '照片')
+    then
+        ChatRule.Q='接下来对话中,问你或者让你画画、生成图片相关的问题，你只需回答您可以使用[三目画画],不用回答其他内容';
+        ChatRule.A='好的，我只回复您可以使用[三目画画]，不回复其他内容';
+        Complete();
+}
+
+rule 客服 "客服" salience 10 {
+    when
+        StringContains(ChatRule.P, '人工') || StringContains(ChatRule.P, '客服')
+    then
+        ChatRule.Q='接下来对话中,问你人工客服或是在线客服等相关问题，你就回复可以通过右下角加群后联系客服';
+        ChatRule.A='好的';
+        Complete();
+}
