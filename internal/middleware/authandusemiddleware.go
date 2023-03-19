@@ -47,7 +47,7 @@ func (m *AuthAndUseMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			t, _ := strconv.Atoi(timestamp)
 			t1 := int64(t / 1000)
 
-			if time.Now().Unix()-t1 > 60 {
+			if time.Now().Unix()-t1 > 300 {
 				errorx.BadRequest(w, "参数错误：时间过期")
 				return
 			}
