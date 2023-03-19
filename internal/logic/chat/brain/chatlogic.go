@@ -116,7 +116,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	dctx.Add("ChatRule", chatRule)
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	_ = rb.BuildRuleFromResource("chat_rule", "0.1.1", pkg.NewFileResource("data/chat.grl"))
+	_ = rb.BuildRuleFromResource("chat_rule", "0.1.1", pkg.NewURLResource("https://img.smuai.com/grl/chat.grl"))
 	kb := lib.NewKnowledgeBaseInstance("chat_rule", "0.1.1")
 	engine := &engine.GruleEngine{MaxCycle: 1}
 	engine.Execute(dctx, kb)
