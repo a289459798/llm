@@ -7,10 +7,10 @@ import (
 
 type Account struct {
 	ID         uint32    `gorm:"primary_key" json:"id"`
-	Uid        uint32    `json:"uid" gorm:"index:idx_uid"`
+	Uid        uint32    `json:"uid" gorm:"uniqueIndex:uk_uid_date"`
 	ChatAmount uint32    `json:"chat_amount" gorm:"COMMENT:总次数"`
 	ChatUse    uint32    `json:"chat_use" gorm:"COMMENT:使用次数"`
-	Date       time.Time `json:"date" gorm:"type:date;COMMENT='日期'"`
+	Date       time.Time `json:"date" gorm:"type:date;COMMENT='日期';uniqueIndex:uk_uid_date"`
 	LoginCount uint32    `json:"login_count"`
 	CreatedAt  time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt   time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
