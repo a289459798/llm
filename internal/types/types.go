@@ -67,6 +67,33 @@ type AIEditRequest struct {
 	Status bool   `form:"status"`
 }
 
+type ChatHistoryListResponse struct {
+	Pagination Pagination        `json:"pagination"`
+	Data       []ChatHistoryData `json:"data"`
+}
+
+type ChatHistoryData struct {
+	Q      string `json:"q"`
+	ChatId string `json:"chatId"`
+	Time   string `json:"time"`
+}
+
+type Response struct {
+	Code    uint   `json:"code"`
+	Message string `json:"message"`
+}
+
+type Pagination struct {
+	Total  int `json:"total"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+}
+
+type PageRequest struct {
+	Limit  int `form:"limit"`
+	Offset int `form:"offset"`
+}
+
 type ReportRequest struct {
 	Content string `json:"content"`
 }
@@ -84,7 +111,7 @@ type ReportResponse struct {
 type ImageRequest struct {
 	Content string `json:"content"`
 	Model   string `json:"model,optional,options=dalle|dalle-plus|journey"`
-	Number  int    `json:"number,optional,options=1|2|4"`
+	Number  int    `json:"number,optional,options=1|4"`
 	Clarity string `json:"clarity,optional,options=standard|high"`
 }
 

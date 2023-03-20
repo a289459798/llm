@@ -16,6 +16,7 @@ import (
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
 	userai "chatgpt-tools/internal/handler/user/ai"
+	userhistory "chatgpt-tools/internal/handler/user/history"
 	usertask "chatgpt-tools/internal/handler/user/task"
 	wechat "chatgpt-tools/internal/handler/wechat"
 	"chatgpt-tools/internal/svc"
@@ -82,6 +83,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: userai.AiEditHandler(serverCtx),
 			},
 		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/history/chat",
+					Handler: userhistory.ChatListHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 

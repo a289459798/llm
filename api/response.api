@@ -4,3 +4,14 @@ type Response {
     Code uint `json:"code"`
     Message string `json:"message"`
 }
+
+type Pagination {
+    Total int `json:"total"`
+    Limit int `json:"limit"`
+    Offset int `json:"offset"`
+}
+
+type PageRequest {
+    Limit int `form:"limit"`
+    Offset int `form:"offset"`
+}

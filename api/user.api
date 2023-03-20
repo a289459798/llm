@@ -1,5 +1,5 @@
 syntax = "v1"
-
+import "api/response.api"
 type LoginRequest {
     Code string `json:"code"`
 }
@@ -109,4 +109,25 @@ service tools {
 
     @handler aiEdit
     post /users/ai (AIEditRequest) returns (AIInfoResponse)
+}
+
+type ChatHistoryListResponse {
+    Pagination Pagination `json:"pagination"`
+    Data []ChatHistoryData `json:"data"`
+}
+
+type ChatHistoryData {
+    Q string `json:"q"`
+    ChatId string `json:"chatId"`
+    Time string `json:"time"`
+}
+
+@server(
+    jwt: Auth
+    middleware: Sign
+    group: user/history
+)
+service tools {
+    @handler chatList
+    get /users/history/chat(PageRequest) returns (ChatHistoryListResponse)
 }
