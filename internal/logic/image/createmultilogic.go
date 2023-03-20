@@ -62,7 +62,10 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			}
 			stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
 			if err == nil && len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
-				imageCreate.Prompt = fmt.Sprintf("midjourney-v5 style %s ", stream.Choices[0].Message.Content)
+				imageCreate.Prompt = stream.Choices[0].Message.Content
+				if req.Model == "journey" {
+					imageCreate.Prompt = fmt.Sprintf("midjourney-v5 style %s ", stream.Choices[0].Message.Content)
+				}
 			}
 		}
 		if req.Number > 0 {
