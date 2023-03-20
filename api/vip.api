@@ -1,0 +1,17 @@
+syntax = "v1"
+
+type VipPriceResponse {
+    Original int `json:"original"`
+    Price int `json:"price"`
+}
+
+@server(
+    jwt: Auth
+    middleware: Sign
+    group: vip
+)
+service tools {
+    @handler vipPrice
+    get /vip/price returns (VipPriceResponse)
+
+}

@@ -365,5 +365,10 @@ type QrCodeRequest struct {
 	Scene string `form:"scene"`
 }
 
+type VipPriceResponse struct {
+	Original int `json:"original"`
+	Price    int `json:"price"`
+}
+
 type WeChatCallbackResponse struct {
 }
