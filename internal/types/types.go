@@ -83,7 +83,7 @@ type ReportResponse struct {
 
 type ImageRequest struct {
 	Content string `json:"content"`
-	Model   string `json:"model,optional"`
+	Model   string `json:"model,optional,options=dalle|dalle-pull|journey"`
 }
 
 type ImageResponse struct {
@@ -257,7 +257,7 @@ type ChatRequest struct {
 	ChatId     string `json:"chatId"`
 	TemplateId uint32 `json:"templateId"`
 	Message    string `json:"message"`
-	Model      string `json:"model,optional"`
+	Model      string `json:"model,optional,options=gpt3.5|gpt4"`
 	Platform   string `json:"platform,optional"`
 }
 
