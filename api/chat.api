@@ -56,8 +56,13 @@ type (
         Platform string `json:"platform,optional"`
     }
 
+    ChatHistoryRequest {
+        ChatId string `path:"chatId"`
+    }
+
     ChatHistoryResponse {
         ChatId string `json:"chatId"`
+        Model string `json:"model"`
         History []ChatHistory `json:"history"`
     }
 
@@ -88,7 +93,7 @@ type (
 )
 service tools {
     @handler chatHistory
-    get /chat/chat/history returns (ChatHistoryResponse)
+    get /chat/chat/:chatId(ChatHistoryRequest) returns (ChatHistoryResponse)
 
     @handler chatTemplate
     get /chat/chat/template(ChatTemplateRequest) returns (ChatTemplateResponse)

@@ -329,7 +329,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
-					Path:    "/chat/chat/history",
+					Path:    "/chat/chat/:chatId",
 					Handler: chatbrain.ChatHistoryHandler(serverCtx),
 				},
 				{

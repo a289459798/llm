@@ -290,8 +290,13 @@ type ChatRequest struct {
 	Platform   string `json:"platform,optional"`
 }
 
+type ChatHistoryRequest struct {
+	ChatId string `path:"chatId"`
+}
+
 type ChatHistoryResponse struct {
 	ChatId  string        `json:"chatId"`
+	Model   string        `json:"model"`
 	History []ChatHistory `json:"history"`
 }
 
