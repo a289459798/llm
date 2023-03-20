@@ -83,7 +83,9 @@ type ReportResponse struct {
 
 type ImageRequest struct {
 	Content string `json:"content"`
-	Model   string `json:"model,optional,options=dalle|dalle-pull|journey"`
+	Model   string `json:"model,optional,options=dalle|dalle-plus|journey"`
+	Number  int    `json:"number,optional,options=1|2|4"`
+	Clarity string `json:"clarity,optional,options=standard|high"`
 }
 
 type ImageResponse struct {

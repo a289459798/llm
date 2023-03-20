@@ -10,6 +10,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,15 +37,46 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		return nil, errors.New(valid)
 	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	isVip := model.User{ID: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
 
-	prompt := "帮我生成一张图片，图片里面需要包含以下内容：" + req.Content
-
+	prompt := "不能露点，" + req.Content
 	imageCreate := sanmuai.ImageCreate{
 		Prompt:         prompt,
 		N:              1,
 		ResponseFormat: "url",
 		Size:           "256x256",
 	}
+
+	if isVip {
+		if req.Model == "dalle-plus" || req.Model == "journey" {
+			// 翻译
+			message := []gogpt.ChatCompletionMessage{
+				{
+					Role:    "system",
+					Content: "帮我翻译",
+				},
+				{
+					Role:    "user",
+					Content: req.Content,
+				},
+			}
+			stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
+			if err == nil && len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
+				imageCreate.Prompt = fmt.Sprintf("midjourney-v4 style %s ", stream.Choices[0].Message.Content)
+			}
+		}
+		if req.Number > 0 {
+			imageCreate.N = req.Number
+		}
+		if req.Clarity == "high" {
+			imageCreate.Size = "512x512"
+		}
+	} else {
+		req.Model = "dalle"
+	}
+
+	fmt.Println(imageCreate.Prompt)
+
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
 		Ctx:    l.ctx,
 		SvcCtx: l.svcCtx,
@@ -59,6 +92,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Type:    "image/createMulti",
 		Content: req.Content,
 		Result:  strings.Join(stream, ","),
+		Model:   req.Model,
 	})
 
 	return &types.ImageMultiResponse{

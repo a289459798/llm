@@ -73,12 +73,15 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 						Prediction struct {
 							Output    []string `json:"output"`
 							CreatedAt string   `json:"created_at"`
+							Uuid      string   `json:"uuid"`
+							Error     string   `json:"error"`
+							Status    string   `json:"status"`
 						} `json:"prediction"`
 					}{}
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					fmt.Println(respData.Prediction.Output)
+					fmt.Println(respData.Prediction)
 					if respData.Prediction.Output != nil {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
