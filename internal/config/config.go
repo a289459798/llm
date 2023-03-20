@@ -15,8 +15,13 @@ type Config struct {
 		AccessExpire int64
 	}
 	MiniApp struct {
-		AppId     string
-		AppSecret string
+		AppId      string
+		AppSecret  string
+		MchId      string
+		SerialNo   string
+		ApiV3Key   string
+		PrivateKey string
+		NotifyUrl  string
 	}
 	OfficialAccount struct {
 		AppId     string

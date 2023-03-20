@@ -16,6 +16,11 @@ Auth:
 MiniApp:
   AppId: wxab342e753dfef0b0
   AppSecret: 2351083d4bddd18289afb3644f1f1de8
+  MchId: df
+  SerialNo: fgfg
+  ApiV3Key: ddf
+  PrivateKey: sdsd
+  NotifyUrl: 343sdsd4
 
 OfficialAccount:
   AppId: wxf5faec580b47b6c9

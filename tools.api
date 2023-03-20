@@ -20,5 +20,6 @@ import (
 	"api/convert.api"
 	"api/common.api"
 	"api/vip.api"
+	"api/order.api"
 	"api/wechat.api"
 )

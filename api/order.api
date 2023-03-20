@@ -1,0 +1,19 @@
+syntax = "v1"
+
+type VipPayRequest {
+    Platform string `json:"platform,options=wechat|alipay"`
+}
+
+type PayResponse {
+    Data string `json:"data"`
+}
+
+@server(
+    jwt: Auth
+    middleware: Sign
+    group: order
+)
+service tools {
+    @handler vipOrderCreate
+    post /order/vip(VipPayRequest) returns (PayResponse)
+}

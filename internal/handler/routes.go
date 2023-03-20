@@ -13,6 +13,7 @@ import (
 	divination "chatgpt-tools/internal/handler/divination"
 	game "chatgpt-tools/internal/handler/game"
 	image "chatgpt-tools/internal/handler/image"
+	order "chatgpt-tools/internal/handler/order"
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
 	userai "chatgpt-tools/internal/handler/user/ai"
@@ -410,6 +411,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/vip/price",
 					Handler: vip.VipPriceHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/order/vip",
+					Handler: order.VipOrderCreateHandler(serverCtx),
 				},
 			}...,
 		),

@@ -370,5 +370,13 @@ type VipPriceResponse struct {
 	Price    int `json:"price"`
 }
 
+type VipPayRequest struct {
+	Platform string `json:"platform,options=wechat|alipay"`
+}
+
+type PayResponse struct {
+	Data string `json:"data"`
+}
+
 type WeChatCallbackResponse struct {
 }
