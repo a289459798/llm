@@ -35,7 +35,7 @@ func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistory
 
 	offset := req.Offset
 	limit := req.Limit
-	tx := l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).
+	tx := l.svcCtx.Db.Model(&model.Record{}).
 		Where("uid = ?", uid).
 		Where("type = ?", "chat/chat").
 		Group("chat_id")
@@ -46,7 +46,7 @@ func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistory
 		return &types.ChatHistoryListResponse{}, nil
 	}
 	records := []model.Record{}
-	tx.Order("id desc").Offset(offset).Limit(limit).Select("min(id), chat_id, content,created_at").Find(&records)
+	tx.Order("id desc").Offset((offset - 1) * limit).Limit(limit).Select("min(id), chat_id, content,created_at").Find(&records)
 	data := []types.ChatHistoryData{}
 	for _, record := range records {
 		data = append(data, types.ChatHistoryData{

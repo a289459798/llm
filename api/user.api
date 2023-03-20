@@ -122,6 +122,18 @@ type ChatHistoryData {
     Time string `json:"time"`
 }
 
+type SuanliHistoryListResponse {
+    Pagination Pagination `json:"pagination"`
+    Data []SuanliHistoryData `json:"data"`
+}
+
+type SuanliHistoryData {
+    Amount int `json:"amount"`
+    Desc string `json:"desc"`
+    Time string `json:"time"`
+    Way uint8 `json:"way"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -130,4 +142,7 @@ type ChatHistoryData {
 service tools {
     @handler chatList
     get /users/history/chat(PageRequest) returns (ChatHistoryListResponse)
+
+    @handler suanliList
+    get /users/history/suanli(PageRequest) returns (SuanliHistoryListResponse)
 }

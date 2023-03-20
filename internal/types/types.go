@@ -78,6 +78,18 @@ type ChatHistoryData struct {
 	Time   string `json:"time"`
 }
 
+type SuanliHistoryListResponse struct {
+	Pagination Pagination          `json:"pagination"`
+	Data       []SuanliHistoryData `json:"data"`
+}
+
+type SuanliHistoryData struct {
+	Amount int    `json:"amount"`
+	Desc   string `json:"desc"`
+	Time   string `json:"time"`
+	Way    uint8  `json:"way"`
+}
+
 type Response struct {
 	Code    uint   `json:"code"`
 	Message string `json:"message"`
