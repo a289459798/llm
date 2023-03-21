@@ -68,14 +68,18 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 
 	// 记录
 	t, _ := strconv.Atoi(timestamp)
-	tx.Create(&model.AccountRecord{
+	err = tx.Create(&model.AccountRecord{
 		Uid:           uint32(uid),
 		RecordId:      uint32(t),
 		Way:           1,
 		Type:          req.Type,
 		Amount:        add,
 		CurrentAmount: amount.ChatAmount - amount.ChatUse,
-	})
+	}).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, errors.New("重复执行")
+	}
 
 	l.svcCtx.Db.Model(&model.AccountRecord{}).
 		Where("uid = ?", uid).

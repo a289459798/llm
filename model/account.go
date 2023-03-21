@@ -2,6 +2,7 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -30,10 +31,8 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 
 	account := &Account{}
 	a.DB.Transaction(func(tx *gorm.DB) error {
-		tx.Set("gorm:query_option", "FOR UPDATE").Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).First(account)
 		tx.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).First(&account)
 		if account.ID == 0 {
-
 			var amount uint32 = 5
 			// 获取连续天数
 			yesterdayAccount := &Account{}
@@ -47,9 +46,9 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			account.ChatAmount = amount
 			account.ChatUse = 0
 			account.Date = date
-			tx.Create(&account)
+			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&account)
 
-			tx.Create(&AccountRecord{
+			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&AccountRecord{
 				Uid:           uid,
 				RecordId:      0,
 				Way:           1,
