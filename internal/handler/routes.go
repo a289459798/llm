@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	callbackpay "chatgpt-tools/internal/handler/callback/pay"
 	chat "chatgpt-tools/internal/handler/chat"
 	chatbrain "chatgpt-tools/internal/handler/chat/brain"
 	code "chatgpt-tools/internal/handler/code"
@@ -442,6 +443,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/wechat/callback/subscribe",
 				Handler: wechat.SubscribeCallHandler(serverCtx),
+			},
+		},
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/callback/pay/vip/:type/:merchant",
+				Handler: callbackpay.PayVipHandler(serverCtx),
 			},
 		},
 	)

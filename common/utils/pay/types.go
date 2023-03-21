@@ -1,10 +1,11 @@
 package pay
 
 type Order struct {
-	Body   string
-	OutNo  string
-	Total  float32
-	OpenId string
+	Body       string
+	OutNo      string
+	Total      float32
+	OpenId     string
+	NotifyPath string
 }
 
 type PayResponse struct {
@@ -14,4 +15,16 @@ type PayResponse struct {
 	Package   string `json:"package"`
 	SignType  string `json:"signType"`
 	PaySign   string `json:"paySign"`
+}
+
+type PayAmoount struct {
+	Total int
+}
+
+type PayNotifyResponse struct {
+	OutTradeNo    string
+	TransactionId string
+	Attach        string
+	SuccessTime   string
+	Amount        PayAmoount
 }

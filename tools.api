@@ -22,4 +22,5 @@ import (
 	"api/vip.api"
 	"api/order.api"
 	"api/wechat.api"
+	"api/callback.api"
 )

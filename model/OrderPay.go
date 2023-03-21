@@ -17,6 +17,7 @@ type OrderPay struct {
 	RefundPrice float32   `json:"pay_price"`
 	Status      uint8     `json:"status"`
 	PayType     string    `json:"pay_type" gorm:"type:varchar(20)"`
+	Merchant    string    `json:"merchant" gorm:"type:varchar(20)"`
 	PayTime     uint8     `json:"pay_time" gorm:"type:TIMESTAMP"`
 	CreatedAt   time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt    time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`

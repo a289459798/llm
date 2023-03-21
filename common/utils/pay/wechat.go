@@ -9,22 +9,30 @@ import (
 	"github.com/go-pay/gopay/pkg/util"
 	"github.com/go-pay/gopay/wechat/v3"
 	"github.com/jinzhu/copier"
+	"net/http"
 )
 
 type WechatPay struct {
-	Ctx    context.Context
-	Config config.Config
+	Ctx      context.Context
+	Config   config.Config
+	Merchant string
 }
 
-func NewWechat(ctx context.Context, c config.Config) *WechatPay {
+func NewWechat(payData PayData) *WechatPay {
 	return &WechatPay{
-		Ctx:    ctx,
-		Config: c,
+		Ctx:      payData.Ctx,
+		Config:   payData.Config,
+		Merchant: payData.Merchant,
 	}
 }
 
+func (p *WechatPay) getConfig() config.WeChatPayConf {
+	return p.Config.WeChatPayConf.Default
+}
+
 func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
-	client, err = wechat.NewClientV3(p.Config.MiniApp.MchId, p.Config.MiniApp.SerialNo, p.Config.MiniApp.ApiV3Key, p.Config.MiniApp.PrivateKey)
+	payConfig := p.getConfig()
+	client, err = wechat.NewClientV3(payConfig.MchId, payConfig.SerialNo, payConfig.ApiV3Key, payConfig.PrivateKey)
 	if err != nil {
 		return
 	}
@@ -44,17 +52,18 @@ func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
 }
 
 func (p *WechatPay) Pay(order Order) (response PayResponse, err error) {
+	payConfig := p.getConfig()
 	client, err := p.getClient()
 	if err != nil {
 		return
 	}
 	bm := make(gopay.BodyMap)
-	bm.Set("appid", p.Config.MiniApp.AppId).
-		Set("mchid", p.Config.MiniApp.MchId).
+	bm.Set("appid", payConfig.AppId).
+		Set("mchid", payConfig.MchId).
 		Set("nonce_str", util.RandomString(32)).
 		Set("description", "H5支付").
 		Set("out_trade_no", order.OutNo).
-		Set("notify_url", p.Config.MiniApp.NotifyUrl).
+		Set("notify_url", fmt.Sprintf("%s%s", payConfig.NotifyUrl, order.NotifyPath)).
 		SetBodyMap("amount", func(bm gopay.BodyMap) {
 			bm.Set("total", order.Total)
 		}).
@@ -75,5 +84,33 @@ func (p *WechatPay) Pay(order Order) (response PayResponse, err error) {
 		return
 	}
 	copier.Copy(&response, &applet)
+	return
+}
+
+func (p *WechatPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyResponse, err error) {
+	notifyReq, err := wechat.V3ParseNotify(req)
+	if err != nil {
+		return
+	}
+	client, err := p.getClient()
+	// 获取微信平台证书
+	certMap := client.WxPublicKeyMap()
+	// 验证异步通知的签名
+	err = notifyReq.VerifySignByPKMap(certMap)
+	if err != nil {
+		return
+	}
+	payConfig := p.getConfig()
+	result, err := notifyReq.DecryptCipherText(payConfig.ApiV3Key)
+	if err != nil {
+		return
+	}
+	payNotifyResponse = PayNotifyResponse{
+		OutTradeNo:    result.OutTradeNo,
+		TransactionId: result.TransactionId,
+		Attach:        result.Attach,
+		SuccessTime:   result.SuccessTime,
+		Amount:        PayAmoount{Total: result.Amount.Total},
+	}
 	return
 }

@@ -77,19 +77,22 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 		PayPrice:    order.PayPrice,
 		RefundPrice: 0,
 		Status:      model.PayStatusWaitPayment,
+		Merchant:    "default",
 	}).Error
 	if err != nil {
 		return nil, err
 	}
 	payModel := pay2.GetPay(req.Platform, pay2.PayData{
-		Ctx:    l.ctx,
-		Config: l.svcCtx.Config,
+		Ctx:      l.ctx,
+		Config:   l.svcCtx.Config,
+		Merchant: "default",
 	})
 	payData, err := payModel.Pay(pay2.Order{
-		Body:   "Vip充值",
-		OutNo:  order.OutNo,
-		Total:  order.PayPrice,
-		OpenId: user.OpenId,
+		Body:       "Vip充值",
+		OutNo:      order.OutNo,
+		Total:      order.PayPrice,
+		OpenId:     user.OpenId,
+		NotifyPath: "callback/pay/vip/wechat/default",
 	})
 	if err != nil {
 		tx.Rollback()

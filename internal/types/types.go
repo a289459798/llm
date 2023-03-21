@@ -390,3 +390,12 @@ type PayResponse struct {
 
 type WeChatCallbackResponse struct {
 }
+
+type WechatPayResponse struct {
+	Data string `json:"data"`
+}
+
+type PayRequest struct {
+	Type     string `path:"type"`
+	Merchant string `path:"merchant"`
+}
