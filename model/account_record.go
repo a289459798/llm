@@ -19,17 +19,18 @@ type AccountRecord struct {
 func (a AccountRecord) GetType() string {
 	types := map[string]string{
 		"open":              "活跃",
-		"convert/translate": "翻译",
 		"share":             "分享",
 		"share_follow":      "分享打开",
-		"chat/chat":         "对话",
 		"ad":                "看广告",
+		"welfare":           "福利",
+		"group":             "加群",
+		"convert/translate": "翻译",
+		"chat/chat":         "对话",
 		"creation/article":  "作文",
 		"image/createMulti": "画画",
 		"code/generate":     "代码生成",
 		"report/week":       "周报",
 		"report/day":        "日报",
-		"welfare":           "福利",
 		"image/pic2pic":     "以图绘图",
 		"chat/introduce":    "自我介绍",
 	}
