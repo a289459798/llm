@@ -8,6 +8,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,7 +35,11 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 		return nil, err
 	}
 	user := model.User{ID: uint32(uid)}.Find(l.svcCtx.Db)
-	if user.VipExpiry.Unix() > 0 {
+	if user.ID == 0 {
+		return nil, errors.New("用户不存在")
+	}
+	firstMonth := model.Order{Uid: uint32(uid)}.FirstMonthVip(l.svcCtx.Db)
+	if !firstMonth {
 		vipsSetting["first"] = vipsSetting["original"]
 	}
 	order := &model.Order{
@@ -45,7 +50,7 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 		CostPrice: 0,
 		SellPrice: float32(vipsSetting["original"].(float64)),
 		PayPrice:  float32(vipsSetting["first"].(float64)),
-		Status:    0,
+		Status:    model.OrderStatusWaitPayment,
 	}
 
 	tx := l.svcCtx.Db.Begin()
@@ -71,7 +76,7 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 		OutNo:       order.OutNo,
 		PayPrice:    order.PayPrice,
 		RefundPrice: 0,
-		Status:      0,
+		Status:      model.PayStatusWaitPayment,
 	}).Error
 	if err != nil {
 		return nil, err

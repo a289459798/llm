@@ -1,7 +1,16 @@
 package model
 
 import (
+	"fmt"
+	"gorm.io/gorm"
 	"time"
+)
+
+const (
+	OrderStatusWaitPayment uint8 = 0
+	OrderStatusPayment     uint8 = 1
+	OrderStatusComplete    uint8 = 2
+	OrderStatusCancel      uint8 = 3
 )
 
 type Order struct {
@@ -18,4 +27,16 @@ type Order struct {
 	CompleteTime uint8     `json:"complete_time" gorm:"type:TIMESTAMP"`
 	CreatedAt    time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt     time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
+}
+
+func (o Order) FirstMonthVip(db *gorm.DB) bool {
+	db.Where("uid = ?", o.Uid).
+		Where("order_type = ?", "vip").
+		Where("status = ?", OrderStatusComplete).
+		First(&o)
+	fmt.Println(o)
+	if o.ID > 0 {
+		return false
+	}
+	return true
 }

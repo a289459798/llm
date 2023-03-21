@@ -4,6 +4,12 @@ import (
 	"time"
 )
 
+const (
+	PayStatusWaitPayment uint8 = 0
+	PayStatusPayment     uint8 = 1
+	PayStatusRefund      uint8 = 2
+)
+
 type OrderPay struct {
 	ID          uint32    `gorm:"primary_key" json:"id"`
 	OutNo       string    `json:"out_no" gorm:"type:varchar(100);uniqueIndex:ik_out_no"`

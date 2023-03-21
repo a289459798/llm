@@ -30,8 +30,8 @@ func (l *VipPriceLogic) VipPrice() (resp *types.VipPriceResponse, err error) {
 		return nil, err
 	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	user := model.User{ID: uint32(uid)}.Find(l.svcCtx.Db)
-	if user.VipExpiry.Unix() > 0 {
+	firstMonth := model.Order{Uid: uint32(uid)}.FirstMonthVip(l.svcCtx.Db)
+	if !firstMonth {
 		vipsSetting["first"] = vipsSetting["original"]
 	}
 	return &types.VipPriceResponse{
