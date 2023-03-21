@@ -44,7 +44,7 @@ type TaskCompleteResponse struct {
 }
 
 type TaskRequest struct {
-	Type   string `json:"type,options=share|ad"`
+	Type   string `json:"type,options=share|ad|group"`
 	Status bool   `json:"status,optional"`
 }
 

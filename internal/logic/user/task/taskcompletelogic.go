@@ -40,6 +40,16 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		return nil, errors.New("非法请求")
 	}
 
+	user := &model.User{}
+	l.svcCtx.Db.First(&user, uid)
+	if user.ID == 0 {
+		return nil, errors.New("用户不存在")
+	}
+
+	if req.Type == "group" && user.JoinGroup {
+		return nil, errors.New("重复操作")
+	}
+
 	today := time.Now().Format("2006-01-02")
 	var total int64
 	l.svcCtx.Db.Model(&model.AccountRecord{}).
@@ -53,6 +63,8 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		return nil, errors.New("已超过最大任务次数")
 	} else if req.Type == "ad" && total == 0 {
 		add = 10
+	} else if req.Type == "group" {
+		add = 10
 	}
 
 	tx := l.svcCtx.Db.Begin()
@@ -65,6 +77,11 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 	amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
 	amount.ChatAmount += add
 	tx.Save(&amount)
+
+	if req.Type == "group" {
+		user.JoinGroup = true
+		l.svcCtx.Db.Save(user)
+	}
 
 	// 记录
 	t, _ := strconv.Atoi(timestamp)
