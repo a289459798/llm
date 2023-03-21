@@ -50,5 +50,6 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 		Vip:    user.IsVip(),
 		Code:   fmt.Sprintf("%b", uid),
 		Token:  tokenString,
+		Group:  user.JoinGroup,
 	}, nil
 }
