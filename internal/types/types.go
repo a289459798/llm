@@ -90,6 +90,14 @@ type SuanliHistoryData struct {
 	Way    uint8  `json:"way"`
 }
 
+type ToolsHistoryListResponse struct {
+	Data []ToolsHistoryData `json:"data"`
+}
+
+type ToolsHistoryData struct {
+	Key string `json:"key"`
+}
+
 type Response struct {
 	Code    uint   `json:"code"`
 	Message string `json:"message"`

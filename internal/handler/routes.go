@@ -102,6 +102,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/users/history/suanli",
 					Handler: userhistory.SuanliListHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/history/tools",
+					Handler: userhistory.ToolsListHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

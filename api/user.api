@@ -134,6 +134,14 @@ type SuanliHistoryData {
     Way uint8 `json:"way"`
 }
 
+type ToolsHistoryListResponse {
+    Data []ToolsHistoryData `json:"data"`
+}
+
+type ToolsHistoryData {
+    Key string `json:"key"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -145,4 +153,7 @@ service tools {
 
     @handler suanliList
     get /users/history/suanli(PageRequest) returns (SuanliHistoryListResponse)
+
+    @handler toolsList
+    get /users/history/tools returns (ToolsHistoryListResponse)
 }
