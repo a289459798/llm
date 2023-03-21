@@ -19,7 +19,7 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := brain.NewChatLogic(r.Context(), svcCtx)
-		_, err := l.Chat(&req, w)
+		_, err := l.Chat(&req, w, r)
 		if err != nil {
 			errorx.Error(w, err.Error())
 		}

@@ -44,7 +44,7 @@ type ChatRule struct {
 	A string
 }
 
-func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *types.ChatResponse, err error) {
+func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.Request) (resp *types.ChatResponse, err error) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	valid := utils.Filter(req.Message, l.svcCtx.Db)
 	if valid != "" {
@@ -233,7 +233,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		Result:   result,
 		ChatId:   req.ChatId,
 		Model:    req.Model,
-		Platform: req.Platform,
+		Platform: r.Header.Get("platform"),
 	})
 
 	return
