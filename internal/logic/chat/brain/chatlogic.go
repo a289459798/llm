@@ -103,7 +103,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 		})
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
-			Content: "好的，下次您问我“你是谁”的时候，我会回答“我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。”",
+			Content: "好的",
 		})
 	}
 
