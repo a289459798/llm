@@ -45,6 +45,21 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			account.ChatAmount = amount
 			account.ChatUse = 0
 			account.Date = date
+
+			isVip := User{ID: uid}.IsVip()
+			if isVip {
+				var vipAmount uint32 = 200
+				account.ChatAmount += vipAmount
+				tx.Create(&AccountRecord{
+					Uid:           uid,
+					RecordId:      0,
+					Way:           1,
+					Type:          "vip",
+					Amount:        vipAmount,
+					CurrentAmount: account.ChatAmount - amount - account.ChatUse,
+				})
+			}
+
 			tx.Create(&account)
 
 			tx.Create(&AccountRecord{
