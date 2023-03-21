@@ -16,6 +16,7 @@ import (
 	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -130,6 +131,14 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 			Content: chatRule.A,
 		})
 	}
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    "user",
+		Content: "接下来对话中,让你画画或者生成图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗5算力",
+	})
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    "assistant",
+		Content: "好的",
+	})
 
 	// 根据模版提问
 	msg := req.Message
@@ -212,6 +221,20 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 			}
 
 		}
+
+		img, err := l.getImage(uint32(uid), result)
+		if err != nil {
+			w.Write([]byte(utils.EncodeURL(err.Error())))
+			if f, ok := w.(http.Flusher); ok {
+				f.Flush()
+			}
+		} else if img != "" {
+			w.Write([]byte(utils.EncodeURL(img)))
+			if f, ok := w.(http.Flusher); ok {
+				f.Flush()
+			}
+		}
+
 		close(ch)
 	}()
 
@@ -237,6 +260,44 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	})
 
 	return
+}
+
+func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
+	if strings.Contains(str, "准备画画中：") {
+		// 判断算力消耗
+		imageUse := uint32(utils.GetSuanLi("image/createMulti", uid, l.svcCtx.Db))
+		chatUse := uint32(utils.GetSuanLi("chat/chat", uid, l.svcCtx.Db))
+		amount := model.NewAccount(l.svcCtx.Db).GetAccount(uid, time.Now())
+		if (amount.ChatAmount - amount.ChatUse) < (chatUse + imageUse) {
+			return "", errors.New("算力不足")
+		}
+		s1 := strings.Replace(str, "准备画画中：", "", 1)
+		s1 = strings.Replace(s1, "-额外消耗5算力", "", 1)
+		imageCreate := sanmuai.ImageCreate{
+			Prompt:         s1,
+			N:              1,
+			ResponseFormat: "url",
+			Size:           "256x256",
+		}
+		ai := sanmuai.GetAI("della", sanmuai.SanmuData{
+			Ctx:    l.ctx,
+			SvcCtx: l.svcCtx,
+		})
+
+		stream, err := ai.CreateImage(imageCreate)
+		if err != nil {
+			return "", err
+		}
+		// 扣除算力
+		service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+			Uid:     uid,
+			Type:    "image/createMulti",
+			Content: s1,
+			Result:  strings.Join(stream, ","),
+		})
+		return fmt.Sprintf("\n\n![%s](%s)\n\n更高级的功能，请使用[三目画画]", s1, stream[0]), nil
+	}
+	return "", nil
 }
 
 func getStudy() []map[string]string {
