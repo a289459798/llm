@@ -53,6 +53,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.Error{})
 	db.AutoMigrate(&model.Setting{})
 	db.AutoMigrate(&model.Order{})
+	db.AutoMigrate(&model.OrderPay{})
+	db.AutoMigrate(&model.OrderItem{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,

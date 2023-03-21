@@ -9,7 +9,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -47,12 +46,36 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 		SellPrice: float32(vipsSetting["original"].(float64)),
 		PayPrice:  float32(vipsSetting["first"].(float64)),
 		Status:    0,
-		PayType:   req.Platform,
 	}
 
 	tx := l.svcCtx.Db.Begin()
 
-	tx.Create(&order)
+	err = tx.Create(&order).Error
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Create(&model.OrderItem{
+		OrderId:   order.ID,
+		ItemId:    0,
+		Name:      "会员",
+		Image:     "",
+		CostPrice: order.CostPrice,
+		SellPrice: order.SellPrice,
+		PayPrice:  order.PayPrice,
+		Number:    1,
+	}).Error
+	if err != nil {
+		return nil, err
+	}
+	err = tx.Create(&model.OrderPay{
+		OutNo:       order.OutNo,
+		PayPrice:    order.PayPrice,
+		RefundPrice: 0,
+		Status:      0,
+	}).Error
+	if err != nil {
+		return nil, err
+	}
 	payModel := pay2.GetPay(req.Platform, pay2.PayData{
 		Ctx:    l.ctx,
 		Config: l.svcCtx.Config,
