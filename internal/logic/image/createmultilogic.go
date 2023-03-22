@@ -8,6 +8,7 @@ import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -95,6 +96,12 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Result:  strings.Join(stream, ","),
 		Model:   req.Model,
 	})
+
+	if req.Model != "" {
+		for i := 0; i < len(stream); i++ {
+			stream[i] = base64.StdEncoding.EncodeToString([]byte(stream[i]))
+		}
+	}
 
 	return &types.ImageMultiResponse{
 		Url: stream,
