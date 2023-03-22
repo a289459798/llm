@@ -375,6 +375,11 @@ type QrCodeRequest struct {
 	Scene string `form:"scene"`
 }
 
+type ShortLinkRequest struct {
+	Page  string `json:"page"`
+	Title string `json:"title"`
+}
+
 type VipPriceResponse struct {
 	Original int `json:"original"`
 	Price    int `json:"price"`
