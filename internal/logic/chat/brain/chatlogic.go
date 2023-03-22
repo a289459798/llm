@@ -133,7 +133,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "user",
-		Content: "接下来对话中,让你画画或者生成图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗5算力",
+		Content: "接下来对话中,让你画画、生成图片以及改图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗5算力",
 	})
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "assistant",
