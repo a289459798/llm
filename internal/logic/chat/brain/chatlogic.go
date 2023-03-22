@@ -47,14 +47,6 @@ type ChatRule struct {
 
 func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.Request) (resp *types.ChatResponse, err error) {
 	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Message, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
-	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	message := []gogpt.ChatCompletionMessage{
 		{
@@ -191,17 +183,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	defer stream.Close()
 
-	if stream.GetResponse().StatusCode != 200 {
-		b, _ := json.Marshal(message)
-		errorModel := &model.Error{
-			Uid:      uint32(uid),
-			Type:     "chat/chat",
-			Question: string(b),
-			Error:    fmt.Sprintf("code: %d, error: %s", stream.GetResponse().StatusCode, stream.GetResponse().Status),
-		}
-		errorModel.Insert(l.svcCtx.Db)
-	}
-
 	result := ""
 	go func() {
 		for {
@@ -210,6 +191,14 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 				break
 			}
 			if err != nil {
+				b, _ := json.Marshal(message)
+				errorModel := &model.Error{
+					Uid:      uint32(uid),
+					Type:     "chat/chat",
+					Question: string(b),
+					Error:    err.Error(),
+				}
+				errorModel.Insert(l.svcCtx.Db)
 				break
 			}
 			if len(response.Choices) > 0 {
@@ -237,6 +226,8 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 
 		close(ch)
 	}()
+
+	fmt.Println(result)
 
 	select {
 	case <-ch:
