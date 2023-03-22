@@ -227,8 +227,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		close(ch)
 	}()
 
-	fmt.Println(result)
-
 	select {
 	case <-ch:
 		// 处理已完成
