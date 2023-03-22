@@ -3,7 +3,6 @@ package svc
 import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
-	"chatgpt-tools/model"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -44,7 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.Feedback{})
 	//db.AutoMigrate(&model.Apikey{})
 	//db.AutoMigrate(&model.Pic2Pic{})
-	db.AutoMigrate(&model.AccountRecord{})
+	//db.AutoMigrate(&model.AccountRecord{})
 	//db.AutoMigrate(&model.ShareRecord{})
 	//db.AutoMigrate(&model.ChatTemplate{})
 	//db.AutoMigrate(&model.Contraband{})
