@@ -17,7 +17,7 @@ type SanmuData struct {
 }
 
 func GetAI(model string, data SanmuData) SanmuAI {
-	if model == "journey" {
+	if model == "Midjourney" {
 		return NewJourney(data.Ctx, data.SvcCtx)
 	} else if model == "gpt4" {
 		return NewGpt4(data.Ctx, data.SvcCtx)

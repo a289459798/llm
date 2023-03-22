@@ -10,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"strings"
 
@@ -48,7 +47,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 	}
 
 	if isVip {
-		if req.Model == "dalle-plus" || req.Model == "journey" {
+		if req.Model == "gpt-plus" || req.Model == "Midjourney" {
 			// 翻译
 			message := []gogpt.ChatCompletionMessage{
 				{
@@ -63,9 +62,6 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
 			if err == nil && len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
 				imageCreate.Prompt = stream.Choices[0].Message.Content
-				if req.Model == "journey" {
-					imageCreate.Prompt = fmt.Sprintf("midjourney-v5 style %s ", stream.Choices[0].Message.Content)
-				}
 			}
 		}
 		if req.Number > 0 {
@@ -75,10 +71,8 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			imageCreate.Size = "512x512"
 		}
 	} else {
-		req.Model = "dalle"
+		req.Model = "gpt"
 	}
-
-	fmt.Println(imageCreate.Prompt)
 
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
 		Ctx:    l.ctx,

@@ -118,7 +118,7 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 			"height":              height,
 			"num_inference_steps": 50,
 			"num_outputs":         image.N,
-			"prompt":              image.Prompt,
+			"prompt":              fmt.Sprintf("midjourney-v5 style %s ", image.Prompt),
 			"seed":                nil,
 		},
 	}
