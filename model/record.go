@@ -7,7 +7,7 @@ type Record struct {
 	Uid       uint32    `json:"uid" gorm:"index:idx_uid"`
 	Type      string    `gorm:"type:varchar(20)" json:"type"`
 	ChatId    string    `gorm:"type:varchar(50)" json:"chat_id"`
-	Content   string    `gorm:"type:varchar(255)" json:"content"`
+	Content   string    `json:"content"`
 	Result    string    `json:"result"`
 	Model     string    `json:"model" gorm:"type:varchar(20)"`
 	Platform  string    `json:"platform" gorm:"type:varchar(20)"`
