@@ -3,9 +3,11 @@ module chatgpt-tools
 go 1.18
 
 require (
+	github.com/go-pay/gopay v1.5.91
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/hyperjumptech/grule-rule-engine v1.13.0
 	github.com/importcjj/sensitive v0.0.0-20200106142752-42d1c505be7b
+	github.com/jinzhu/copier v0.3.5
 	github.com/qiniu/go-sdk/v7 v7.14.0
 	github.com/sashabaranov/go-openai v1.5.2
 	github.com/silenceper/wechat/v2 v2.1.4
@@ -28,7 +30,6 @@ require (
 	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-pay/gopay v1.5.91 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -36,7 +37,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
-	github.com/jinzhu/copier v0.3.5 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd // indirect

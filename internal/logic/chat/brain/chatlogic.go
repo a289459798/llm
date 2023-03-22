@@ -125,7 +125,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "user",
-		Content: "接下来对话中,让你画画、生成图片以及改图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗5算力",
+		Content: "接下来对话中,让你画画、生成图片以及改图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗10算力",
 	})
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "assistant",
@@ -261,14 +261,30 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 			return "", errors.New("算力不足")
 		}
 		s1 := strings.Replace(str, "准备画画中：", "", 1)
-		s1 = strings.Replace(s1, "-额外消耗5算力", "", 1)
+		s1 = strings.Replace(s1, "-额外消耗10算力", "", 1)
+
+		message := []gogpt.ChatCompletionMessage{
+			{
+				Role:    "system",
+				Content: "帮我翻译",
+			},
+			{
+				Role:    "user",
+				Content: s1,
+			},
+		}
+		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
+		if err == nil && len(conv.Choices) > 0 && conv.Choices[0].Message.Content != "" {
+			s1 = fmt.Sprintf("midjourney-v4 style %s", conv.Choices[0].Message.Content)
+		}
+
 		imageCreate := sanmuai.ImageCreate{
 			Prompt:         s1,
 			N:              1,
 			ResponseFormat: "url",
-			Size:           "256x256",
+			Size:           "512x512",
 		}
-		ai := sanmuai.GetAI("della", sanmuai.SanmuData{
+		ai := sanmuai.GetAI("Midjourney", sanmuai.SanmuData{
 			Ctx:    l.ctx,
 			SvcCtx: l.svcCtx,
 		})
