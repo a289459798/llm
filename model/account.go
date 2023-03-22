@@ -2,6 +2,7 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -29,13 +30,13 @@ func NewAccount(db *gorm.DB) *AccountModel {
 func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 
 	account := &Account{}
-	a.DB.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).Find(&account)
-	if account.ID == 0 {
-		a.DB.Transaction(func(tx *gorm.DB) error {
+	a.DB.Transaction(func(tx *gorm.DB) error {
+		tx.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).First(&account)
+		if account.ID == 0 {
 			var amount uint32 = 5
 			// 获取连续天数
 			yesterdayAccount := &Account{}
-			tx.Where("uid = ?", uid).Where("date = ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")).Find(&yesterdayAccount)
+			tx.Where("uid = ?", uid).Where("date = ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")).First(&yesterdayAccount)
 			account.LoginCount = 1
 			if yesterdayAccount.ID > 0 {
 				amount += yesterdayAccount.LoginCount
@@ -45,6 +46,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			account.ChatAmount = amount
 			account.ChatUse = 0
 			account.Date = date
+			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&account)
 
 			isVip := User{ID: uid}.IsVip()
 			if isVip {
@@ -62,7 +64,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 
 			tx.Create(&account)
 
-			tx.Create(&AccountRecord{
+			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&AccountRecord{
 				Uid:           uid,
 				RecordId:      0,
 				Way:           1,
@@ -70,11 +72,9 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 				Amount:        amount,
 				CurrentAmount: account.ChatAmount - account.ChatUse,
 			})
+		}
+		return nil
+	})
 
-			return nil
-		})
-
-		return account
-	}
 	return account
 }
