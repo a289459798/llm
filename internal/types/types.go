@@ -385,6 +385,13 @@ type VipGiveResponse struct {
 	Expiry string `json:"expiry"`
 }
 
+type VipCxchangeRequest struct {
+	Code string `json:"code"`
+}
+
+type VipCxchangeResponse struct {
+}
+
 type VipPayRequest struct {
 	Platform string `json:"platform,options=wechat|alipay"`
 }

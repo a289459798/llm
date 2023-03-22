@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
@@ -25,4 +27,36 @@ func (user User) Find(db *gorm.DB) User {
 
 func (user User) IsVip() bool {
 	return time.Now().Unix() < user.VipExpiry.Unix()
+}
+
+func (user User) SetVip(db *gorm.DB) error {
+	if user.ID == 0 {
+		fmt.Println(222)
+		return errors.New("用户不存在")
+	}
+	return db.Transaction(func(tx *gorm.DB) error {
+		// 设置VIP过期时间
+		user.VipExpiry = user.VipExpiry.AddDate(0, 0, 30)
+		tx.Save(user)
+		// 增加VIP算力
+		var vipAmount uint32 = 200
+		amount := NewAccount(tx).GetAccount(user.ID, time.Now())
+		amount.ChatAmount += vipAmount
+		tx.Save(&amount)
+
+		// 插入算力明细
+		err := tx.Create(&AccountRecord{
+			Uid:           user.ID,
+			RecordId:      0,
+			Way:           1,
+			Type:          "vip",
+			Amount:        vipAmount,
+			CurrentAmount: amount.ChatAmount - amount.ChatUse,
+		}).Error
+		if err != nil {
+			fmt.Println(1111)
+			return err
+		}
+		return nil
+	})
 }

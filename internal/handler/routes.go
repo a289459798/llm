@@ -423,6 +423,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/vip/give",
 					Handler: vip.VipGiveHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/vip/exchange",
+					Handler: vip.VipCxchangeHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

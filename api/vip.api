@@ -10,6 +10,14 @@ type VipGiveResponse {
     Expiry string `json:"expiry"`
 }
 
+type VipCxchangeRequest {
+    Code string `json:"code"`
+}
+
+type VipCxchangeResponse {
+
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -21,4 +29,7 @@ service tools {
 
     @handler vipGive
     get /vip/give returns (VipGiveResponse)
+
+    @handler vipCxchange
+    post /vip/exchange(VipCxchangeRequest) returns (VipCxchangeResponse)
 }
