@@ -133,7 +133,7 @@ type ReportResponse struct {
 
 type ImageRequest struct {
 	Content string `json:"content"`
-	Model   string `json:"model,optional,options=dalle|dalle-plus|journey"`
+	Model   string `json:"model,optional,options=gpt|gpt-plus|StableDiffusion|Midjourney"`
 	Number  int    `json:"number,optional,options=1|4"`
 	Clarity string `json:"clarity,optional,options=standard|high"`
 }
@@ -378,6 +378,11 @@ type QrCodeRequest struct {
 type VipPriceResponse struct {
 	Original int `json:"original"`
 	Price    int `json:"price"`
+}
+
+type VipGiveResponse struct {
+	Day    int    `json:"day"`
+	Expiry string `json:"expiry"`
 }
 
 type VipPayRequest struct {

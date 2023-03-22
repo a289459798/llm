@@ -418,6 +418,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/vip/price",
 					Handler: vip.VipPriceHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/vip/give",
+					Handler: vip.VipGiveHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

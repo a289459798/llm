@@ -5,6 +5,11 @@ type VipPriceResponse {
     Price int `json:"price"`
 }
 
+type VipGiveResponse {
+    Day int `json:"day"`
+    Expiry string `json:"expiry"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -14,4 +19,6 @@ service tools {
     @handler vipPrice
     get /vip/price returns (VipPriceResponse)
 
+    @handler vipGive
+    get /vip/give returns (VipGiveResponse)
 }
