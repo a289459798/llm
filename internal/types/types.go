@@ -11,13 +11,15 @@ type InfoRequest struct {
 }
 
 type InfoResponse struct {
-	Token  string `json:"token"`
-	Amount uint32 `json:"amount"`
-	Uid    uint32 `json:"uid"`
-	OpenId string `json:"openId"`
-	Vip    bool   `json:"vip"`
-	Code   string `json:"code"`
-	Group  bool   `json:"group"`
+	Token   string `json:"token"`
+	Amount  uint32 `json:"amount"`
+	Uid     uint32 `json:"uid"`
+	OpenId  string `json:"openId"`
+	Vip     bool   `json:"vip"`
+	Code    string `json:"code"`
+	Group   bool   `json:"group"`
+	VipName string `json:"vipName"`
+	VipGive uint32 `json:"vipGive"`
 }
 
 type Task struct {
@@ -133,7 +135,7 @@ type ReportResponse struct {
 
 type ImageRequest struct {
 	Content string `json:"content"`
-	Model   string `json:"model,optional,options=gpt|gpt-plus|StableDiffusion|Midjourney"`
+	Model   string `json:"model,optional,options=DALL-E|GPT-PLUS|StableDiffusion|Midjourney"`
 	Number  int    `json:"number,optional,options=1|4"`
 	Clarity string `json:"clarity,optional,options=standard|high|superhigh"`
 }

@@ -33,7 +33,7 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
 	user := &model.User{}
-	l.svcCtx.Db.Where("id = ?", uid).First(user)
+	l.svcCtx.Db.Where("id = ?", uid).Preload("Vip").First(user)
 
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
@@ -44,12 +44,14 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
 
 	return &types.InfoResponse{
-		Amount: amount.ChatAmount - amount.ChatUse,
-		Uid:    uint32(uid),
-		OpenId: user.OpenId,
-		Vip:    user.IsVip(),
-		Code:   fmt.Sprintf("%b", uid),
-		Token:  tokenString,
-		Group:  user.JoinGroup,
+		Amount:  amount.ChatAmount - amount.ChatUse,
+		Uid:     uint32(uid),
+		OpenId:  user.OpenId,
+		Vip:     user.IsVip(),
+		Code:    fmt.Sprintf("%b", uid),
+		Token:   tokenString,
+		Group:   user.JoinGroup,
+		VipName: user.Vip.Name,
+		VipGive: user.Vip.Amount,
 	}, nil
 }
