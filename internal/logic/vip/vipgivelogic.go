@@ -39,6 +39,7 @@ func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
 		}
 		day = 1
 		expiry = user.VipExpiry.Format("2006-01-02")
+		user.VipId = 1
 		l.svcCtx.Db.Save(&user)
 	}
 	return &types.VipGiveResponse{

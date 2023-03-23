@@ -1,14 +1,12 @@
 package vip
 
 import (
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
 	"errors"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,9 +27,15 @@ func NewVipCxchangeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipCx
 func (l *VipCxchangeLogic) VipCxchange(req *types.VipCxchangeRequest) (resp *types.VipCxchangeResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	vipCode := &model.VipCode{}
-	l.svcCtx.Db.Where("uid = ?", uid).Where("code = ?", req.Code).Where("status != 1").First(&vipCode)
+	l.svcCtx.Db.Where("uid = ?", uid).Where("code = ?", req.Code).Where("status != 1").Preload("Vip").First(&vipCode)
 	if vipCode.ID == 0 {
 		return nil, errors.New("兑换码错误")
+	}
+
+	// 判断会员等级
+	user := model.User{ID: uint32(uid)}.Find(l.svcCtx.Db)
+	if user.IsVip() && user.VipId != vipCode.VipId {
+		return nil, errors.New("当前会员与购买会员不符，请联系客服")
 	}
 
 	tx := l.svcCtx.Db.Begin()
@@ -43,7 +47,7 @@ func (l *VipCxchangeLogic) VipCxchange(req *types.VipCxchangeRequest) (resp *typ
 		tx.Rollback()
 		return nil, err
 	}
-	err = model.User{ID: uint32(uid)}.Find(l.svcCtx.Db).SetVip(tx)
+	err = model.User{ID: uint32(uid)}.Find(l.svcCtx.Db).SetVip(tx, vipCode)
 	if err != nil {
 		tx.RollbackTo("start")
 		return nil, err
