@@ -97,30 +97,36 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		tx.Rollback()
 		return nil, errors.New("重复执行")
 	}
-
-	l.svcCtx.Db.Model(&model.AccountRecord{}).
-		Where("uid = ?", uid).
-		Where("type in (?, ?)", "ad", "share").
-		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
-		Count(&total)
-
 	var welfare uint32 = 0
 
-	if total == 12 {
-		welfare = 100
-		amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
-		amount.ChatAmount += welfare
-		tx.Save(&amount)
+	tasksSetting, err := model.Setting{Name: "task_welfare"}.Find(l.svcCtx.Db)
+	if err == nil && len(tasksSetting) > 0 {
+		startTime, err1 := time.ParseInLocation("2006-01-02 15:04:05", tasksSetting["start"].(string)+" 00:00:00", time.Local)
+		endTime, err2 := time.ParseInLocation("2006-01-02 15:04:05", tasksSetting["end"].(string)+" 23:59:59", time.Local)
+		if err1 == nil && err2 == nil && time.Now().Unix() >= startTime.Unix() && time.Now().Unix() < endTime.Unix() {
+			l.svcCtx.Db.Model(&model.AccountRecord{}).
+				Where("uid = ?", uid).
+				Where("type in (?, ?)", "ad", "share").
+				Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
+				Count(&total)
 
-		tx.Create(&model.AccountRecord{
-			Uid:           uint32(uid),
-			RecordId:      uint32(t),
-			Way:           1,
-			Type:          "welfare",
-			Amount:        welfare,
-			CurrentAmount: amount.ChatAmount - amount.ChatUse,
-		})
+			if total == 12 {
+				welfare = uint32(tasksSetting["amount"].(float64))
+				amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
+				amount.ChatAmount += welfare
+				tx.Save(&amount)
 
+				tx.Create(&model.AccountRecord{
+					Uid:           uint32(uid),
+					RecordId:      uint32(t),
+					Way:           1,
+					Type:          "welfare",
+					Amount:        welfare,
+					CurrentAmount: amount.ChatAmount - amount.ChatUse,
+				})
+
+			}
+		}
 	}
 
 	totalAmount := amount.ChatAmount - amount.ChatUse
