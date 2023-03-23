@@ -125,7 +125,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "user",
-		Content: "接下来对话中,让你画画、生成图片以及改图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗10算力",
+		Content: "接下来对话中,让你画画、生成图片以及改图片，你要回复格式是：准备画画中：{画画的内容}-额外消耗5算力",
 	})
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    "assistant",
@@ -261,7 +261,7 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 			return "", errors.New("算力不足")
 		}
 		s1 := strings.Replace(str, "准备画画中：", "", 1)
-		s1 = strings.Replace(s1, "-额外消耗10算力", "", 1)
+		s1 = strings.Replace(s1, "-额外消耗5算力", "", 1)
 
 		message := []gogpt.ChatCompletionMessage{
 			{
