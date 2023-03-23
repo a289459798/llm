@@ -1,8 +1,15 @@
 syntax = "v1"
 
 type VipPriceResponse {
-    Original int `json:"original"`
-    Price int `json:"price"`
+    Data []VipDataResponse `json:"data"`
+}
+
+type VipDataResponse {
+    ID uint32 `json:"id"`
+    Name string `json:"name"`
+    Origin float32 `json:"origin"`
+    Price float32 `json:"price"`
+    Amount uint32 `json:"amount"`
 }
 
 type VipGiveResponse {
@@ -16,6 +23,16 @@ type VipCxchangeRequest {
 
 type VipCxchangeResponse {
 
+}
+
+type VipCodeGenerateRequest {
+    VipId uint32 `json:"vipId"`
+    Day uint32 `json:"day"`
+    AICode string `json:"aiCode"`
+}
+
+type VipCodeGenerateResponse {
+    Code string `json:"code"`
 }
 
 @server(
@@ -32,4 +49,7 @@ service tools {
 
     @handler vipCxchange
     post /vip/exchange(VipCxchangeRequest) returns (VipCxchangeResponse)
+
+    @handler vipCodeGenerate
+    post /vip/code-generate(VipCodeGenerateRequest) returns (VipCodeGenerateResponse)
 }

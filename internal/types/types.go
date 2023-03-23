@@ -135,7 +135,7 @@ type ImageRequest struct {
 	Content string `json:"content"`
 	Model   string `json:"model,optional,options=gpt|gpt-plus|StableDiffusion|Midjourney"`
 	Number  int    `json:"number,optional,options=1|4"`
-	Clarity string `json:"clarity,optional,options=standard|high"`
+	Clarity string `json:"clarity,optional,options=standard|high|superhigh"`
 }
 
 type ImageResponse struct {
@@ -382,8 +382,15 @@ type ShortLinkRequest struct {
 }
 
 type VipPriceResponse struct {
-	Original int `json:"original"`
-	Price    int `json:"price"`
+	Data []VipDataResponse `json:"data"`
+}
+
+type VipDataResponse struct {
+	ID     uint32  `json:"id"`
+	Name   string  `json:"name"`
+	Origin float32 `json:"origin"`
+	Price  float32 `json:"price"`
+	Amount uint32  `json:"amount"`
 }
 
 type VipGiveResponse struct {
@@ -396,6 +403,16 @@ type VipCxchangeRequest struct {
 }
 
 type VipCxchangeResponse struct {
+}
+
+type VipCodeGenerateRequest struct {
+	VipId  uint32 `json:"vipId"`
+	Day    uint32 `json:"day"`
+	AICode string `json:"aiCode"`
+}
+
+type VipCodeGenerateResponse struct {
+	Code string `json:"code"`
 }
 
 type VipPayRequest struct {

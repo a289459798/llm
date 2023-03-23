@@ -433,6 +433,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/vip/exchange",
 					Handler: vip.VipCxchangeHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/vip/code-generate",
+					Handler: vip.VipCodeGenerateHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

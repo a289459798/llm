@@ -5,7 +5,7 @@ import (
 	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
-	"encoding/json"
+	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -24,18 +24,11 @@ func NewVipPriceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipPrice
 }
 
 func (l *VipPriceLogic) VipPrice() (resp *types.VipPriceResponse, err error) {
-	setting := &model.Setting{Name: "vip"}
-	vipsSetting, err := setting.Find(l.svcCtx.Db)
-	if err != nil {
-		return nil, err
-	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	firstMonth := model.Order{Uid: uint32(uid)}.FirstMonthVip(l.svcCtx.Db)
-	if !firstMonth {
-		vipsSetting["first"] = vipsSetting["original"]
-	}
+	vip := []model.Vip{}
+	l.svcCtx.Db.Find(&vip)
+	res := []types.VipDataResponse{}
+	copier.Copy(&res, &vip)
 	return &types.VipPriceResponse{
-		Original: int(vipsSetting["original"].(float64)),
-		Price:    int(vipsSetting["first"].(float64)),
+		Data: res,
 	}, nil
 }
