@@ -29,6 +29,7 @@ func (l *ToolsListLogic) ToolsList() (resp *types.ToolsHistoryListResponse, err 
 
 	records := []model.Record{}
 	l.svcCtx.Db.Where("uid = ?", uid).
+		Where("type != ?", "chat/chat").
 		Group("type").
 		Order("id desc").
 		Select("type").
