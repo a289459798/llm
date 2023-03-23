@@ -3,6 +3,7 @@ syntax = "v1"
 type(
     ValidRequest {
         Content string `json:"content"`
+        Params string `json:"params,optional"`
     }
 
     ValidResponse {

@@ -351,6 +351,7 @@ type ConvertResponse struct {
 
 type ValidRequest struct {
 	Content string `json:"content"`
+	Params  string `json:"params,optional"`
 }
 
 type ValidResponse struct {

@@ -2,16 +2,32 @@ package utils
 
 import (
 	"chatgpt-tools/model"
+	"encoding/json"
 	"gorm.io/gorm"
 )
 
-func GetSuanLi(t string, uid uint32, db *gorm.DB) int {
+func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 	suanli := 1
+	paramsMap := make(map[string]interface{})
+	if params != "" {
+		json.Unmarshal([]byte(params), &paramsMap)
+
+	}
 	switch t {
 	case "image/create":
 	case "image/edit":
 	case "image/createMulti":
 		suanli = 5
+		if clarity, ok := paramsMap["clarity"]; ok {
+			if clarity == "superhigh" {
+				suanli = 20
+			} else if clarity == "high" {
+				suanli = 10
+			}
+		}
+		if number, ok := paramsMap["number"]; ok {
+			suanli = suanli * int(number.(float64))
+		}
 		break
 	case "creation/article":
 	case "code/generate":

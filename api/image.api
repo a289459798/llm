@@ -5,7 +5,7 @@ type(
         Content string `json:"content"`
         Model string `json:"model,optional,options=gpt|gpt-plus|StableDiffusion|Midjourney"`
         Number int `json:"number,optional,options=1|4"`
-        Clarity string `json:"clarity,optional,options=standard|high"`
+        Clarity string `json:"clarity,optional,options=standard|high|superhigh"`
     }
 
     ImageResponse {

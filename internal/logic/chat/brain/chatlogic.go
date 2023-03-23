@@ -253,8 +253,8 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 	if strings.Contains(str, "准备画画中：") {
 		// 判断算力消耗
-		imageUse := uint32(utils.GetSuanLi("image/createMulti", uid, l.svcCtx.Db))
-		chatUse := uint32(utils.GetSuanLi("chat/chat", uid, l.svcCtx.Db))
+		imageUse := uint32(utils.GetSuanLi(uid, "image/createMulti", "", l.svcCtx.Db))
+		chatUse := uint32(utils.GetSuanLi(uid, "chat/chat", "uid", l.svcCtx.Db))
 		amount := model.NewAccount(l.svcCtx.Db).GetAccount(uid, time.Now())
 		if (amount.ChatAmount - amount.ChatUse) < (chatUse + imageUse) {
 			return "", errors.New("算力不足")
