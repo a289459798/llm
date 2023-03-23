@@ -3,6 +3,7 @@ package svc
 import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
+	"chatgpt-tools/model"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
