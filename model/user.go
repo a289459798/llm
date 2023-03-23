@@ -13,6 +13,7 @@ type User struct {
 	UnionId   string    `gorm:"type:varchar(64)"json:"union_id"`
 	Subscribe bool      `json:"subscribe"`
 	JoinGroup bool      `json:"join_group" gorm:"default:0"`
+	VipId     uint32    `json:"vip_id"`
 	VipExpiry time.Time `json:"vip_expiry" gorm:"type:TIMESTAMP"`
 	Platform  string    `json:"platform" gorm:"type:varchar(20)"`
 	Channel   string    `json:"channel" gorm:"type:varchar(32)"`

@@ -56,6 +56,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	db.AutoMigrate(&model.OrderPay{})
 	db.AutoMigrate(&model.OrderItem{})
 	db.AutoMigrate(&model.VipCode{})
+	db.AutoMigrate(&model.Vip{})
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,

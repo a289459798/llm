@@ -13,8 +13,8 @@ const (
 type OrderPay struct {
 	ID          uint32    `gorm:"primary_key" json:"id"`
 	OutNo       string    `json:"out_no" gorm:"type:varchar(100);uniqueIndex:ik_out_no"`
-	PayPrice    float32   `json:"pay_price"`
-	RefundPrice float32   `json:"pay_price"`
+	PayPrice    float32   `json:"pay_price" gorm:"type:decimal(10,2)"`
+	RefundPrice float32   `json:"refund_price" gorm:"type:decimal(10,2)"`
 	Status      uint8     `json:"status"`
 	PayType     string    `json:"pay_type" gorm:"type:varchar(20)"`
 	Merchant    string    `json:"merchant" gorm:"type:varchar(20)"`
