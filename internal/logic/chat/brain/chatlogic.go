@@ -74,7 +74,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		})
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
-			Content: fmt.Sprintf("好的，在接下来的对话中我的名字叫%s，我称呼你为%s", ai.Name, ai.Call),
+			Content: fmt.Sprintf("好的"),
 		})
 		if ai.RoleId > 0 {
 			// 角色语气

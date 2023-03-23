@@ -74,6 +74,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			}
 		}
 	}
+	fmt.Println(isVip)
 	if isVip {
 		if req.Number > 0 {
 			imageCreate.N = req.Number
@@ -87,6 +88,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		req.Model = "DALL-E"
 	}
 
+	fmt.Println(req.Model)
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
 		Ctx:    l.ctx,
 		SvcCtx: l.svcCtx,
