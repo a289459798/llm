@@ -63,5 +63,5 @@ service tools {
     post /vip/code-generate(VipCodeGenerateRequest) returns (VipCodeGenerateResponse)
 
     @handler vipPrivilege
-    post /vip/privilege returns (VipPrivilegeListResponse)
+    get /vip/privilege returns (VipPrivilegeListResponse)
 }

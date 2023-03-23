@@ -439,7 +439,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: vip.VipCodeGenerateHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/vip/privilege",
 					Handler: vip.VipPrivilegeHandler(serverCtx),
 				},
