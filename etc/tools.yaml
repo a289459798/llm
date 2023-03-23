@@ -7,7 +7,7 @@ Timeout: 0
 OpenAIKey: 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
 
 Mysql:
-  DataSource: sdfggfgf:fgh5645234SDFD334@tcp(rm-uywlhafd.mysql.rds.aliyuncs.com:3306)/sdfgfh?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:5ichong2015@tcp(222.71.152.146:6033)/chatgpt-tools?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 
 Auth:
   AccessSecret: chatgpt-tools
