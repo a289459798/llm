@@ -95,6 +95,6 @@ func (l *QimingLogic) Qiming(req *types.QiMingRequest, w http.ResponseWriter) (r
 		Type:    "divination/qiming",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

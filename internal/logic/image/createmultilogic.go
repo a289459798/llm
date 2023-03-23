@@ -48,6 +48,8 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Size:           "256x256",
 	}
 
+	paramsMap := make(map[string]interface{})
+	paramsMap["number"] = 1
 	if isVip {
 		if req.Model == "gpt-plus" || req.Model == "Midjourney" || req.Model == "StableDiffusion" {
 			// 翻译
@@ -69,9 +71,12 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 				}
 			}
 		}
+
 		if req.Number > 0 {
 			imageCreate.N = req.Number
+			paramsMap["number"] = req.Number
 		}
+		paramsMap["clarity"] = req.Clarity
 		if req.Clarity == "high" {
 			imageCreate.Size = "512x512"
 		}
@@ -95,6 +100,14 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Content: req.Content,
 		Result:  strings.Join(stream, ","),
 		Model:   req.Model,
+	}, &service.RecordParams{
+		Params: func() string {
+			if paramsMap != nil {
+				params, _ := json.Marshal(paramsMap)
+				return string(params)
+			}
+			return ""
+		}(),
 	})
 
 	if req.Model != "" {

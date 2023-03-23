@@ -95,6 +95,6 @@ func (l *PlaygroundLogic) Playground(req *types.PlaygroundRequest, w http.Respon
 		Type:    "code/playground",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

@@ -94,6 +94,6 @@ func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter)
 		Type:    "code/regular",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

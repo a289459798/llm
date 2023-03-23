@@ -11,18 +11,22 @@ type Record struct {
 	DB *gorm.DB
 }
 
+type RecordParams struct {
+	Params string `json:"params"`
+}
+
 func NewRecord(db *gorm.DB) *Record {
 	return &Record{
 		DB: db,
 	}
 }
 
-func (r *Record) Insert(record *model.Record) {
+func (r *Record) Insert(record *model.Record, params *RecordParams) {
 	r.DB.Create(record)
 
 	r.DB.Transaction(func(tx *gorm.DB) error {
 		// 消耗次数
-		chatUse := uint32(utils.GetSuanLi(record.Uid, record.Type, "", r.DB))
+		chatUse := uint32(utils.GetSuanLi(record.Uid, record.Type, params.Params, r.DB))
 		amount := model.NewAccount(tx).GetAccount(record.Uid, time.Now())
 		amount.ChatUse += chatUse
 		tx.Save(&amount)

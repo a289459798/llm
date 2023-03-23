@@ -110,6 +110,6 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 		Type:    "chat/reject",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

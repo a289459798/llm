@@ -99,6 +99,6 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 		Type:    "divination/suanming",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

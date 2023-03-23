@@ -104,6 +104,6 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		Type:    "report/week",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

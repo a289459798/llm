@@ -95,6 +95,6 @@ func (l *NameLogic) Name(req *types.NameRequest, w http.ResponseWriter) (resp *t
 		Type:    "code/name",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

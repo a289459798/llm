@@ -95,6 +95,6 @@ func (l *GsqimingLogic) Gsqiming(req *types.GSQiMingRequest, w http.ResponseWrit
 		Type:    "divination/gsqiming",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

@@ -106,6 +106,6 @@ func (l *PursueLogic) Pursue(req *types.PursueRequest, w http.ResponseWriter) (r
 		Type:    "chat/pursue",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

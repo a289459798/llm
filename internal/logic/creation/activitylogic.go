@@ -107,6 +107,6 @@ func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWrit
 		Type:    "creation/activity",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

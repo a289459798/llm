@@ -133,6 +133,6 @@ func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp
 		Type:    "creation/activity",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

@@ -245,7 +245,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		ChatId:   req.ChatId,
 		Model:    req.Model,
 		Platform: r.Header.Get("platform"),
-	})
+	}, nil)
 
 	return
 }
@@ -298,7 +298,7 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 			Type:    "image/createMulti",
 			Content: s1,
 			Result:  strings.Join(stream, ","),
-		})
+		}, nil)
 		return fmt.Sprintf("\n\n![%s](%s)\n\n更高级的功能，请使用[三目画画]", s1, stream[0]), nil
 	}
 	return "", nil
