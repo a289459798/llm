@@ -50,28 +50,28 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 
 	paramsMap := make(map[string]interface{})
 	paramsMap["number"] = 1
-	if isVip {
-		if req.Model == "gpt-plus" || req.Model == "Midjourney" || req.Model == "StableDiffusion" {
-			// 翻译
-			message := []gogpt.ChatCompletionMessage{
-				{
-					Role:    "system",
-					Content: "帮我翻译",
-				},
-				{
-					Role:    "user",
-					Content: req.Content,
-				},
-			}
-			stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
-			if err == nil && len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
-				imageCreate.Prompt = stream.Choices[0].Message.Content
-				if req.Model == "Midjourney" {
-					imageCreate.Prompt = fmt.Sprintf("midjourney-v4 style %s", stream.Choices[0].Message.Content)
-				}
+
+	if req.Model == "GPT-PLUS" || req.Model == "Midjourney" || req.Model == "StableDiffusion" {
+		// 翻译
+		message := []gogpt.ChatCompletionMessage{
+			{
+				Role:    "system",
+				Content: "帮我翻译",
+			},
+			{
+				Role:    "user",
+				Content: req.Content,
+			},
+		}
+		stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
+		if err == nil && len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
+			imageCreate.Prompt = stream.Choices[0].Message.Content
+			if req.Model == "Midjourney" {
+				imageCreate.Prompt = fmt.Sprintf("midjourney-v4 style %s", stream.Choices[0].Message.Content)
 			}
 		}
-
+	}
+	if isVip {
 		if req.Number > 0 {
 			imageCreate.N = req.Number
 			paramsMap["number"] = req.Number
@@ -81,7 +81,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			imageCreate.Size = "512x512"
 		}
 	} else {
-		req.Model = "gpt"
+		req.Model = "DALL-E"
 	}
 
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
