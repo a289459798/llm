@@ -35,6 +35,15 @@ type VipCodeGenerateResponse {
     Code string `json:"code"`
 }
 
+type VipPrivilegeListResponse {
+    Data []VipPrivilegeResponse `json:"data"`
+}
+
+type VipPrivilegeResponse {
+    Type string `json:"type"`
+    Title string `json:"title"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -52,4 +61,7 @@ service tools {
 
     @handler vipCodeGenerate
     post /vip/code-generate(VipCodeGenerateRequest) returns (VipCodeGenerateResponse)
+
+    @handler vipPrivilege
+    post /vip/privilege returns (VipPrivilegeListResponse)
 }

@@ -44,14 +44,14 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
 
 	return &types.InfoResponse{
-		Amount:  amount.ChatAmount - amount.ChatUse,
-		Uid:     uint32(uid),
-		OpenId:  user.OpenId,
-		Vip:     user.IsVip(),
-		Code:    fmt.Sprintf("%b", uid),
-		Token:   tokenString,
-		Group:   user.JoinGroup,
-		VipName: user.Vip.Name,
-		VipGive: user.Vip.Amount,
+		Amount:    amount.ChatAmount - amount.ChatUse,
+		Uid:       uint32(uid),
+		OpenId:    user.OpenId,
+		Vip:       user.IsVip(),
+		Code:      fmt.Sprintf("%b", uid),
+		Token:     tokenString,
+		Group:     user.JoinGroup,
+		VipName:   user.Vip.Name,
+		VipExpiry: user.VipExpiry.Format("2006-01-02"),
 	}, nil
 }

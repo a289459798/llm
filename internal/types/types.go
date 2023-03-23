@@ -11,15 +11,16 @@ type InfoRequest struct {
 }
 
 type InfoResponse struct {
-	Token   string `json:"token"`
-	Amount  uint32 `json:"amount"`
-	Uid     uint32 `json:"uid"`
-	OpenId  string `json:"openId"`
-	Vip     bool   `json:"vip"`
-	Code    string `json:"code"`
-	Group   bool   `json:"group"`
-	VipName string `json:"vipName"`
-	VipGive uint32 `json:"vipGive"`
+	Token     string `json:"token"`
+	Amount    uint32 `json:"amount"`
+	Uid       uint32 `json:"uid"`
+	OpenId    string `json:"openId"`
+	Vip       bool   `json:"vip"`
+	Code      string `json:"code"`
+	Group     bool   `json:"group"`
+	VipName   string `json:"vipName"`
+	VipGive   uint32 `json:"vipGive"`
+	VipExpiry string `json:"vipExpiry"`
 }
 
 type Task struct {
@@ -415,6 +416,15 @@ type VipCodeGenerateRequest struct {
 
 type VipCodeGenerateResponse struct {
 	Code string `json:"code"`
+}
+
+type VipPrivilegeListResponse struct {
+	Data []VipPrivilegeResponse `json:"data"`
+}
+
+type VipPrivilegeResponse struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
 }
 
 type VipPayRequest struct {

@@ -19,6 +19,7 @@ type InfoResponse {
     Group bool `json:"group"`
     VipName string `json:"vipName"`
     VipGive uint32 `json:"vipGive"`
+    VipExpiry string `json:"vipExpiry"`
 }
 
 type Task {
