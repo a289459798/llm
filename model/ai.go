@@ -1,6 +1,7 @@
 package model
 
 import (
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -15,4 +16,15 @@ type AI struct {
 	CreatedAt time.Time    `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt  time.Time    `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
 	Role      ChatTemplate `gorm:"foreignKey:id;references:role_id"`
+}
+
+func (ai AI) Info(db *gorm.DB) AI {
+	db.Model(AI{}).Select("gpt_ai.*").
+		Joins("inner join gpt_user on gpt_user.id=gpt_ai.uid").
+		Where("gpt_ai.uid = ?", ai.Uid).
+		Where("gpt_ai.status = 1").
+		Where("gpt_user.vip_expiry >=?", time.Now().Format("2006-01-02 15:04:05")).
+		Preload("Role").
+		First(&ai)
+	return ai
 }
