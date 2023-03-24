@@ -26,7 +26,12 @@ func (r *Record) Insert(record *model.Record, params *RecordParams) {
 
 	r.DB.Transaction(func(tx *gorm.DB) error {
 		// 消耗次数
-		chatUse := uint32(utils.GetSuanLi(record.Uid, record.Type, params.Params, r.DB))
+		chatUse := uint32(utils.GetSuanLi(record.Uid, record.Type, func() string {
+			if params != nil {
+				return params.Params
+			}
+			return ""
+		}(), tx))
 		amount := model.NewAccount(tx).GetAccount(record.Uid, time.Now())
 		amount.ChatUse += chatUse
 		tx.Save(&amount)

@@ -14,9 +14,7 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 
 	}
 	switch t {
-	case "image/create":
-	case "image/edit":
-	case "image/createMulti":
+	case "image/create", "image/edit", "image/createMulti":
 		suanli = 5
 		if clarity, ok := paramsMap["clarity"]; ok {
 			if clarity == "superhigh" {
@@ -29,9 +27,7 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 			suanli = suanli * int(number.(float64))
 		}
 		break
-	case "creation/article":
-	case "code/generate":
-	case "code/exam":
+	case "creation/article", "code/generate", "code/exam":
 		suanli = 2
 		break
 	case "chat/chat":
