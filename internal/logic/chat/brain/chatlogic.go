@@ -98,11 +98,11 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter) (resp *t
 	} else {
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "user",
-			Content: "在之后的对话中，问你你是谁的时候，你要回答”我是三目AI，一个站在巨人肩上诞生的项目，结合了GPT-3.5、GPT-4、文心等多种能力的AI。“，不要回答其他信息",
+			Content: "在之后的对话中，问你你是谁的时候，你要回答”我是三目AI，一个站在巨人肩上诞生的项目，不属于chatgpt、GPT，是结合了多种能力的AI。“，不要回答其他信息",
 		})
 		message = append(message, gogpt.ChatCompletionMessage{
 			Role:    "assistant",
-			Content: "好的，下次您问我“你是谁”的时候，我会回答“我是三目AI，一个站在巨人肩上诞生的项目，结合了ChatGPT、文心等多种能力的AI。”",
+			Content: "好的",
 		})
 	}
 
