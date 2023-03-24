@@ -420,6 +420,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/common/shortlink",
 				Handler: common.ShortLinkHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/common/upload-token",
+				Handler: common.UploadTokenHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)

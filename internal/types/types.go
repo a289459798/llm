@@ -396,6 +396,10 @@ type ShortLinkRequest struct {
 	Title string `json:"title"`
 }
 
+type UploadTokenResponse struct {
+	Token string `json:"token"`
+}
+
 type VipPriceResponse struct {
 	Data []VipDataResponse `json:"data"`
 }

@@ -32,6 +32,10 @@ type(
         Page string `json:"page"`
         Title string `json:"title"`
     }
+
+    UploadTokenResponse {
+        Token string `json:"token"`
+    }
 )
 
 @server(
@@ -53,4 +57,7 @@ service tools {
     
     @handler shortLink
     get /common/shortlink(ShortLinkRequest) returns (QrCodeResponse)
+
+    @handler uploadToken
+    get /common/upload-token returns (UploadTokenResponse)
 }
