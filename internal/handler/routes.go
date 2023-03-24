@@ -176,6 +176,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/images/pic2pic/task",
 					Handler: image.Pic2pictaskHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/images/pic-repair",
+					Handler: image.Old2newHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

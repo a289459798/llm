@@ -9,31 +9,29 @@ import (
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 )
 
-type Journey struct {
+type Tencentarc struct {
 	Ctx    context.Context
 	SvcCtx *svc.ServiceContext
 }
 
-func NewJourney(c context.Context, svcCtx *svc.ServiceContext) *Journey {
-	return &Journey{
+func NewTencentarc(c context.Context, svcCtx *svc.ServiceContext) *Tencentarc {
+	return &Tencentarc{
 		Ctx:    c,
 		SvcCtx: svcCtx,
 	}
 }
 
-func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
-	cookie, err := getCookie()
+func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error) {
+	cookie, err := getTencentarcCookie()
 	if cookie == "" {
 		err = errors.New("cookie is empty")
 		return
 	}
 
-	uuid, err := create(cookie, image)
+	uuid, err := createRepair(cookie, image)
 	if err != nil {
 		return
 	}
@@ -51,7 +49,7 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 			case <-timer.C:
 				go func(resultChan chan []string, quitChan chan string) {
 					client := &http.Client{}
-					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/prompthero/openjourney/versions/9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb/predictions/%s", uuid), nil)
+					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", uuid), nil)
 					if err != nil {
 						return
 					}
@@ -71,7 +69,7 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 
 					respData := struct {
 						Prediction struct {
-							Output    []string `json:"output"`
+							Output    []string `json:"output_files"`
 							CreatedAt string   `json:"created_at"`
 							Uuid      string   `json:"uuid"`
 							Error     string   `json:"error"`
@@ -100,29 +98,22 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 	return
 }
 
-func (ai *Journey) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
+func (ai *Tencentarc) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
 	err = errors.New("该模型不支持会话")
 	return
 }
 
-func (ai *Journey) ImageRepair(image ImageRepair) (result []string, err error) {
+func (ai *Tencentarc) CreateImage(image ImageCreate) (result []string, err error) {
 	return
 }
 
-func create(cookie string, image ImageCreate) (uuid string, err error) {
+func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	client := &http.Client{}
-	s := strings.Split(image.Size, "x")
-	width, _ := strconv.Atoi(s[0])
-	height, _ := strconv.Atoi(s[1])
 	data := map[string]map[string]interface{}{
 		"inputs": {
-			"guidance_scale":      7,
-			"width":               width,
-			"height":              height,
-			"num_inference_steps": 50,
-			"num_outputs":         image.N,
-			"prompt":              image.Prompt,
-			"seed":                nil,
+			"img":     image.Image,
+			"scale":   1,
+			"version": "v1.4",
 		},
 	}
 
@@ -131,7 +122,7 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	if err != nil {
 		return
 	}
-	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/prompthero/openjourney/versions/9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb/predictions", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return
 	}
@@ -159,10 +150,10 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	return
 }
 
-func getCookie() (cookieString string, err error) {
+func getTencentarcCookie() (cookieString string, err error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest(http.MethodGet, "https://replicate.com/prompthero/openjourney", nil)
+	req, err := http.NewRequest(http.MethodGet, "https://replicate.com/tencentarc/gfpgan", nil)
 	if err != nil {
 		return
 	}

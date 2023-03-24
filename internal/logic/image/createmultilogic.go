@@ -88,7 +88,6 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		req.Model = "DALL-E"
 	}
 
-	fmt.Println(req.Model)
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
 		Ctx:    l.ctx,
 		SvcCtx: l.svcCtx,

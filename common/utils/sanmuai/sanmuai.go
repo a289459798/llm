@@ -9,6 +9,7 @@ import (
 type SanmuAI interface {
 	CreateImage(req ImageCreate) (stream []string, err error)
 	CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error)
+	ImageRepair(image ImageRepair) (result []string, err error)
 }
 
 type SanmuData struct {
@@ -21,6 +22,8 @@ func GetAI(model string, data SanmuData) SanmuAI {
 		return NewJourney(data.Ctx, data.SvcCtx)
 	} else if model == "GPT-4" {
 		return NewGpt4(data.Ctx, data.SvcCtx)
+	} else if model == "Tencentarc" {
+		return NewTencentarc(data.Ctx, data.SvcCtx)
 	} else {
 		return NewOpenAi(data.Ctx, data.SvcCtx)
 	}

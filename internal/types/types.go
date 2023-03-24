@@ -171,6 +171,10 @@ type ImageEditRequest struct {
 	Content string `form:"content"`
 }
 
+type PicRepairRequest struct {
+	Image string `json:"image"`
+}
+
 type QiMingRequest struct {
 	First    string `json:"first"`
 	Number   string `json:"number"`

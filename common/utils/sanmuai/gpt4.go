@@ -64,3 +64,7 @@ func (ai *Gpt4) CreateImage(req ImageCreate) (stream []string, err error) {
 	}
 	return
 }
+
+func (ai *Gpt4) ImageRepair(image ImageRepair) (result []string, err error) {
+	return
+}

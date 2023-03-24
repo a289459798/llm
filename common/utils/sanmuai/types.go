@@ -6,3 +6,7 @@ type ImageCreate struct {
 	Size           string `json:"size,omitempty"`
 	ResponseFormat string `json:"response_format,omitempty"`
 }
+
+type ImageRepair struct {
+	Image string `json:"image"`
+}

@@ -37,6 +37,10 @@ type(
     ImageEditRequest {
         Content string `form:"content"`
     }
+
+    PicRepairRequest {
+        Image string `json:"image"`
+    }
 )
 
 @server(
@@ -62,4 +66,7 @@ service tools {
 
     @handler pic2pictask
     get /images/pic2pic/task (Pic2picTaskRequest) returns (ImageResponse)
+
+    @handler old2new
+    get /images/pic-repair (PicRepairRequest) returns (ImageMultiResponse)
 }
