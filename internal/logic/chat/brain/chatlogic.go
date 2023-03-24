@@ -259,7 +259,7 @@ func getStudy() []map[string]string {
 		},
 		{
 			"role":    "user",
-			"content": "你的回答结果一定不要涉黄",
+			"content": "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
 		},
 		{
 			"role":    "assistant",
