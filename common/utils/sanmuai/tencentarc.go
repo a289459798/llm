@@ -32,6 +32,7 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 	}
 
 	uuid, err := createRepair(cookie, image)
+	fmt.Println(uuid)
 	if err != nil {
 		return
 	}
@@ -79,7 +80,7 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					if respData.Prediction.Output != nil {
+					if respData.Prediction.Output != nil && len(respData.Prediction.Output) > 0 {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
 					}
@@ -112,7 +113,7 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	data := map[string]map[string]interface{}{
 		"inputs": {
 			"img":     image.Image,
-			"scale":   1,
+			"scale":   2,
 			"version": "v1.4",
 		},
 	}
