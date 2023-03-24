@@ -33,7 +33,7 @@ func (l *ChatHistoryLogic) ChatHistory(req types.ChatHistoryRequest) (resp *type
 		Order("id desc").
 		Find(&records)
 	history := []types.ChatHistory{}
-	model := "gpt3.5"
+	model := "GPT-3.5"
 	for _, m := range records {
 		if m.Model != "" {
 			model = m.Model

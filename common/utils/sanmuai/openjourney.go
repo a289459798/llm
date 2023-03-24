@@ -81,7 +81,6 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					fmt.Println(respData.Prediction)
 					if respData.Prediction.Output != nil {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
