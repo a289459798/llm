@@ -46,11 +46,13 @@ func (l *VipCodeGenerateLogic) VipCodeGenerate(req *types.VipCodeGenerateRequest
 	newSign := hex.EncodeToString(md5sum[:6])
 	code := strings.ToUpper(newSign)
 	err = l.svcCtx.Db.Create(&model.VipCode{
-		Uid:    uint32(uid),
-		Code:   code,
-		VipId:  req.VipId,
-		Day:    req.Day,
-		Status: false,
+		Uid:      uint32(uid),
+		Code:     code,
+		VipId:    req.VipId,
+		Day:      req.Day,
+		Status:   false,
+		SystemId: uint32(uid),
+		AICode:   req.AICode,
 	}).Error
 	if err != nil {
 		return nil, err
