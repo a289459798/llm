@@ -9,6 +9,7 @@ import (
 
 func EncodeURL(s string) string {
 	var result string
+	s = strings.ReplaceAll(s, "~~", "~")
 	for _, r := range s {
 		if unicode.Is(unicode.Han, r) || unicode.Is(unicode.P, r) || unicode.Is(unicode.Hangul, r) || unicode.Is(unicode.Hiragana, r) || unicode.Is(unicode.Katakana, r) || unicode.Is(unicode.Latin, r) || unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Cyrillic, r) || unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Arabic, r) || unicode.Is(unicode.Thai, r) {
 			result += url.QueryEscape(string(r))
