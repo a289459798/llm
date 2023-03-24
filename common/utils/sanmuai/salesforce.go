@@ -45,7 +45,6 @@ func (ai *Salesforce) ImageText(image Image2Text) (result string, err error) {
 	}
 
 	uuid, err := createText(cookie, image)
-	fmt.Println(uuid)
 	if err != nil {
 		return
 	}

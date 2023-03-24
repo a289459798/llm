@@ -102,7 +102,6 @@ func (b *BaiduWX) getClient(id int) error {
 	} else {
 		b.Token = apikey.Token
 	}
-	fmt.Println(apikey.ID)
 	b.AppKeyId = int(apikey.ID)
 	return nil
 }

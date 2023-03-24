@@ -60,7 +60,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			},
 			{
 				Role:    "user",
-				Content: req.Content,
+				Content: fmt.Sprintf("帮我把一下内容翻译成英文：:%s", req.Content),
 			},
 		}
 		stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
@@ -74,7 +74,6 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			}
 		}
 	}
-	fmt.Println(isVip)
 	if isVip {
 		if req.Number > 0 {
 			imageCreate.N = req.Number
