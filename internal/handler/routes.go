@@ -177,9 +177,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: image.Pic2pictaskHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/images/pic-repair",
 					Handler: image.Old2newHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/img2text",
+					Handler: image.Image2TextHandler(serverCtx),
 				},
 			}...,
 		),

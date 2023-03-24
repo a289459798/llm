@@ -27,6 +27,12 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 			suanli = suanli * int(number.(float64))
 		}
 		break
+	case "image/img2text":
+		suanli = 5
+		break
+	case "image/pic-repair":
+		suanli = 10
+		break
 	case "creation/article", "code/generate", "code/exam":
 		suanli = 2
 		break

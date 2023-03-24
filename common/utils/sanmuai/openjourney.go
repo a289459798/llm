@@ -184,3 +184,7 @@ func getCookie() (cookieString string, err error) {
 	}
 	return
 }
+
+func (ai *Journey) ImageText(image Image2Text) (result string, err error) {
+	return
+}

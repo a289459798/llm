@@ -175,6 +175,14 @@ type PicRepairRequest struct {
 	Image string `json:"image"`
 }
 
+type Image2TextRequest struct {
+	Image string `json:"image"`
+}
+
+type Image2TextResponse struct {
+	Data string `json:"data"`
+}
+
 type QiMingRequest struct {
 	First    string `json:"first"`
 	Number   string `json:"number"`

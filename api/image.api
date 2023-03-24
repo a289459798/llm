@@ -41,6 +41,14 @@ type(
     PicRepairRequest {
         Image string `json:"image"`
     }
+
+    Image2TextRequest {
+        Image string `json:"image"`
+    }
+
+    Image2TextResponse {
+        Data string `json:"data"`
+    }
 )
 
 @server(
@@ -68,5 +76,8 @@ service tools {
     get /images/pic2pic/task (Pic2picTaskRequest) returns (ImageResponse)
 
     @handler old2new
-    get /images/pic-repair (PicRepairRequest) returns (ImageMultiResponse)
+    post /images/pic-repair (PicRepairRequest) returns (ImageMultiResponse)
+
+    @handler image2Text
+    post /images/img2text (Image2TextRequest) returns (Image2TextResponse)
 }

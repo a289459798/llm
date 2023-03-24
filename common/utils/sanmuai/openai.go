@@ -125,3 +125,7 @@ func (ai *OpenAi) CreateEditImage(file *os.File, content string) (stream gogpt.I
 func (ai *OpenAi) ImageRepair(image ImageRepair) (result []string, err error) {
 	return
 }
+
+func (ai *OpenAi) ImageText(image Image2Text) (result string, err error) {
+	return
+}

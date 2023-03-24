@@ -10,3 +10,7 @@ type ImageCreate struct {
 type ImageRepair struct {
 	Image string `json:"image"`
 }
+
+type Image2Text struct {
+	Image string `json:"image"`
+}

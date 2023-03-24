@@ -12,32 +12,46 @@ import (
 	"time"
 )
 
-type Tencentarc struct {
+type Salesforce struct {
 	Ctx    context.Context
 	SvcCtx *svc.ServiceContext
 }
 
-func NewTencentarc(c context.Context, svcCtx *svc.ServiceContext) *Tencentarc {
-	return &Tencentarc{
+func NewSalesforce(c context.Context, svcCtx *svc.ServiceContext) *Salesforce {
+	return &Salesforce{
 		Ctx:    c,
 		SvcCtx: svcCtx,
 	}
 }
 
-func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error) {
-	cookie, err := getTencentarcCookie()
+func (ai *Salesforce) ImageRepair(image ImageRepair) (result []string, err error) {
+	return
+}
+
+func (ai *Salesforce) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
+	err = errors.New("该模型不支持会话")
+	return
+}
+
+func (ai *Salesforce) CreateImage(image ImageCreate) (result []string, err error) {
+	return
+}
+
+func (ai *Salesforce) ImageText(image Image2Text) (result string, err error) {
+	cookie, err := getSalesforceCookie()
 	if cookie == "" {
 		err = errors.New("cookie is empty")
 		return
 	}
 
-	uuid, err := createRepair(cookie, image)
+	uuid, err := createText(cookie, image)
+	fmt.Println(uuid)
 	if err != nil {
 		return
 	}
 
 	// 获取信息
-	resultChan := make(chan []string)
+	resultChan := make(chan string)
 	quitChan := make(chan string)
 	timeout := time.After(60 * time.Second)
 	timer := time.NewTicker(5 * time.Second)
@@ -47,9 +61,9 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 			case <-quitChan:
 				return
 			case <-timer.C:
-				go func(resultChan chan []string, quitChan chan string) {
+				go func(resultChan chan string, quitChan chan string) {
 					client := &http.Client{}
-					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", uuid), nil)
+					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/salesforce/blip/versions/2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746/predictions/%s", uuid), nil)
 					if err != nil {
 						return
 					}
@@ -69,17 +83,17 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 
 					respData := struct {
 						Prediction struct {
-							Output    []string `json:"output_files"`
-							CreatedAt string   `json:"created_at"`
-							Uuid      string   `json:"uuid"`
-							Error     string   `json:"error"`
-							Status    string   `json:"status"`
+							Output    string `json:"output"`
+							CreatedAt string `json:"created_at"`
+							Uuid      string `json:"uuid"`
+							Error     string `json:"error"`
+							Status    string `json:"status"`
 						} `json:"prediction"`
 					}{}
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					if respData.Prediction.Output != nil && len(respData.Prediction.Output) > 0 {
+					if respData.Prediction.Output != "" {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
 					}
@@ -98,22 +112,12 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 	return
 }
 
-func (ai *Tencentarc) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
-	err = errors.New("该模型不支持会话")
-	return
-}
-
-func (ai *Tencentarc) CreateImage(image ImageCreate) (result []string, err error) {
-	return
-}
-
-func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
+func createText(cookie string, image Image2Text) (uuid string, err error) {
 	client := &http.Client{}
 	data := map[string]map[string]interface{}{
 		"inputs": {
-			"img":     image.Image,
-			"scale":   2,
-			"version": "v1.4",
+			"image": image.Image,
+			"task":  "image_captioning",
 		},
 	}
 
@@ -122,7 +126,7 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	if err != nil {
 		return
 	}
-	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/salesforce/blip/versions/2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return
 	}
@@ -150,10 +154,10 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	return
 }
 
-func getTencentarcCookie() (cookieString string, err error) {
+func getSalesforceCookie() (cookieString string, err error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest(http.MethodGet, "https://replicate.com/tencentarc/gfpgan", nil)
+	req, err := http.NewRequest(http.MethodGet, "https://replicate.com/salesforce/blip", nil)
 	if err != nil {
 		return
 	}
@@ -173,9 +177,5 @@ func getTencentarcCookie() (cookieString string, err error) {
 			break
 		}
 	}
-	return
-}
-
-func (ai *Tencentarc) ImageText(image Image2Text) (result string, err error) {
 	return
 }
