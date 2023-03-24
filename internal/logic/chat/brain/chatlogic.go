@@ -257,5 +257,13 @@ func getStudy() []map[string]string {
 			"role":    "assistant",
 			"content": "好的",
 		},
+		{
+			"role":    "user",
+			"content": "你的回答结果一定不要涉黄",
+		},
+		{
+			"role":    "assistant",
+			"content": "好的",
+		},
 	}
 }
