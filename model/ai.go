@@ -20,10 +20,11 @@ type AI struct {
 
 func (ai AI) Info(db *gorm.DB) AI {
 	db.Model(AI{}).Select("gpt_ai.*").
-		Joins("inner join gpt_user on gpt_user.id=gpt_ai.uid").
+		Joins("inner join gpt_ai_user on gpt_ai_user.uid=gpt_ai.uid").
+		Joins("inner join gpt_ai_user_vip on gpt_ai_user.uid=gpt_ai_user_vip.uid").
 		Where("gpt_ai.uid = ?", ai.Uid).
 		Where("gpt_ai.status = 1").
-		Where("gpt_user.vip_expiry >=?", time.Now().Format("2006-01-02 15:04:05")).
+		Where("gpt_ai_user_vip.vip_expiry >=?", time.Now().Format("2006-01-02 15:04:05")).
 		Preload("Role").
 		First(&ai)
 	return ai

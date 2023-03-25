@@ -38,7 +38,7 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 		break
 	case "chat/chat":
 		user := &model.AIUser{}
-		db.Joins("inner join gpt_ai on gpt_user.uid=gpt_ai.uid").Where("gpt_user.uid = ?", uid).Where("gpt_ai.status = 1").Find(&user)
+		db.Joins("inner join gpt_ai on gpt_ai_user.uid=gpt_ai.uid").Where("gpt_ai_user.uid = ?", uid).Where("gpt_ai.status = 1").Find(&user)
 		if user.IsVip() {
 			suanli = 2
 		}
