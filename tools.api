@@ -19,5 +19,8 @@ import (
 	"api/chat.api"
 	"api/convert.api"
 	"api/common.api"
+	"api/vip.api"
+	"api/order.api"
 	"api/wechat.api"
+	"api/callback.api"
 )

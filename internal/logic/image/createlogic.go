@@ -56,7 +56,7 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 		Type:    "image/create",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 
 	return &types.ImageResponse{
 		Url: stream[0],

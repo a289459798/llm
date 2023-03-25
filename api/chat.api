@@ -52,12 +52,16 @@ type (
         ChatId string `json:"chatId"`
         TemplateId uint32 `json:"templateId"`
         Message string `json:"message"`
-        Model string `json:"model,optional"`
-        Platform string `json:"platform,optional"`
+        Model string `json:"model,optional,options=GPT-3.5|GPT-4"`
+    }
+
+    ChatHistoryRequest {
+        ChatId string `path:"chatId"`
     }
 
     ChatHistoryResponse {
         ChatId string `json:"chatId"`
+        Model string `json:"model"`
         History []ChatHistory `json:"history"`
     }
 
@@ -88,7 +92,7 @@ type (
 )
 service tools {
     @handler chatHistory
-    get /chat/chat/history returns (ChatHistoryResponse)
+    get /chat/chat/:chatId(ChatHistoryRequest) returns (ChatHistoryResponse)
 
     @handler chatTemplate
     get /chat/chat/template(ChatTemplateRequest) returns (ChatTemplateResponse)

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/golang-jwt/jwt/v4"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -32,17 +33,25 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
 	user := &model.User{}
-	l.svcCtx.Db.Where("id = ?", uid).First(user)
-	vip := false
-	if user.VipExpiry.Unix() > time.Now().Unix() {
-		vip = true
-	}
+	l.svcCtx.Db.Where("id = ?", uid).Preload("Vip").First(user)
+
+	claims := make(jwt.MapClaims)
+	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
+	claims["iat"] = time.Now().Unix()
+	claims["uid"] = user.ID
+	token := jwt.New(jwt.SigningMethodHS256)
+	token.Claims = claims
+	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
 
 	return &types.InfoResponse{
-		Amount: amount.ChatAmount - amount.ChatUse,
-		Uid:    uint32(uid),
-		OpenId: user.OpenId,
-		Vip:    vip,
-		Code:   fmt.Sprintf("%b", uid),
+		Amount:    amount.ChatAmount - amount.ChatUse,
+		Uid:       uint32(uid),
+		OpenId:    user.OpenId,
+		Vip:       user.IsVip(),
+		Code:      fmt.Sprintf("%b", uid),
+		Token:     tokenString,
+		Group:     user.JoinGroup,
+		VipName:   user.Vip.Name,
+		VipExpiry: user.VipExpiry.Format("2006-01-02"),
 	}, nil
 }

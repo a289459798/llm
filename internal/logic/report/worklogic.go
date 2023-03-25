@@ -114,6 +114,6 @@ func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *t
 		Type:    "report/week",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

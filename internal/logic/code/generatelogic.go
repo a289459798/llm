@@ -136,6 +136,6 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 		Content: content,
 		Result:  result,
 		ChatId:  req.ChatId,
-	})
+	}, nil)
 	return
 }

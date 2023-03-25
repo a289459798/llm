@@ -90,6 +90,6 @@ func (l *YyqimingLogic) Yyqiming(req *types.YYQiMingRequest, w http.ResponseWrit
 		Type:    "divination/yyqiming",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

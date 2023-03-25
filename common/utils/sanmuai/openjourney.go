@@ -73,12 +73,14 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 						Prediction struct {
 							Output    []string `json:"output"`
 							CreatedAt string   `json:"created_at"`
+							Uuid      string   `json:"uuid"`
+							Error     string   `json:"error"`
+							Status    string   `json:"status"`
 						} `json:"prediction"`
 					}{}
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					fmt.Println(respData.Prediction.Output)
 					if respData.Prediction.Output != nil {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
@@ -100,6 +102,10 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 
 func (ai *Journey) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
 	err = errors.New("该模型不支持会话")
+	return
+}
+
+func (ai *Journey) ImageRepair(image ImageRepair) (result []string, err error) {
 	return
 }
 
@@ -176,5 +182,9 @@ func getCookie() (cookieString string, err error) {
 			break
 		}
 	}
+	return
+}
+
+func (ai *Journey) ImageText(image Image2Text) (result string, err error) {
 	return
 }

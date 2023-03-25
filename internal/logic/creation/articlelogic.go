@@ -114,6 +114,6 @@ func (l *ArticleLogic) Article(req *types.ArticleRequest, w http.ResponseWriter)
 		Type:    "creation/article",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

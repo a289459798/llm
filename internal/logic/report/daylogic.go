@@ -114,6 +114,6 @@ func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *t
 		Type:    "report/day",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

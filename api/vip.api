@@ -1,0 +1,67 @@
+syntax = "v1"
+
+type VipPriceResponse {
+    Data []VipDataResponse `json:"data"`
+}
+
+type VipDataResponse {
+    ID uint32 `json:"id"`
+    Name string `json:"name"`
+    Origin float32 `json:"origin"`
+    Price float32 `json:"price"`
+    Amount uint32 `json:"amount"`
+}
+
+type VipGiveResponse {
+    Day int `json:"day"`
+    Expiry string `json:"expiry"`
+}
+
+type VipCxchangeRequest {
+    Code string `json:"code"`
+}
+
+type VipCxchangeResponse {
+
+}
+
+type VipCodeGenerateRequest {
+    VipId uint32 `json:"vipId"`
+    Day uint32 `json:"day"`
+    AICode string `json:"aiCode"`
+}
+
+type VipCodeGenerateResponse {
+    Code string `json:"code"`
+}
+
+type VipPrivilegeListResponse {
+    Data []VipPrivilegeResponse `json:"data"`
+}
+
+type VipPrivilegeResponse {
+    Type string `json:"type"`
+    Title string `json:"title"`
+}
+
+@server(
+    jwt: Auth
+    middleware: Sign
+    group: vip
+)
+service tools {
+    @handler vipPrice
+    get /vip/price returns (VipPriceResponse)
+
+    @handler vipGive
+    get /vip/give returns (VipGiveResponse)
+
+    @handler vipCxchange
+    post /vip/exchange(VipCxchangeRequest) returns (VipCxchangeResponse)
+
+    @handler vipCodeGenerate
+    post /vip/code-generate(VipCodeGenerateRequest) returns (VipCodeGenerateResponse)
+
+    @handler vipPrivilege
+    get /vip/privilege returns (VipPrivilegeListResponse)
+}

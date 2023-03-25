@@ -107,6 +107,6 @@ func (l *ExamLogic) Exam(req *types.ExamRequest, w http.ResponseWriter) (resp *t
 		Type:    "code/exam",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

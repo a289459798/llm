@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	callbackpay "chatgpt-tools/internal/handler/callback/pay"
 	chat "chatgpt-tools/internal/handler/chat"
 	chatbrain "chatgpt-tools/internal/handler/chat/brain"
 	code "chatgpt-tools/internal/handler/code"
@@ -13,10 +14,13 @@ import (
 	divination "chatgpt-tools/internal/handler/divination"
 	game "chatgpt-tools/internal/handler/game"
 	image "chatgpt-tools/internal/handler/image"
+	order "chatgpt-tools/internal/handler/order"
 	report "chatgpt-tools/internal/handler/report"
 	user "chatgpt-tools/internal/handler/user"
 	userai "chatgpt-tools/internal/handler/user/ai"
+	userhistory "chatgpt-tools/internal/handler/user/history"
 	usertask "chatgpt-tools/internal/handler/user/task"
+	vip "chatgpt-tools/internal/handler/vip"
 	wechat "chatgpt-tools/internal/handler/wechat"
 	"chatgpt-tools/internal/svc"
 
@@ -87,6 +91,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/history/chat",
+					Handler: userhistory.ChatListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/history/suanli",
+					Handler: userhistory.SuanliListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/history/tools",
+					Handler: userhistory.ToolsListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthAndUse},
 			[]rest.Route{
 				{
@@ -147,6 +175,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/images/pic2pic/task",
 					Handler: image.Pic2pictaskHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/pic-repair",
+					Handler: image.Old2newHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/img2text",
+					Handler: image.Image2TextHandler(serverCtx),
 				},
 			}...,
 		),
@@ -314,7 +352,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
-					Path:    "/chat/chat/history",
+					Path:    "/chat/chat/:chatId",
 					Handler: chatbrain.ChatHistoryHandler(serverCtx),
 				},
 				{
@@ -377,7 +415,65 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/common/qrcode",
 				Handler: common.QrcodeHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/common/shortlink",
+				Handler: common.ShortLinkHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/common/upload-token",
+				Handler: common.UploadTokenHandler(serverCtx),
+			},
 		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/vip/price",
+					Handler: vip.VipPriceHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/vip/give",
+					Handler: vip.VipGiveHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/vip/exchange",
+					Handler: vip.VipCxchangeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/vip/code-generate",
+					Handler: vip.VipCodeGenerateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/vip/privilege",
+					Handler: vip.VipPrivilegeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/order/vip",
+					Handler: order.VipOrderCreateHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 
@@ -387,6 +483,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/wechat/callback/subscribe",
 				Handler: wechat.SubscribeCallHandler(serverCtx),
+			},
+		},
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/callback/pay/vip/:type/:merchant",
+				Handler: callbackpay.PayVipHandler(serverCtx),
 			},
 		},
 	)

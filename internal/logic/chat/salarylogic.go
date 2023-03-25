@@ -116,6 +116,6 @@ func (l *SalaryLogic) Salary(req *types.SalaryRequest, w http.ResponseWriter) (r
 		Type:    "chat/salary",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

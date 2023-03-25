@@ -113,6 +113,6 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 		Type:    "report/plot",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

@@ -98,6 +98,6 @@ func (l *TranslateLogic) Translate(req *types.TranslateRequest, w http.ResponseW
 		Type:    "convert/translate",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

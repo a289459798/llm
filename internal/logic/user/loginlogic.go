@@ -9,6 +9,7 @@ import (
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	"github.com/silenceper/wechat/v2/miniprogram/config"
+	"gorm.io/gorm/clause"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -47,7 +48,9 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	if user.ID == 0 {
 		user.OpenId = session.OpenID
 		user.UnionId = session.UnionID
-		l.svcCtx.Db.Create(&user)
+		user.Platform = req.Platform
+		user.Channel = req.Channel
+		l.svcCtx.Db.Clauses(clause.OnConflict{UpdateAll: true}).Create(&user)
 	}
 
 	claims := make(jwt.MapClaims)

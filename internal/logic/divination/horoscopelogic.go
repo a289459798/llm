@@ -124,7 +124,7 @@ func (l *HoroscopeLogic) Horoscope(req *types.HoroscopeRequest, w http.ResponseW
 		Type:    "divination/horoscope",
 		Content: horoscope,
 		Result:  result,
-	})
+	}, nil)
 	return
 }
 

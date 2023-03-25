@@ -3,6 +3,7 @@ syntax = "v1"
 type(
     ValidRequest {
         Content string `json:"content"`
+        Params string `json:"params,optional"`
     }
 
     ValidResponse {
@@ -26,6 +27,15 @@ type(
         Path string `form:"path"`
         Scene string `form:"scene"`
     }
+
+    ShortLinkRequest {
+        Page string `json:"page"`
+        Title string `json:"title"`
+    }
+
+    UploadTokenResponse {
+        Token string `json:"token"`
+    }
 )
 
 @server(
@@ -44,4 +54,10 @@ service tools {
 
     @handler qrcode
     get /common/qrcode(QrCodeRequest) returns (QrCodeResponse)
+    
+    @handler shortLink
+    get /common/shortlink(ShortLinkRequest) returns (QrCodeResponse)
+
+    @handler uploadToken
+    get /common/upload-token returns (UploadTokenResponse)
 }

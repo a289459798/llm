@@ -4,6 +4,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -56,18 +57,21 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 		}
 	}
 
-	// 获取订阅
-	var subscribeCount int64
-	l.svcCtx.Db.
-		Where("uid = ?", uid).
-		Where("way = 1").
-		Where("type = ?", "subscribe").
-		Count(&subscribeCount)
+	// 限时福利
+	tips := ""
+	tasksSetting, err := model.Setting{Name: "task_welfare"}.Find(l.svcCtx.Db)
+	if err == nil && len(tasksSetting) > 0 {
+		startTime, err1 := time.ParseInLocation("2006-01-02 15:04:05", tasksSetting["start"].(string)+" 00:00:00", time.Local)
+		endTime, err2 := time.ParseInLocation("2006-01-02 15:04:05", tasksSetting["end"].(string)+" 23:59:59", time.Local)
+		if err1 == nil && err2 == nil && time.Now().Unix() >= startTime.Unix() && time.Now().Unix() < endTime.Unix() {
+			tips = fmt.Sprintf("限时福利：今日完成所有任务额外可得%d算力", int(tasksSetting["amount"].(float64)))
+		}
+	}
 
 	return &types.TaskResponse{
 		Max:     100 + 30 + 55 + 5,
 		Have:    total,
-		Tips:    "限时福利：今日完成所有任务额外可得100算力",
+		Tips:    tips,
 		Content: "每天打开小程序即可获得5算力，连续登录额外奖励对应的连续次数算力，坚持使用100年，当天可获得36500算力\n\n分享后可获得5算力，链接被新用户打开可额外获得5算力，分享任务每天可做3次，通过分享最多可获得30算力\n\n每天第一次看激励视频获得10算力，之后每个视频奖励5算力，每天可观看10次\n\n以上所得算力仅限当天有效",
 		List: []types.Task{
 			{

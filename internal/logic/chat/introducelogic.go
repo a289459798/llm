@@ -116,6 +116,6 @@ func (l *IntroduceLogic) Introduce(req *types.IntroduceRequest, w http.ResponseW
 		Type:    "chat/introduce",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 	return
 }

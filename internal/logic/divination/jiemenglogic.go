@@ -99,6 +99,6 @@ func (l *JiemengLogic) Jiemeng(req *types.JieMengRequest, w http.ResponseWriter)
 		Type:    "divination/jiemeng",
 		Content: "",
 		Result:  "",
-	})
+	}, nil)
 	return
 }

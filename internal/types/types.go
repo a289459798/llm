@@ -2,19 +2,25 @@
 package types
 
 type LoginRequest struct {
-	Code string `json:"code"`
+	Code     string `json:"code"`
+	Platform string `json:"platform,optional"`
+	Channel  string `json:"channel,optional"`
 }
 
 type InfoRequest struct {
 }
 
 type InfoResponse struct {
-	Token  string `json:"token"`
-	Amount uint32 `json:"amount"`
-	Uid    uint32 `json:"uid"`
-	OpenId string `json:"openId"`
-	Vip    bool   `json:"vip"`
-	Code   string `json:"code"`
+	Token     string `json:"token"`
+	Amount    uint32 `json:"amount"`
+	Uid       uint32 `json:"uid"`
+	OpenId    string `json:"openId"`
+	Vip       bool   `json:"vip"`
+	Code      string `json:"code"`
+	Group     bool   `json:"group"`
+	VipName   string `json:"vipName"`
+	VipGive   uint32 `json:"vipGive"`
+	VipExpiry string `json:"vipExpiry"`
 }
 
 type Task struct {
@@ -42,7 +48,7 @@ type TaskCompleteResponse struct {
 }
 
 type TaskRequest struct {
-	Type   string `json:"type,options=share|ad"`
+	Type   string `json:"type,options=share|ad|group"`
 	Status bool   `json:"status,optional"`
 }
 
@@ -67,6 +73,53 @@ type AIEditRequest struct {
 	Status bool   `form:"status"`
 }
 
+type ChatHistoryListResponse struct {
+	Pagination Pagination        `json:"pagination"`
+	Data       []ChatHistoryData `json:"data"`
+}
+
+type ChatHistoryData struct {
+	Q      string `json:"q"`
+	ChatId string `json:"chatId"`
+	Time   string `json:"time"`
+}
+
+type SuanliHistoryListResponse struct {
+	Pagination Pagination          `json:"pagination"`
+	Data       []SuanliHistoryData `json:"data"`
+}
+
+type SuanliHistoryData struct {
+	Amount int    `json:"amount"`
+	Desc   string `json:"desc"`
+	Time   string `json:"time"`
+	Way    uint8  `json:"way"`
+}
+
+type ToolsHistoryListResponse struct {
+	Data []ToolsHistoryData `json:"data"`
+}
+
+type ToolsHistoryData struct {
+	Key string `json:"key"`
+}
+
+type Response struct {
+	Code    uint   `json:"code"`
+	Message string `json:"message"`
+}
+
+type Pagination struct {
+	Total  int `json:"total"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+}
+
+type PageRequest struct {
+	Limit  int `form:"limit"`
+	Offset int `form:"offset"`
+}
+
 type ReportRequest struct {
 	Content string `json:"content"`
 }
@@ -83,7 +136,9 @@ type ReportResponse struct {
 
 type ImageRequest struct {
 	Content string `json:"content"`
-	Model   string `json:"model,optional"`
+	Model   string `json:"model,optional,options=DALL-E|GPT-PLUS|StableDiffusion|Midjourney"`
+	Number  int    `json:"number,optional,options=1|4"`
+	Clarity string `json:"clarity,optional,options=standard|high|superhigh"`
 }
 
 type ImageResponse struct {
@@ -114,6 +169,18 @@ type ImageMultiResponse struct {
 
 type ImageEditRequest struct {
 	Content string `form:"content"`
+}
+
+type PicRepairRequest struct {
+	Image string `json:"image"`
+}
+
+type Image2TextRequest struct {
+	Image string `json:"image"`
+}
+
+type Image2TextResponse struct {
+	Data string `json:"data"`
 }
 
 type QiMingRequest struct {
@@ -257,12 +324,16 @@ type ChatRequest struct {
 	ChatId     string `json:"chatId"`
 	TemplateId uint32 `json:"templateId"`
 	Message    string `json:"message"`
-	Model      string `json:"model,optional"`
-	Platform   string `json:"platform,optional"`
+	Model      string `json:"model,optional,options=GPT-3.5|GPT-4"`
+}
+
+type ChatHistoryRequest struct {
+	ChatId string `path:"chatId"`
 }
 
 type ChatHistoryResponse struct {
 	ChatId  string        `json:"chatId"`
+	Model   string        `json:"model"`
 	History []ChatHistory `json:"history"`
 }
 
@@ -295,6 +366,7 @@ type ConvertResponse struct {
 
 type ValidRequest struct {
 	Content string `json:"content"`
+	Params  string `json:"params,optional"`
 }
 
 type ValidResponse struct {
@@ -319,5 +391,74 @@ type QrCodeRequest struct {
 	Scene string `form:"scene"`
 }
 
+type ShortLinkRequest struct {
+	Page  string `json:"page"`
+	Title string `json:"title"`
+}
+
+type UploadTokenResponse struct {
+	Token string `json:"token"`
+}
+
+type VipPriceResponse struct {
+	Data []VipDataResponse `json:"data"`
+}
+
+type VipDataResponse struct {
+	ID     uint32  `json:"id"`
+	Name   string  `json:"name"`
+	Origin float32 `json:"origin"`
+	Price  float32 `json:"price"`
+	Amount uint32  `json:"amount"`
+}
+
+type VipGiveResponse struct {
+	Day    int    `json:"day"`
+	Expiry string `json:"expiry"`
+}
+
+type VipCxchangeRequest struct {
+	Code string `json:"code"`
+}
+
+type VipCxchangeResponse struct {
+}
+
+type VipCodeGenerateRequest struct {
+	VipId  uint32 `json:"vipId"`
+	Day    uint32 `json:"day"`
+	AICode string `json:"aiCode"`
+}
+
+type VipCodeGenerateResponse struct {
+	Code string `json:"code"`
+}
+
+type VipPrivilegeListResponse struct {
+	Data []VipPrivilegeResponse `json:"data"`
+}
+
+type VipPrivilegeResponse struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+}
+
+type VipPayRequest struct {
+	Platform string `json:"platform,options=wechat|alipay"`
+}
+
+type PayResponse struct {
+	Data string `json:"data"`
+}
+
 type WeChatCallbackResponse struct {
+}
+
+type WechatPayResponse struct {
+	Data string `json:"data"`
+}
+
+type PayRequest struct {
+	Type     string `path:"type"`
+	Merchant string `path:"merchant"`
 }

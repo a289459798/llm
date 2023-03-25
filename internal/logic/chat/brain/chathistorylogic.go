@@ -1,13 +1,11 @@
 package brain
 
 import (
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
-	"time"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,39 +24,27 @@ func NewChatHistoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatH
 	}
 }
 
-func (l *ChatHistoryLogic) ChatHistory() (resp *types.ChatHistoryResponse, err error) {
+func (l *ChatHistoryLogic) ChatHistory(req types.ChatHistoryRequest) (resp *types.ChatHistoryResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	today := time.Now().Format("2006-01-02")
-	totalRecord := &struct {
-		ChatId string
-		Count  int
-	}{}
-	l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).
-		Order("id desc").
-		Where("type = ?", "chat/chat").
-		Where("created_at between ? and ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")+" 00:00:00", today+" 23:59:59").
-		Group("chat_id").
-		Select("chat_id, count(*) as count").Find(&totalRecord)
 
-	chatId := ""
+	records := []model.Record{}
+	l.svcCtx.Db.Where("uid = ?", uid).
+		Where("chat_id = ?", req.ChatId).
+		Order("id desc").
+		Find(&records)
 	history := []types.ChatHistory{}
-	if totalRecord.Count >= 3 {
-		chatId = totalRecord.ChatId
-		records := []model.Record{}
-		l.svcCtx.Db.Where("uid = ?", uid).
-			Where("chat_id = ?", chatId).
-			Order("id desc").
-			Limit(2).
-			Find(&records)
-		for _, m := range records {
-			history = append([]types.ChatHistory{
-				{
-					Q: m.Content,
-					A: m.Result,
-				},
-			}, history...)
+	model := "GPT-3.5"
+	for _, m := range records {
+		if m.Model != "" {
+			model = m.Model
 		}
+		history = append([]types.ChatHistory{
+			{
+				Q: m.Content,
+				A: m.Result,
+			},
+		}, history...)
 	}
 
-	return &types.ChatHistoryResponse{ChatId: chatId, History: history}, nil
+	return &types.ChatHistoryResponse{ChatId: req.ChatId, History: history, Model: model}, nil
 }

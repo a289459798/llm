@@ -63,7 +63,7 @@ func (l *EditLogic) Edit(req *types.ImageEditRequest, files map[string][]*multip
 		Type:    "image/edit",
 		Content: req.Content,
 		Result:  "",
-	})
+	}, nil)
 
 	return &types.ImageResponse{
 		Url: stream.Data[0].B64JSON,

@@ -36,3 +36,12 @@ Qiniu:
   Bucket: sanmuai
   AK: XV5w_I55zuLV-GolzDF7c2KdKOT77EyRlcZLInFZ
   SK: yoEkRdotk9oubPkXFmLK0m_2unpvsKUikjCqOGCC
+
+WeChatPayConf:
+  Default:
+    AppId: wxab342e753dfef0b0
+    MchId: df
+    SerialNo: fgfg
+    ApiV3Key: ddf
+    PrivateKey: sdsd
+    NotifyUrl: 343sdsd4

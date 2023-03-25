@@ -3,7 +3,9 @@ syntax = "v1"
 type(
     ImageRequest {
         Content string `json:"content"`
-        Model string `json:"model,optional"`
+        Model string `json:"model,optional,options=DALL-E|GPT-PLUS|StableDiffusion|Midjourney"`
+        Number int `json:"number,optional,options=1|4"`
+        Clarity string `json:"clarity,optional,options=standard|high|superhigh"`
     }
 
     ImageResponse {
@@ -35,6 +37,18 @@ type(
     ImageEditRequest {
         Content string `form:"content"`
     }
+
+    PicRepairRequest {
+        Image string `json:"image"`
+    }
+
+    Image2TextRequest {
+        Image string `json:"image"`
+    }
+
+    Image2TextResponse {
+        Data string `json:"data"`
+    }
 )
 
 @server(
@@ -60,4 +74,10 @@ service tools {
 
     @handler pic2pictask
     get /images/pic2pic/task (Pic2picTaskRequest) returns (ImageResponse)
+
+    @handler old2new
+    post /images/pic-repair (PicRepairRequest) returns (ImageMultiResponse)
+
+    @handler image2Text
+    post /images/img2text (Image2TextRequest) returns (Image2TextResponse)
 }

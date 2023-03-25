@@ -1,0 +1,19 @@
+syntax = "v1"
+
+type(
+    WechatPayResponse {
+        Data string `json:"data"`
+    }
+    PayRequest {
+        Type string `path:"type"`
+        Merchant string `path:"merchant"`
+    }
+)
+
+@server(
+    group: callback/pay
+)
+service tools {
+    @handler payVip
+    post /callback/pay/vip/:type/:merchant(PayRequest)  returns (WechatPayResponse)
+}
