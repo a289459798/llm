@@ -55,6 +55,14 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 		},
 		{
 			Role:    "user",
+			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
+		},
+		{
+			Role:    "assistant",
+			Content: "好的",
+		},
+		{
+			Role:    "user",
 			Content: prompt,
 		},
 	}

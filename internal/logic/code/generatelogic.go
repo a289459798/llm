@@ -51,6 +51,14 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 			Role:    "system",
 			Content: "编程问题咨询",
 		},
+		{
+			Role:    "user",
+			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
+		},
+		{
+			Role:    "assistant",
+			Content: "好的",
+		},
 	}
 
 	if req.ChatId != "" {
