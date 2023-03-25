@@ -33,7 +33,7 @@ func (l *VipCxchangeLogic) VipCxchange(req *types.VipCxchangeRequest) (resp *typ
 	}
 
 	// 判断会员等级
-	user := model.User{ID: uint32(uid)}.Find(l.svcCtx.Db)
+	user := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db)
 	if user.IsVip() && user.VipId != vipCode.VipId {
 		return nil, errors.New("当前会员与购买会员不符，请联系客服")
 	}
@@ -47,7 +47,7 @@ func (l *VipCxchangeLogic) VipCxchange(req *types.VipCxchangeRequest) (resp *typ
 		tx.Rollback()
 		return nil, err
 	}
-	err = model.User{ID: uint32(uid)}.Find(l.svcCtx.Db).SetVip(tx, vipCode)
+	err = model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db).SetVip(tx, vipCode)
 	if err != nil {
 		tx.RollbackTo("start")
 		return nil, err

@@ -5,11 +5,11 @@ import (
 	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
+	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	"github.com/silenceper/wechat/v2/miniprogram/config"
-	"gorm.io/gorm/clause"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,20 +43,30 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	if err != nil {
 		return nil, err
 	}
-	user := &model.User{}
-	l.svcCtx.Db.Where("open_id = ?", session.OpenID).First(user)
-	if user.ID == 0 {
-		user.OpenId = session.OpenID
-		user.UnionId = session.UnionID
-		user.Platform = req.Platform
-		user.Channel = req.Channel
-		l.svcCtx.Db.Clauses(clause.OnConflict{UpdateAll: true}).Create(&user)
+	aiUser := &model.AIUser{}
+	l.svcCtx.Db.Where("open_id = ?", session.OpenID).First(aiUser)
+	if aiUser.ID == 0 {
+		tx := l.svcCtx.Db.Begin()
+		// 创建用户
+		user := &model.User{}
+		tx.Create(user)
+		aiUser.OpenId = session.OpenID
+		aiUser.UnionId = session.UnionID
+		aiUser.Platform = req.Platform
+		aiUser.Channel = req.Channel
+		err = tx.Create(&aiUser).Error
+		if err != nil {
+			tx.Rollback()
+			return nil, errors.New("错误")
+		}
+
+		tx.Commit()
 	}
 
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
 	claims["iat"] = time.Now().Unix()
-	claims["uid"] = user.ID
+	claims["uid"] = aiUser.ID
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
@@ -67,7 +77,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 
 	return &types.InfoResponse{
 		Token:  tokenString,
-		Uid:    user.ID,
-		OpenId: user.OpenId,
+		Uid:    aiUser.ID,
+		OpenId: aiUser.OpenId,
 	}, nil
 }

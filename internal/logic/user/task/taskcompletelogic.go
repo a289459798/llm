@@ -40,7 +40,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		return nil, errors.New("非法请求")
 	}
 
-	user := &model.User{}
+	user := &model.AIUser{}
 	l.svcCtx.Db.First(&user, uid)
 	if user.ID == 0 {
 		return nil, errors.New("用户不存在")

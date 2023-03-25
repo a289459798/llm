@@ -32,7 +32,7 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
-	user := &model.User{}
+	user := &model.AIUser{}
 	l.svcCtx.Db.Where("id = ?", uid).Preload("Vip").First(user)
 
 	claims := make(jwt.MapClaims)

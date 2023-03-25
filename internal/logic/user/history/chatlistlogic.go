@@ -28,7 +28,7 @@ func NewChatListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatList
 
 func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistoryListResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	isVip := model.User{ID: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
+	isVip := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
 	if !isVip {
 		return nil, errors.New("非VIP")
 	}

@@ -28,7 +28,7 @@ func NewVipPrivilegeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipP
 
 func (l *VipPrivilegeLogic) VipPrivilege() (resp *types.VipPrivilegeListResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	user := &model.User{}
+	user := &model.AIUser{}
 	l.svcCtx.Db.Preload("Vip").First(&user, uid)
 	privilege := getPrivilege()
 
