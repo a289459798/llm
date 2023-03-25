@@ -32,14 +32,14 @@ func (l *TaskShareFollowLogic) TaskShareFollow(req *types.TaskShareFollowRequest
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := &model.AIUser{}
 	l.svcCtx.Db.Where("open_id = ?", req.OpenId).Where("uid != ?", uid).Find(&user)
-	if user.ID == 0 {
+	if user.Uid == 0 {
 		return nil, errors.New("用户不存在")
 	}
 
 	today := time.Now().Format("2006-01-02")
 	var total int64
 	l.svcCtx.Db.Model(&model.ShareRecord{}).
-		Where("uid = ?", user.ID).
+		Where("uid = ?", user.Uid).
 		Where("follow_id = ?", uid).
 		Count(&total)
 	if total > 0 {
@@ -48,7 +48,7 @@ func (l *TaskShareFollowLogic) TaskShareFollow(req *types.TaskShareFollowRequest
 
 	taskType := "share_follow"
 	l.svcCtx.Db.Model(&model.AccountRecord{}).
-		Where("uid = ?", user.ID).
+		Where("uid = ?", user.Uid).
 		Where("type = ?", taskType).
 		Where("created_at between ? and ?", today+" 00:00:00", today+" 23:59:59").
 		Count(&total)
@@ -62,17 +62,17 @@ func (l *TaskShareFollowLogic) TaskShareFollow(req *types.TaskShareFollowRequest
 	l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
 		// 插入
 		tx.Create(&model.ShareRecord{
-			Uid:      user.ID,
+			Uid:      user.Uid,
 			FollowId: uint32(uid),
 		})
 		// 增加次数
-		amount := model.NewAccount(tx).GetAccount(user.ID, time.Now())
+		amount := model.NewAccount(tx).GetAccount(user.Uid, time.Now())
 		amount.ChatAmount += add
 		tx.Save(&amount)
 
 		// 记录
 		tx.Create(&model.AccountRecord{
-			Uid:           user.ID,
+			Uid:           user.Uid,
 			RecordId:      0,
 			Way:           1,
 			Type:          taskType,

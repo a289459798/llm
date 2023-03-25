@@ -38,7 +38,7 @@ func (l *VipCodeGenerateLogic) VipCodeGenerate(req *types.VipCodeGenerateRequest
 	}
 	userId, _ := strconv.ParseInt(req.AICode, 2, 64)
 	user := model.AIUser{Uid: uint32(userId)}.Find(l.svcCtx.Db)
-	if user.ID == 0 {
+	if user.Uid == 0 {
 		return nil, errors.New("用户不存在")
 	}
 	str := fmt.Sprintf("%d", time.Now().Unix())

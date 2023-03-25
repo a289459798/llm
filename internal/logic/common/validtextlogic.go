@@ -39,7 +39,7 @@ func (l *ValidTextLogic) ValidText(req *types.ValidRequest) (resp *types.ValidRe
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := &model.AIUser{}
 	l.svcCtx.Db.Where("uid = ?", uid).First(user)
-	if user.ID == 0 {
+	if user.Uid == 0 {
 		return nil, errors.New("用户不存在")
 	}
 

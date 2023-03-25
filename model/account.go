@@ -48,7 +48,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			account.Date = date
 			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&account)
 
-			isVip := AIUser{ID: uid}.IsVip()
+			isVip := AIUser{Uid: uid}.IsVip()
 			if isVip {
 				var vipAmount uint32 = 200
 				account.ChatAmount += vipAmount

@@ -45,7 +45,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	}
 	aiUser := &model.AIUser{}
 	l.svcCtx.Db.Where("open_id = ?", session.OpenID).First(aiUser)
-	if aiUser.ID == 0 {
+	if aiUser.Uid == 0 {
 		tx := l.svcCtx.Db.Begin()
 		// 创建用户
 		user := &model.User{}
@@ -67,7 +67,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
 	claims["iat"] = time.Now().Unix()
-	claims["uid"] = aiUser.ID
+	claims["uid"] = aiUser.Uid
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
@@ -78,7 +78,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 
 	return &types.InfoResponse{
 		Token:  tokenString,
-		Uid:    aiUser.ID,
+		Uid:    aiUser.Uid,
 		OpenId: aiUser.OpenId,
 	}, nil
 }

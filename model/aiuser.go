@@ -64,7 +64,7 @@ func (user AIUser) SetVip(db *gorm.DB, vipCode *VipCode) error {
 
 			// 插入算力明细
 			err := tx.Create(&AccountRecord{
-				Uid:           user.ID,
+				Uid:           user.Uid,
 				RecordId:      0,
 				Way:           1,
 				Type:          "vip",

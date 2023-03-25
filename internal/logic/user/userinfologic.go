@@ -38,7 +38,7 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
 	claims["iat"] = time.Now().Unix()
-	claims["uid"] = user.ID
+	claims["uid"] = user.Uid
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
