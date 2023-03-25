@@ -30,19 +30,20 @@ func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
 	user := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db)
 	day := 0
 	expiry := ""
-	if user.ID > 0 && user.Vip.VipExpiry.Unix() < 0 {
+	if user.ID > 0 && user.Vip.ID == 0 {
 		// 赠送
-		user.Vip.VipExpiry, err = time.ParseInLocation("2006-01-02 15:04:05", time.Now().AddDate(0, 0, 1).Format("2006-01-02")+" 23:59:59", time.Local)
+		userVip := &model.AIUserVip{}
+		userVip.Uid = user.ID
+		userVip.VipExpiry, err = time.ParseInLocation("2006-01-02 15:04:05", time.Now().AddDate(0, 0, 1).Format("2006-01-02")+" 23:59:59", time.Local)
 		if err != nil {
 			return nil, err
 		}
 		day = 1
-		expiry = user.Vip.VipExpiry.Format("2006-01-02")
-		user.Vip.VipId = 1
-		if user.Vip.Uid > 0 {
-			l.svcCtx.Db.Save(user.Vip)
-		} else {
-			l.svcCtx.Db.Create(user.Vip)
+		expiry = userVip.VipExpiry.Format("2006-01-02")
+		userVip.VipId = 1
+		err = l.svcCtx.Db.Create(userVip).Error
+		if err != nil {
+			return nil, err
 		}
 	}
 	return &types.VipGiveResponse{

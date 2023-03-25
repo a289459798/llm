@@ -32,7 +32,7 @@ func (l *VipPrivilegeLogic) VipPrivilege() (resp *types.VipPrivilegeListResponse
 	l.svcCtx.Db.Preload("Vip").First(&user, uid)
 	privilege := getPrivilege()
 
-	if user.Vip.IsVip() {
+	if user.IsVip() {
 		privilege.Data[0].Title = fmt.Sprintf("每天%d算力", user.Vip.Vip.Amount)
 	}
 
