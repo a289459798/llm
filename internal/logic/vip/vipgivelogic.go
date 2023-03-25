@@ -1,13 +1,12 @@
 package vip
 
 import (
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
 	"time"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,16 +30,20 @@ func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
 	user := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db)
 	day := 0
 	expiry := ""
-	if user.ID > 0 && user.VipExpiry.Unix() < 0 {
+	if user.ID > 0 && user.Vip.VipExpiry.Unix() < 0 {
 		// 赠送
-		user.VipExpiry, err = time.ParseInLocation("2006-01-02 15:04:05", time.Now().AddDate(0, 0, 1).Format("2006-01-02")+" 23:59:59", time.Local)
+		user.Vip.VipExpiry, err = time.ParseInLocation("2006-01-02 15:04:05", time.Now().AddDate(0, 0, 1).Format("2006-01-02")+" 23:59:59", time.Local)
 		if err != nil {
 			return nil, err
 		}
 		day = 1
-		expiry = user.VipExpiry.Format("2006-01-02")
-		user.VipId = 1
-		l.svcCtx.Db.Save(&user)
+		expiry = user.Vip.VipExpiry.Format("2006-01-02")
+		user.Vip.VipId = 1
+		if user.Vip.Uid > 0 {
+			l.svcCtx.Db.Save(user.Vip)
+		} else {
+			l.svcCtx.Db.Create(user.Vip)
+		}
 	}
 	return &types.VipGiveResponse{
 		Day:    day,

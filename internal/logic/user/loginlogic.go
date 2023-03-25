@@ -54,6 +54,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 		aiUser.UnionId = session.UnionID
 		aiUser.Platform = req.Platform
 		aiUser.Channel = req.Channel
+		aiUser.Uid = user.ID
 		err = tx.Create(&aiUser).Error
 		if err != nil {
 			tx.Rollback()

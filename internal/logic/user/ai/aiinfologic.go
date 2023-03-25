@@ -29,7 +29,7 @@ func NewAiInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AiInfoLogi
 
 func (l *AiInfoLogic) AiInfo(req *types.InfoRequest) (resp *types.AIInfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	isVip := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
+	isVip := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db).Vip.IsVip()
 	if !isVip {
 		return nil, errors.New("VIP特权")
 	}
