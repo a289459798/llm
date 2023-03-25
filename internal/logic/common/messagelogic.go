@@ -1,12 +1,10 @@
 package common
 
 import (
-	"chatgpt-tools/model"
-	"context"
-	"errors"
-
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
+	"chatgpt-tools/model"
+	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,7 +27,7 @@ func (l *MessageLogic) Message() (resp *types.MessageResponse, err error) {
 	message := &model.Message{}
 	l.svcCtx.Db.Where("status = 1").Find(&message)
 	if message.ID == 0 {
-		return nil, errors.New("数据为空")
+		return nil, nil
 	}
 
 	return &types.MessageResponse{
