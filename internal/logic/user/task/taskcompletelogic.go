@@ -41,7 +41,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 	}
 
 	user := &model.AIUser{}
-	l.svcCtx.Db.First(&user, uid)
+	l.svcCtx.Db.Where("uid = ?", uid).First(&user)
 	if user.ID == 0 {
 		return nil, errors.New("用户不存在")
 	}

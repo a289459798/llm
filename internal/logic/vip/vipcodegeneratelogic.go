@@ -37,7 +37,7 @@ func (l *VipCodeGenerateLogic) VipCodeGenerate(req *types.VipCodeGenerateRequest
 		return nil, errors.New("非法操作")
 	}
 	userId, _ := strconv.ParseInt(req.AICode, 2, 64)
-	user := model.AIUser{ID: uint32(userId)}.Find(l.svcCtx.Db)
+	user := model.AIUser{Uid: uint32(userId)}.Find(l.svcCtx.Db)
 	if user.ID == 0 {
 		return nil, errors.New("用户不存在")
 	}

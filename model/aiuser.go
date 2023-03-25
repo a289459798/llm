@@ -21,7 +21,7 @@ type AIUser struct {
 }
 
 func (user AIUser) Find(db *gorm.DB) AIUser {
-	db.Where("uid = ?", user.ID).Preload("Vip").First(&user)
+	db.Where("uid = ?", user.Uid).Preload("Vip").First(&user)
 	return user
 }
 

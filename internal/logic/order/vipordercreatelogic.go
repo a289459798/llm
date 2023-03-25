@@ -34,7 +34,7 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 	if err != nil {
 		return nil, err
 	}
-	user := model.AIUser{ID: uint32(uid)}.Find(l.svcCtx.Db)
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	if user.ID == 0 {
 		return nil, errors.New("用户不存在")
 	}

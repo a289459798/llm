@@ -33,7 +33,7 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 
 	user := &model.AIUser{}
-	l.svcCtx.Db.Where("id = ?", uid).Preload("Vip").Preload("Vip.Vip").First(user)
+	l.svcCtx.Db.Where("uid = ?", uid).Preload("Vip").Preload("Vip.Vip").First(user)
 
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire

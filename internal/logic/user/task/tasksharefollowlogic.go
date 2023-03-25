@@ -30,8 +30,8 @@ func NewTaskShareFollowLogic(ctx context.Context, svcCtx *svc.ServiceContext) *T
 
 func (l *TaskShareFollowLogic) TaskShareFollow(req *types.TaskShareFollowRequest) (resp *types.TaskResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	user := &model.User{}
-	l.svcCtx.Db.Where("open_id = ?", req.OpenId).Where("id != ?", uid).Find(&user)
+	user := &model.AIUser{}
+	l.svcCtx.Db.Where("open_id = ?", req.OpenId).Where("uid != ?", uid).Find(&user)
 	if user.ID == 0 {
 		return nil, errors.New("用户不存在")
 	}
