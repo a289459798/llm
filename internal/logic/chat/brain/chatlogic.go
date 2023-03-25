@@ -323,7 +323,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	if true {
 		res = append(res, map[string]string{
 			"role":    "user",
-			"content": "接下来对话中，不要回答与画图、生成图片、改图等无关的问题，否则你要回答：'三目只为您提供画图功能，更多功能请打开https://chat.smuai.com/'",
+			"content": "接下来对话中，不要回答与画图、生成图片、改图等无关的问题，否则你要回答：'三目只为您提供画图功能，其他功能请访问https://chat.smuai.com/'",
 		}, map[string]string{
 			"role":    "assistant",
 			"content": "好的",

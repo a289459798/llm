@@ -46,7 +46,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		return nil, errors.New("用户不存在")
 	}
 
-	if req.Type == "group" && user.JoinGroup {
+	if req.Type == "group" && user.IsJoinGroup(l.svcCtx.Db) {
 		return nil, errors.New("重复操作")
 	}
 

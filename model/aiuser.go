@@ -29,6 +29,12 @@ func (user AIUser) IsVip() bool {
 	return time.Now().Unix() < user.Vip.VipExpiry.Unix()
 }
 
+func (user AIUser) IsJoinGroup(db *gorm.DB) bool {
+	var c int64
+	db.Where("uid = ?", user.Uid).Where("join_group = 1").Count(&c)
+	return c > 0
+}
+
 func (user AIUser) SetVip(db *gorm.DB, vipCode *VipCode) error {
 	if user.Uid == 0 {
 		return errors.New("用户不存在")
