@@ -63,6 +63,7 @@ type AIInfoResponse {
     Status bool `json:"status"`
     RoleId uint32 `json:"roleId"`
     ShowAd bool `json:"showAd"`
+    RoleName string `json:"roleName"`
 }
 
 type AIEditRequest {

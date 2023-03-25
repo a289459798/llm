@@ -57,13 +57,14 @@ type TaskShareFollowRequest struct {
 }
 
 type AIInfoResponse struct {
-	Name    string `json:"name"`
-	Photo   string `json:"photo"`
-	Call    string `json:"call"`
-	Welcome string `json:"welcome"`
-	Status  bool   `json:"status"`
-	RoleId  uint32 `json:"roleId"`
-	ShowAd  bool   `json:"showAd"`
+	Name     string `json:"name"`
+	Photo    string `json:"photo"`
+	Call     string `json:"call"`
+	Welcome  string `json:"welcome"`
+	Status   bool   `json:"status"`
+	RoleId   uint32 `json:"roleId"`
+	ShowAd   bool   `json:"showAd"`
+	RoleName string `json:"roleName"`
 }
 
 type AIEditRequest struct {

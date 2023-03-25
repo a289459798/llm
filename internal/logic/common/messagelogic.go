@@ -27,7 +27,7 @@ func (l *MessageLogic) Message() (resp *types.MessageResponse, err error) {
 	message := &model.Message{}
 	l.svcCtx.Db.Where("status = 1").Find(&message)
 	if message.ID == 0 {
-		return nil, nil
+		return &types.MessageResponse{}, nil
 	}
 
 	return &types.MessageResponse{
