@@ -13,7 +13,7 @@ type AIUser struct {
 	UnionId   string    `gorm:"type:varchar(64)"json:"union_id"`
 	Subscribe bool      `json:"subscribe"`
 	JoinGroup bool      `json:"join_group" gorm:"default:0"`
-	Platform  string    `json:"platform" gorm:"type:varchar(20)"`
+	AppKey    string    `json:"app_key" gorm:"type:varchar(32)"`
 	Channel   string    `json:"channel" gorm:"type:varchar(32)"`
 	CreatedAt time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt  time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`

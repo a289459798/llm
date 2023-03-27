@@ -1,13 +1,9 @@
 package common
 
 import (
-	"context"
-	"github.com/silenceper/wechat/v2"
-	"github.com/silenceper/wechat/v2/cache"
-	"github.com/silenceper/wechat/v2/miniprogram/config"
-
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
+	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,18 +23,5 @@ func NewShortLinkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ShortLi
 }
 
 func (l *ShortLinkLogic) ShortLink(req *types.ShortLinkRequest) (resp *types.QrCodeResponse, err error) {
-	wc := wechat.NewWechat()
-	memory := cache.NewMemory()
-	cfg := &config.Config{
-		AppID:     l.svcCtx.Config.MiniApp.AppId,
-		AppSecret: l.svcCtx.Config.MiniApp.AppSecret,
-		Cache:     memory,
-	}
-	mini := wc.GetMiniProgram(cfg)
-	link, err := mini.GetShortLink().GenerateShortLinkTemp(req.Page, req.Title)
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.QrCodeResponse{Data: link}, nil
+	return &types.QrCodeResponse{Data: ""}, nil
 }

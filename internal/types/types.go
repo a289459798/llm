@@ -2,9 +2,8 @@
 package types
 
 type LoginRequest struct {
-	Code     string `json:"code"`
-	Platform string `json:"platform,optional"`
-	Channel  string `json:"channel,optional"`
+	Code    string `json:"code"`
+	Channel string `json:"channel,optional"`
 }
 
 type InfoRequest struct {

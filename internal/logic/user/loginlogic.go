@@ -1,15 +1,14 @@
 package user
 
 import (
+	"chatgpt-tools/common/utils/appplatform"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/silenceper/wechat/v2"
-	"github.com/silenceper/wechat/v2/cache"
-	"github.com/silenceper/wechat/v2/miniprogram/config"
+	"net/http"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,25 +28,31 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 	}
 }
 
-func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, err error) {
-	wc := wechat.NewWechat()
-	memory := cache.NewMemory()
-	cfg := &config.Config{
-		AppID:     l.svcCtx.Config.MiniApp.AppId,
-		AppSecret: l.svcCtx.Config.MiniApp.AppSecret,
-		Cache:     memory,
+func (l *LoginLogic) Login(req *types.LoginRequest, r *http.Request) (resp *types.InfoResponse, err error) {
+	appKey := r.Header.Get("App-Key")
+	if appKey == "" {
+		return nil, errors.New("App-Key 错误")
 	}
-	mini := wc.GetMiniProgram(cfg)
-	auth := mini.GetAuth()
-	session, err := auth.Code2Session(req.Code)
+	appInfo := model.App{AppKey: appKey}.Info(l.svcCtx.Db)
+	if appInfo.ID == 0 {
+		return nil, errors.New("App-Key 错误")
+	}
+
+	app, err := appplatform.GetApp(appInfo.Platform, appplatform.AppData{
+		Ctx:  l.ctx,
+		Conf: appInfo.Conf,
+	})
 	if err != nil {
 		return nil, err
 	}
+	session, err := app.GetSession(appplatform.SessionReq{
+		Code: req.Code,
+	})
 	aiUser := &model.AIUser{}
 	l.svcCtx.Db.Where("open_id = ?", session.OpenID).First(aiUser)
 	if aiUser.Uid == 0 {
 		// 判断UnionID是否存在
-		l.svcCtx.Db.Where("union_id = ?", session.OpenID).First(aiUser)
+		l.svcCtx.Db.Where("union_id = ?", session.UnionID).First(aiUser)
 		if aiUser.Uid == 0 {
 			tx := l.svcCtx.Db.Begin()
 			// 创建用户
@@ -55,7 +60,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 			tx.Create(user)
 			aiUser.OpenId = session.OpenID
 			aiUser.UnionId = session.UnionID
-			aiUser.Platform = req.Platform
+			aiUser.AppKey = appKey
 			aiUser.Channel = req.Channel
 			aiUser.Uid = user.ID
 			err = tx.Create(&aiUser).Error
@@ -69,7 +74,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 			newUser := model.AIUser{}
 			newUser.OpenId = session.OpenID
 			newUser.UnionId = session.UnionID
-			newUser.Platform = req.Platform
+			newUser.AppKey = appKey
 			newUser.Channel = req.Channel
 			newUser.Uid = aiUser.Uid
 			err = l.svcCtx.Db.Create(&aiUser).Error

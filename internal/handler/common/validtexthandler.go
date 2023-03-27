@@ -19,7 +19,7 @@ func ValidTextHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := common.NewValidTextLogic(r.Context(), svcCtx)
-		resp, err := l.ValidText(&req)
+		resp, err := l.ValidText(&req, r)
 		if err != nil {
 			errorx.Error(w, err.Error())
 		} else {

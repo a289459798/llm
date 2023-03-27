@@ -23,6 +23,11 @@ func NewSignMiddleware(c config.Config) *SignMiddleware {
 
 func (m *SignMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		appKey := r.Header.Get("App-Key")
+		if appKey == "" {
+			errorx.BadRequest(w, "参数错误 appKey")
+			return
+		}
 		authorization := r.Header.Get("authorization")
 		uid := r.Context().Value("uid")
 		if m.C.Mode == "pro" {

@@ -2,7 +2,6 @@ syntax = "v1"
 import "api/response.api"
 type LoginRequest {
     Code string `json:"code"`
-    Platform string `json:"platform,optional"`
     Channel string `json:"channel,optional"`
 }
 

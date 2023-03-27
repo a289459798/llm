@@ -28,7 +28,11 @@ func NewAuthAndUseMiddleware(c config.Config, db *gorm.DB) *AuthAndUseMiddleware
 
 func (m *AuthAndUseMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		appKey := r.Header.Get("App-Key")
+		if appKey == "" {
+			errorx.BadRequest(w, "参数错误 appKey")
+			return
+		}
 		authorization := r.Header.Get("authorization")
 		uid := r.Context().Value("uid")
 		uid2, _ := uid.(json.Number).Int64()

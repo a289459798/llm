@@ -1,6 +1,7 @@
 package pay
 
 import (
+	"chatgpt-tools/common/utils/appplatform"
 	"chatgpt-tools/internal/config"
 	"context"
 	"errors"
@@ -26,8 +27,8 @@ func NewWechat(payData PayData) *WechatPay {
 	}
 }
 
-func (p *WechatPay) getConfig() config.WeChatPayConf {
-	return p.Config.WeChatPayConf.Default
+func (p *WechatPay) getConfig() appplatform.WechatMiniConf {
+	return appplatform.WechatMiniConf{}
 }
 
 func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {

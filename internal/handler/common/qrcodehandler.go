@@ -19,7 +19,7 @@ func QrcodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := common.NewQrcodeLogic(r.Context(), svcCtx)
-		resp, err := l.Qrcode(req)
+		resp, err := l.Qrcode(req, r)
 		if err != nil {
 			errorx.Error(w, err.Error())
 		} else {

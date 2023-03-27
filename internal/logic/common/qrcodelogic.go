@@ -1,15 +1,13 @@
 package common
 
 import (
-	"context"
-	"encoding/base64"
-	"github.com/silenceper/wechat/v2"
-	"github.com/silenceper/wechat/v2/cache"
-	"github.com/silenceper/wechat/v2/miniprogram/config"
-	"github.com/silenceper/wechat/v2/miniprogram/qrcode"
-
+	"chatgpt-tools/common/utils/appplatform"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
+	"chatgpt-tools/model"
+	"context"
+	"errors"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,30 +26,32 @@ func NewQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QrcodeLogi
 	}
 }
 
-func (l *QrcodeLogic) Qrcode(req types.QrCodeRequest) (resp *types.QrCodeResponse, err error) {
-	wc := wechat.NewWechat()
-	memory := cache.NewMemory()
-	cfg := &config.Config{
-		AppID:     l.svcCtx.Config.MiniApp.AppId,
-		AppSecret: l.svcCtx.Config.MiniApp.AppSecret,
-		Cache:     memory,
+func (l *QrcodeLogic) Qrcode(req types.QrCodeRequest, r *http.Request) (resp *types.QrCodeResponse, err error) {
+	appKey := r.Header.Get("App-Key")
+	if appKey == "" {
+		return nil, errors.New("App-Key 错误")
 	}
-	mini := wc.GetMiniProgram(cfg)
-	qr, err := mini.GetQRCode().GetWXACodeUnlimit(qrcode.QRCoder{
-		Width: 100,
+	appInfo := model.App{AppKey: appKey}.Info(l.svcCtx.Db)
+	if appInfo.ID == 0 {
+		return nil, errors.New("App-Key 错误")
+	}
+
+	app, err := appplatform.GetApp(appInfo.Platform, appplatform.AppData{
+		Ctx:  l.ctx,
+		Conf: appInfo.Conf,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	qr, err := app.GetQRcode(appplatform.QrcodeReq{
 		Path:  req.Path,
 		Scene: req.Scene,
-		EnvVersion: func() string {
-			if l.svcCtx.Config.Mode == "dev" {
-				return "trial"
-			}
-			return "release"
-		}(),
 	})
 	if err != nil {
 		return nil, err
 	}
 	return &types.QrCodeResponse{
-		Data: base64.StdEncoding.EncodeToString(qr),
+		Data: qr,
 	}, nil
 }

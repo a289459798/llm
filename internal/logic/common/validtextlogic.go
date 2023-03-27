@@ -2,6 +2,7 @@ package common
 
 import (
 	"chatgpt-tools/common/utils"
+	"chatgpt-tools/common/utils/appplatform"
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
@@ -13,6 +14,7 @@ import (
 	"github.com/silenceper/wechat/v2/cache"
 	"github.com/silenceper/wechat/v2/miniprogram/config"
 	"github.com/silenceper/wechat/v2/miniprogram/security"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,7 +33,7 @@ func NewValidTextLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ValidTe
 	}
 }
 
-func (l *ValidTextLogic) ValidText(req *types.ValidRequest) (resp *types.ValidResponse, err error) {
+func (l *ValidTextLogic) ValidText(req *types.ValidRequest, r *http.Request) (resp *types.ValidResponse, err error) {
 	valid := utils.Filter(req.Content, l.svcCtx.Db)
 	if valid != "" {
 		return nil, errors.New(valid)
@@ -43,31 +45,43 @@ func (l *ValidTextLogic) ValidText(req *types.ValidRequest) (resp *types.ValidRe
 		return nil, errors.New("用户不存在")
 	}
 
-	wc := wechat.NewWechat()
-	memory := cache.NewMemory()
-	cfg := &config.Config{
-		AppID:     l.svcCtx.Config.MiniApp.AppId,
-		AppSecret: l.svcCtx.Config.MiniApp.AppSecret,
-		Cache:     memory,
+	appKey := r.Header.Get("App-Key")
+	if appKey == "" {
+		return nil, errors.New("App-Key 错误")
 	}
-	mini := wc.GetMiniProgram(cfg)
-	res, _ := mini.GetSecurity().MsgCheck(&security.MsgCheckRequest{
-		OpenID:  user.OpenId,
-		Scene:   3,
-		Content: req.Content,
-	})
+	appInfo := model.App{AppKey: appKey}.Info(l.svcCtx.Db)
+	if appInfo.ID == 0 {
+		return nil, errors.New("App-Key 错误")
+	}
 
-	if res.Result.Suggest != "pass" {
-		resMessage := ""
-		for _, s := range res.Detail {
-			if s.Suggest != "pass" {
-				if s.Prob > 80 {
-					resMessage += fmt.Sprintf("%s:%s ", s.Label, s.Keyword)
+	if appInfo.Platform == "wechat_mii" {
+		c, _ := appplatform.GetConf[appplatform.WechatMiniConf](appInfo.Conf)
+		wc := wechat.NewWechat()
+		memory := cache.NewMemory()
+		cfg := &config.Config{
+			AppID:     c.AppId,
+			AppSecret: c.AppSecret,
+			Cache:     memory,
+		}
+		mini := wc.GetMiniProgram(cfg)
+		res, _ := mini.GetSecurity().MsgCheck(&security.MsgCheckRequest{
+			OpenID:  user.OpenId,
+			Scene:   3,
+			Content: req.Content,
+		})
+
+		if res.Result.Suggest != "pass" {
+			resMessage := ""
+			for _, s := range res.Detail {
+				if s.Suggest != "pass" {
+					if s.Prob > 80 {
+						resMessage += fmt.Sprintf("%s:%s ", s.Label, s.Keyword)
+					}
 				}
 			}
-		}
-		if resMessage != "" {
-			return nil, errors.New(fmt.Sprintf("包含：%s", resMessage))
+			if resMessage != "" {
+				return nil, errors.New(fmt.Sprintf("包含：%s", resMessage))
+			}
 		}
 	}
 
