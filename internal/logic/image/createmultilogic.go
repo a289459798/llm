@@ -83,7 +83,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			imageCreate.Size = "512x512"
 		}
 	} else {
-		req.Model = "DALL-E"
+		req.Model = "StableDiffusion"
 	}
 
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
