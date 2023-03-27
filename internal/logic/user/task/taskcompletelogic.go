@@ -76,11 +76,19 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 	// 增加次数
 	amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
 	amount.ChatAmount += add
-	tx.Save(&amount)
+	err = tx.Save(&amount).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
 
 	if req.Type == "group" {
 		user.JoinGroup = true
-		l.svcCtx.Db.Save(user)
+		err = tx.Save(user).Error
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 	}
 
 	// 记录
