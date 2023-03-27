@@ -45,7 +45,6 @@ func getPrivilege() types.VipPrivilegeListResponse {
 		Data: []types.VipPrivilegeResponse{
 			{Type: "suanli", Title: "每天高额算力"},
 			{Type: "pic", Title: "图片高级功能"},
-			{Type: "history", Title: "对话历史"},
 			{Type: "ad", Title: "全站无广告"},
 			{Type: "ai", Title: "专属AI"},
 			{Type: "kf", Title: "专属客服"},
