@@ -71,6 +71,15 @@ func (m *AuthAndUseMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 				errorx.BadRequest(w, "参数错误：验签失败")
 				return
 			}
+
+			requestLog := &model.RequestLog{}
+			m.DB.Where("request_id = ?", newSign).First(&requestLog)
+			if requestLog.ID > 0 {
+				errorx.BadRequest(w, "重复请求")
+				return
+			}
+			// 记录请求
+			m.DB.Create(&model.RequestLog{RequestId: newSign})
 		}
 
 		amount := model.NewAccount(m.DB).GetAccount(uint32(uid2), time.Now())
@@ -80,5 +89,6 @@ func (m *AuthAndUseMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		next(w, r)
+
 	}
 }
