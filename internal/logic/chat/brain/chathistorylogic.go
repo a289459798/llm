@@ -40,8 +40,18 @@ func (l *ChatHistoryLogic) ChatHistory(req types.ChatHistoryRequest) (resp *type
 		}
 		history = append([]types.ChatHistory{
 			{
-				Q: m.Content,
-				A: m.Result,
+				Q: func() string {
+					if m.ShowContent != "" {
+						return m.ShowContent
+					}
+					return m.Content
+				}(),
+				A: func() string {
+					if m.ShowResult != "" {
+						return m.ShowResult
+					}
+					return m.Result
+				}(),
 			},
 		}, history...)
 	}

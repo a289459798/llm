@@ -59,7 +59,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			},
 			{
 				Role:    "user",
-				Content: fmt.Sprintf("帮我把一下内容翻译成英文：:%s", req.Content),
+				Content: fmt.Sprintf("帮我把以下内容翻译成英文:%s,回复内容只需要译文", req.Content),
 			},
 		}
 		stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
@@ -101,11 +101,12 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 	}
 
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "image/createMulti",
-		Content: req.Content,
-		Result:  fmt.Sprintf("%s|||%s", imageCreate.Prompt, strings.Join(stream, ",")),
-		Model:   req.Model,
+		Uid:         uint32(uid),
+		Type:        "image/createMulti",
+		ShowContent: req.Content,
+		Content:     imageCreate.Prompt,
+		Result:      fmt.Sprintf("%s|||%s", imageCreate.Prompt, strings.Join(stream, ",")),
+		Model:       req.Model,
 	}, &service.RecordParams{
 		Params: func() string {
 			if paramsMap != nil {
