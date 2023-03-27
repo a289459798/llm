@@ -72,3 +72,9 @@ func (ai *Gpt4) ImageRepair(image ImageRepair) (result []string, err error) {
 func (ai *Gpt4) ImageText(image Image2Text) (result string, err error) {
 	return
 }
+func (ai *Gpt4) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, err error) {
+	return
+}
+func (ai *Gpt4) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
+	return
+}

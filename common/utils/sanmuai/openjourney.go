@@ -188,3 +188,10 @@ func getCookie() (cookieString string, err error) {
 func (ai *Journey) ImageText(image Image2Text) (result string, err error) {
 	return
 }
+
+func (ai *Journey) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, err error) {
+	return
+}
+func (ai *Journey) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
+	return
+}

@@ -178,3 +178,10 @@ func getSalesforceCookie() (cookieString string, err error) {
 	}
 	return
 }
+
+func (ai *Salesforce) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, err error) {
+	return
+}
+func (ai *Salesforce) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
+	return
+}

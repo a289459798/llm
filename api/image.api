@@ -34,12 +34,23 @@ type(
         Url []string `json:"url"`
     }
 
+    ImageMultiAsyncResponse {
+        Task string `json:"task"`
+        Model string `json:"model"`
+        Url []string `json:"url"`
+    }
+
     ImageEditRequest {
         Content string `form:"content"`
     }
 
     PicRepairRequest {
         Image string `json:"image"`
+    }
+
+    ImageTaskRequest {
+        Task string `json:"task"`
+        Model string `json:"model"`
     }
 
     Image2TextRequest {
@@ -80,4 +91,16 @@ service tools {
 
     @handler image2Text
     post /images/img2text (Image2TextRequest) returns (Image2TextResponse)
+
+    @handler old2newAsync
+    post /images/pic-repair-async (PicRepairRequest) returns (ImageMultiAsyncResponse)
+}
+
+@server(
+    jwt: Auth
+    group: image
+)
+service tools {
+    @handler task
+    get /images/task (ImageTaskRequest) returns (ImageMultiAsyncResponse)
 }

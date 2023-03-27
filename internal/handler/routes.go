@@ -186,8 +186,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/images/img2text",
 					Handler: image.Image2TextHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/pic-repair-async",
+					Handler: image.Old2newAsyncHandler(serverCtx),
+				},
 			}...,
 		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/images/task",
+				Handler: image.TaskHandler(serverCtx),
+			},
+		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 

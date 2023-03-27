@@ -179,3 +179,52 @@ func getTencentarcCookie() (cookieString string, err error) {
 func (ai *Tencentarc) ImageText(image Image2Text) (result string, err error) {
 	return
 }
+
+func (ai *Tencentarc) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, err error) {
+	cookie, err := getTencentarcCookie()
+	if cookie == "" {
+		err = errors.New("cookie is empty")
+		return
+	}
+	uuid, err := createRepair(cookie, image)
+	result.Task = uuid
+	result.Session = cookie
+	return
+}
+func (ai *Tencentarc) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
+	client := &http.Client{}
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", task.Task), nil)
+	fmt.Println(fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", task.Task))
+	if err != nil {
+		return
+	}
+	//req.Header.Set("x-csrftoken", task.Session)
+	req.Header.Set("Content-Type", "application/json")
+	// 发送请求并获取响应
+	resp, err := client.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		err = errors.New(resp.Status)
+		return
+	}
+
+	respData := struct {
+		Prediction struct {
+			Output    []string `json:"output_files"`
+			CreatedAt string   `json:"created_at"`
+			Uuid      string   `json:"uuid"`
+			Error     string   `json:"error"`
+			Status    string   `json:"status"`
+		} `json:"prediction"`
+	}{}
+	if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
+		return
+	}
+	fmt.Println(respData)
+	result.Output = respData.Prediction.Output
+	return
+}

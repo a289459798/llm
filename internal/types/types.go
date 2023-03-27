@@ -167,12 +167,23 @@ type ImageMultiResponse struct {
 	Url []string `json:"url"`
 }
 
+type ImageMultiAsyncResponse struct {
+	Task  string   `json:"task"`
+	Model string   `json:"model"`
+	Url   []string `json:"url"`
+}
+
 type ImageEditRequest struct {
 	Content string `form:"content"`
 }
 
 type PicRepairRequest struct {
 	Image string `json:"image"`
+}
+
+type ImageTaskRequest struct {
+	Task  string `json:"task"`
+	Model string `json:"model"`
 }
 
 type Image2TextRequest struct {

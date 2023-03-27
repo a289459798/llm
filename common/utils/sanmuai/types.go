@@ -14,3 +14,12 @@ type ImageRepair struct {
 type Image2Text struct {
 	Image string `json:"image"`
 }
+
+type ImageAsyncTask struct {
+	Task    string
+	Session string
+}
+
+type ImageTask struct {
+	Output []string
+}

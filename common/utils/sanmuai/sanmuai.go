@@ -10,6 +10,8 @@ type SanmuAI interface {
 	CreateImage(req ImageCreate) (stream []string, err error)
 	CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error)
 	ImageRepair(image ImageRepair) (result []string, err error)
+	ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, err error)
+	ImageTask(task ImageAsyncTask) (result ImageTask, err error)
 	ImageText(image Image2Text) (result string, err error)
 }
 
