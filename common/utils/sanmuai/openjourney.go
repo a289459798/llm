@@ -81,6 +81,7 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
+					fmt.Println(respData.Prediction)
 					if respData.Prediction.Output != nil {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
@@ -114,6 +115,13 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	s := strings.Split(image.Size, "x")
 	width, _ := strconv.Atoi(s[0])
 	height, _ := strconv.Atoi(s[1])
+	if width > 768 {
+		width = 768
+	}
+
+	if height > 768 {
+		height = 768
+	}
 	data := map[string]map[string]interface{}{
 		"inputs": {
 			"guidance_scale":      7,
