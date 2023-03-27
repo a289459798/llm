@@ -4,8 +4,10 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
+	"net/http"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -30,11 +32,13 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 
 func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
-
 	user := &model.AIUser{}
 	l.svcCtx.Db.Where("uid = ?", uid).Preload("Vip").Preload("Vip.Vip").First(user)
 
+	if user.Uid == 0 || user.UnionId == "" {
+		return nil, errors.New(string(http.StatusUnauthorized))
+	}
+	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + l.svcCtx.Config.Auth.AccessExpire
 	claims["iat"] = time.Now().Unix()

@@ -6,7 +6,20 @@ import (
 )
 
 func Error(w http.ResponseWriter, err string) {
-	httpx.WriteJson(w, http.StatusInternalServerError, map[string]string{"message": err})
+	switch err {
+	case string(http.StatusNotFound):
+		NoFound(w, "NotFound")
+		break
+	case string(http.StatusBadRequest):
+		BadRequest(w, "BadRequest")
+		break
+	case string(http.StatusUnauthorized):
+		Unauthorized(w, "Unauthorized")
+		break
+	default:
+		httpx.WriteJson(w, http.StatusInternalServerError, map[string]string{"message": err})
+		break
+	}
 }
 
 func NoFound(w http.ResponseWriter, err string) {
