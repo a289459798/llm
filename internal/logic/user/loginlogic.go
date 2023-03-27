@@ -46,22 +46,37 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 	aiUser := &model.AIUser{}
 	l.svcCtx.Db.Where("open_id = ?", session.OpenID).First(aiUser)
 	if aiUser.Uid == 0 {
-		tx := l.svcCtx.Db.Begin()
-		// 创建用户
-		user := &model.User{}
-		tx.Create(user)
-		aiUser.OpenId = session.OpenID
-		aiUser.UnionId = session.UnionID
-		aiUser.Platform = req.Platform
-		aiUser.Channel = req.Channel
-		aiUser.Uid = user.ID
-		err = tx.Create(&aiUser).Error
-		if err != nil {
-			tx.Rollback()
-			return nil, errors.New("错误")
-		}
+		// 判断UnionID是否存在
+		l.svcCtx.Db.Where("union_id = ?", session.OpenID).First(aiUser)
+		if aiUser.Uid == 0 {
+			tx := l.svcCtx.Db.Begin()
+			// 创建用户
+			user := &model.User{}
+			tx.Create(user)
+			aiUser.OpenId = session.OpenID
+			aiUser.UnionId = session.UnionID
+			aiUser.Platform = req.Platform
+			aiUser.Channel = req.Channel
+			aiUser.Uid = user.ID
+			err = tx.Create(&aiUser).Error
+			if err != nil {
+				tx.Rollback()
+				return nil, errors.New("错误")
+			}
 
-		tx.Commit()
+			tx.Commit()
+		} else {
+			newUser := model.AIUser{}
+			newUser.OpenId = session.OpenID
+			newUser.UnionId = session.UnionID
+			newUser.Platform = req.Platform
+			newUser.Channel = req.Channel
+			newUser.Uid = aiUser.Uid
+			err = l.svcCtx.Db.Create(&aiUser).Error
+			if err != nil {
+				return nil, errors.New("错误")
+			}
+		}
 	} else if aiUser.UnionId == "" {
 		aiUser.UnionId = session.UnionID
 		l.svcCtx.Db.Save(aiUser)
