@@ -62,6 +62,9 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.InfoResponse, e
 		}
 
 		tx.Commit()
+	} else if aiUser.UnionId == "" {
+		aiUser.UnionId = session.UnionID
+		l.svcCtx.Db.Save(aiUser)
 	}
 
 	claims := make(jwt.MapClaims)
