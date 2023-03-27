@@ -2,7 +2,6 @@ package pay
 
 import (
 	"chatgpt-tools/common/utils/appplatform"
-	"chatgpt-tools/internal/config"
 	"context"
 	"errors"
 	"fmt"
@@ -15,8 +14,9 @@ import (
 
 type WechatPay struct {
 	Ctx      context.Context
-	Config   config.Config
+	Config   string
 	Merchant string
+	DeBug    bool
 }
 
 func NewWechat(payData PayData) *WechatPay {
@@ -24,15 +24,16 @@ func NewWechat(payData PayData) *WechatPay {
 		Ctx:      payData.Ctx,
 		Config:   payData.Config,
 		Merchant: payData.Merchant,
+		DeBug:    payData.DeBug,
 	}
 }
 
-func (p *WechatPay) getConfig() appplatform.WechatMiniConf {
-	return appplatform.WechatMiniConf{}
+func (p *WechatPay) getConfig() (appplatform.WechatMiniConf, error) {
+	return appplatform.GetConf[appplatform.WechatMiniConf](p.Config)
 }
 
 func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
-	payConfig := p.getConfig()
+	payConfig, _ := p.getConfig()
 	client, err = wechat.NewClientV3(payConfig.MchId, payConfig.SerialNo, payConfig.ApiV3Key, payConfig.PrivateKey)
 	if err != nil {
 		return
@@ -44,7 +45,7 @@ func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
 
 	// 打开Debug开关，输出日志，默认是关闭的
 	client.DebugSwitch = func() gopay.DebugSwitch {
-		if p.Config.Mode == "dev" {
+		if p.DeBug {
 			return 1
 		}
 		return 0
@@ -53,7 +54,7 @@ func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
 }
 
 func (p *WechatPay) Pay(order Order) (response PayResponse, err error) {
-	payConfig := p.getConfig()
+	payConfig, _ := p.getConfig()
 	client, err := p.getClient()
 	if err != nil {
 		return
@@ -101,7 +102,7 @@ func (p *WechatPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyRes
 	if err != nil {
 		return
 	}
-	payConfig := p.getConfig()
+	payConfig, _ := p.getConfig()
 	result, err := notifyReq.DecryptCipherText(payConfig.ApiV3Key)
 	if err != nil {
 		return

@@ -84,7 +84,7 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 	}
 	payModel := pay2.GetPay(req.Platform, pay2.PayData{
 		Ctx:      l.ctx,
-		Config:   l.svcCtx.Config,
+		Config:   "",
 		Merchant: "default",
 	})
 	payData, err := payModel.Pay(pay2.Order{

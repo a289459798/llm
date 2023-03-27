@@ -1,7 +1,6 @@
 package pay
 
 import (
-	"chatgpt-tools/internal/config"
 	"context"
 	"net/http"
 )
@@ -13,8 +12,9 @@ type SanmuPay interface {
 
 type PayData struct {
 	Ctx      context.Context
-	Config   config.Config
+	Config   string
 	Merchant string
+	DeBug    bool
 }
 
 func GetPay(platform string, payData PayData) SanmuPay {

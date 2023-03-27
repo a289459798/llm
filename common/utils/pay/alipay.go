@@ -1,14 +1,13 @@
 package pay
 
 import (
-	"chatgpt-tools/internal/config"
 	"context"
 	"net/http"
 )
 
 type AlipayPay struct {
 	Ctx      context.Context
-	Config   config.Config
+	Config   string
 	Merchant string
 }
 

@@ -29,7 +29,7 @@ func NewPayVipLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayVipLogi
 func (l *PayVipLogic) PayVip(req *types.PayRequest, r *http.Request) (resp *types.WechatPayResponse, err error) {
 	payModel := pay.GetPay(req.Type, pay.PayData{
 		Ctx:      l.ctx,
-		Config:   l.svcCtx.Config,
+		Config:   "",
 		Merchant: req.Merchant,
 	})
 
