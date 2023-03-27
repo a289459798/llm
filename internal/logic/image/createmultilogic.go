@@ -13,9 +13,8 @@ import (
 	"errors"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
-	"strings"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"strings"
 )
 
 type CreateMultiLogic struct {
@@ -101,7 +100,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Uid:     uint32(uid),
 		Type:    "image/createMulti",
 		Content: req.Content,
-		Result:  strings.Join(stream, ","),
+		Result:  fmt.Sprintf("%s|||%s", imageCreate.Prompt, strings.Join(stream, ",")),
 		Model:   req.Model,
 	}, &service.RecordParams{
 		Params: func() string {
