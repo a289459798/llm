@@ -39,7 +39,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	isVip := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
 
-	prompt := "不能露点，" + req.Content
+	prompt := req.Content
 	imageCreate := sanmuai.ImageCreate{
 		Prompt:         prompt,
 		N:              1,
