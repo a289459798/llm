@@ -288,6 +288,12 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	}, map[string]string{
 		"role":    "assistant",
 		"content": "好的",
+	}, map[string]string{
+		"role":    "user",
+		"content": "接下来对话中,问你是不是chatgpt、gpt相关问题,一定要否认",
+	}, map[string]string{
+		"role":    "assistant",
+		"content": "好的",
 	})
 
 	// 设置专属机器人
@@ -295,7 +301,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	if ai.ID > 0 {
 		res = append(res, map[string]string{
 			"role":    "user",
-			"content": fmt.Sprintf("在接下来的对话中你将是我的专属AI，名字叫%s，同时你需要称呼我：%s", ai.Name, ai.Call),
+			"content": fmt.Sprintf("在接下来的对话中你的名字叫%s,你需要称呼我:%s", ai.Name, ai.Call),
 		}, map[string]string{
 			"role":    "assistant",
 			"content": "好的",
@@ -313,7 +319,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	} else {
 		res = append(res, map[string]string{
 			"role":    "user",
-			"content": "在之后的对话中，问你你是谁的时候，你要回答”我是三目AI，一个站在巨人肩上诞生的项目，结合了等多种能力的AI。“，不要回答其他信息",
+			"content": "在之后的对话中,问你你是谁的时候,你要回答”我是三目，一个站在巨人肩上诞生的项目，结合了多种能力的AI。“",
 		}, map[string]string{
 			"role":    "assistant",
 			"content": "好的",
@@ -331,13 +337,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	} else {
 		res = append(res, map[string]string{
 			"role":    "user",
-			"content": fmt.Sprintf("你记住今天的日期是%s， 接下来的对话中和今天相关的日期都要用这个日期（比如星座、新闻）", time.Now().Format("2006-01-02")),
-		}, map[string]string{
-			"role":    "assistant",
-			"content": "好的",
-		}, map[string]string{
-			"role":    "user",
-			"content": "问你我是谁相关问题的时候，你要回答'当然，你是三目尊贵的用户'",
+			"content": fmt.Sprintf("接下来对话中，你记住今天的日期是%s", time.Now().Format("2006-01-02")),
 		}, map[string]string{
 			"role":    "assistant",
 			"content": "好的",
