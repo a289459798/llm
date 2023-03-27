@@ -31,7 +31,7 @@ func (user AIUser) IsVip() bool {
 
 func (user AIUser) IsJoinGroup(db *gorm.DB) bool {
 	var c int64
-	db.Where("uid = ?", user.Uid).Where("join_group = 1").Count(&c)
+	db.Model(AIUser{}).Where("uid = ?", user.Uid).Where("join_group = 1").Count(&c)
 	return c > 0
 }
 

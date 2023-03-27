@@ -68,6 +68,11 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 		}
 	}
 
+	// 加群
+	user := &model.AIUser{}
+	l.svcCtx.Db.Where("uid = ?", uid).First(&user)
+	isJoinGroup := user.IsJoinGroup(l.svcCtx.Db)
+
 	return &types.TaskResponse{
 		Max:     100 + 30 + 55 + 5,
 		Have:    total,
@@ -101,6 +106,20 @@ func (l *TaskListLogic) TaskList(req *types.InfoRequest) (resp *types.TaskRespon
 					return 10
 				}(int(adCount)),
 				Max: 55,
+			},
+			{
+				Title:  "加群",
+				Status: isJoinGroup,
+				Total:  1,
+				CompleteNumber: func() int {
+					if isJoinGroup {
+						return 1
+					}
+					return 0
+				}(),
+				Type:   "group",
+				Amount: 10,
+				Max:    10,
 			},
 			{
 				Title:          "打开小程序",
