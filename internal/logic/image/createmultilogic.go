@@ -81,6 +81,10 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		paramsMap["clarity"] = req.Clarity
 		if req.Clarity == "high" {
 			imageCreate.Size = "512x512"
+			imageCreate.Prompt += " 4k"
+		} else if req.Clarity == "superhigh" {
+			imageCreate.Size = "1024x1024"
+			imageCreate.Prompt += " 8k"
 		}
 	} else {
 		req.Model = "StableDiffusion"
