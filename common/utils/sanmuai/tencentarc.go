@@ -39,7 +39,7 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 	// 获取信息
 	resultChan := make(chan []string)
 	quitChan := make(chan string)
-	timeout := time.After(60 * time.Second)
+	timeout := time.After(300 * time.Second)
 	timer := time.NewTicker(5 * time.Second)
 	go func() {
 		for {
