@@ -72,12 +72,19 @@ type AIEditRequest {
     Status bool `form:"status"`
 }
 
+type LoginWXQrcodeResponse {
+    Qrcode string `json:"qrcode"`
+}
+
 @server(
     group: user
 )
 service tools {
     @handler login
     post /users/login (LoginRequest) returns (InfoResponse)
+
+    @handler loginWXQrcode
+    get /users/login/wxqrcode returns (LoginWXQrcodeResponse)
 }
 
 @server(

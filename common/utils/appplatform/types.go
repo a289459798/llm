@@ -14,7 +14,7 @@ type Session struct {
 }
 
 type ConfData interface {
-	WechatMiniConf
+	WechatMiniConf | WechatOfficialConf
 }
 
 type WechatMiniConf struct {
@@ -25,4 +25,11 @@ type WechatMiniConf struct {
 	ApiV3Key   string
 	PrivateKey string
 	NotifyUrl  string
+}
+
+type WechatOfficialConf struct {
+	AppId          string
+	AppSecret      string
+	Token          string
+	EncodingAESKey string
 }

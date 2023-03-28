@@ -73,6 +73,10 @@ type AIEditRequest struct {
 	Status bool   `form:"status"`
 }
 
+type LoginWXQrcodeResponse struct {
+	Qrcode string `json:"qrcode"`
+}
+
 type ChatHistoryListResponse struct {
 	Pagination Pagination        `json:"pagination"`
 	Data       []ChatHistoryData `json:"data"`

@@ -12,6 +12,10 @@ import (
 func ValidateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.WechatValidateRequest
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.Error(w, err)
+			return
+		}
 		l := wechat.NewValidateLogic(r.Context(), svcCtx)
 		resp, err := l.Validate(req, w, r)
 		if err != nil {

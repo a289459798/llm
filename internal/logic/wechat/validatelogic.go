@@ -39,7 +39,6 @@ func (l *ValidateLogic) Validate(req types.WechatValidateRequest, w http.Respons
 		Cache:          memory,
 	}
 	officialAccount := wc.GetOfficialAccount(cfg)
-
 	// 传入request和responseWriter
 	validate := officialAccount.GetServer(r, w).Validate()
 
