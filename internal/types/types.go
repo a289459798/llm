@@ -465,6 +465,13 @@ type PayResponse struct {
 type WeChatCallbackResponse struct {
 }
 
+type WechatValidateRequest struct {
+	Signature string `form:"signature"`
+	Timestamp string `form:"timestamp"`
+	Nonce     string `form:"nonce"`
+	Echostr   string `form:"echostr"`
+}
+
 type WechatPayResponse struct {
 	Data string `json:"data"`
 }

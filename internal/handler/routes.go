@@ -496,6 +496,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodGet,
+				Path:    "/wechat/validate",
+				Handler: wechat.ValidateHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/wechat/callback/subscribe",
 				Handler: wechat.SubscribeCallHandler(serverCtx),

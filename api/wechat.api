@@ -3,11 +3,20 @@ syntax = "v1"
 type WeChatCallbackResponse {
 
 }
+type WechatValidateRequest {
+    Signature string `form:"signature"`
+    Timestamp string `form:"timestamp"`
+    Nonce string `form:"nonce"`
+    Echostr string `form:"echostr"`
+}
 
 @server(
     group: wechat
 )
 service tools {
+    @handler validate
+    get /wechat/validate(WechatValidateRequest)  returns (WeChatCallbackResponse)
+
     @handler subscribeCall
     post /wechat/callback/subscribe  returns (WeChatCallbackResponse)
 }
