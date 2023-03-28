@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
 	"time"
 )
@@ -18,6 +19,67 @@ type AIUser struct {
 	CreatedAt time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt  time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
 	Vip       AIUserVip `gorm:"foreignKey:uid;references:uid"`
+}
+
+type UserLogin struct {
+	OpenID       string
+	UnionID      string
+	Channel      string
+	AppKey       string
+	AccessExpire int64
+	AccessSecret string
+}
+
+func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, error) {
+	db.Where("open_id = ?", userLogin.OpenID).First(&user)
+	if user.Uid == 0 {
+		// 判断UnionID是否存在
+		db.Where("union_id = ?", userLogin.UnionID).First(&user)
+		if user.Uid == 0 {
+			tx := db.Begin()
+			// 创建用户
+			u := User{}
+			tx.Create(u)
+			user.OpenId = userLogin.OpenID
+			user.UnionId = userLogin.UnionID
+			user.AppKey = userLogin.AppKey
+			user.Channel = userLogin.Channel
+			user.Uid = u.ID
+			err := tx.Create(&user).Error
+			if err != nil {
+				tx.Rollback()
+				return nil, "", errors.New("错误")
+			}
+
+			tx.Commit()
+		} else {
+			newUser := AIUser{}
+			newUser.OpenId = userLogin.OpenID
+			newUser.UnionId = userLogin.UnionID
+			newUser.AppKey = userLogin.AppKey
+			newUser.Channel = userLogin.Channel
+			newUser.Uid = user.Uid
+			err := db.Create(&newUser).Error
+			if err != nil {
+				return nil, "", errors.New("错误")
+			}
+		}
+	} else if user.UnionId == "" {
+		user.UnionId = userLogin.UnionID
+		db.Save(user)
+	}
+
+	claims := make(jwt.MapClaims)
+	claims["exp"] = time.Now().Unix() + userLogin.AccessExpire
+	claims["iat"] = time.Now().Unix()
+	claims["uid"] = user.Uid
+	token := jwt.New(jwt.SigningMethodHS256)
+	token.Claims = claims
+	tokenString, err := token.SignedString([]byte(userLogin.AccessSecret))
+	if err != nil {
+		return nil, "", err
+	}
+	return &user, tokenString, nil
 }
 
 func (user AIUser) Find(db *gorm.DB) AIUser {

@@ -17,11 +17,11 @@ func EventHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 		l := wechat.NewEventLogic(r.Context(), svcCtx)
-		resp, err := l.Event(req, r, w)
+		_, err := l.Event(req, r, w)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {
-			httpx.OkJson(w, resp)
+			//httpx.OkJson(w, resp)
 		}
 	}
 }
