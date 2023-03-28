@@ -62,7 +62,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 				})
 			}
 
-			tx.Create(&account)
+			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&account)
 
 			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&AccountRecord{
 				Uid:           uid,

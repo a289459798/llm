@@ -1,6 +1,8 @@
 package wechat
 
 import (
+	"chatgpt-tools/common/utils/appplatform"
+	"chatgpt-tools/model"
 	"context"
 	"errors"
 	"github.com/silenceper/wechat/v2"
@@ -29,13 +31,18 @@ func NewValidateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Validate
 }
 
 func (l *ValidateLogic) Validate(req types.WechatValidateRequest, w http.ResponseWriter, r *http.Request) (resp string, err error) {
+	appInfo := model.App{AppKey: req.AppKey}.Info(l.svcCtx.Db)
+	if appInfo.ID == 0 {
+		return "", errors.New("App-Key 错误")
+	}
+	c, _ := appplatform.GetConf[appplatform.WechatOfficialConf](appInfo.Conf)
 	wc := wechat.NewWechat()
 	memory := cache.NewMemory()
 	var cfg = &offConfig.Config{
-		AppID:          "wx774aefe5b682fe6f",
-		AppSecret:      "164c9a3e9090983ef35668293df86045",
-		Token:          "2CA4jdhM",
-		EncodingAESKey: "9mV4fqzpiaZ53UzhPZuzd4wsCw42v8neGRksLpVyUXy",
+		AppID:          c.AppId,
+		AppSecret:      c.AppSecret,
+		Token:          c.Token,
+		EncodingAESKey: c.EncodingAESKey,
 		Cache:          memory,
 	}
 	officialAccount := wc.GetOfficialAccount(cfg)

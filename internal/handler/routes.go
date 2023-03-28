@@ -502,8 +502,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/wechat/validate",
+				Path:    "/wechat/event/:appkey",
 				Handler: wechat.ValidateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/wechat/event/:appkey",
+				Handler: wechat.EventHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

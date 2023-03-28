@@ -5,6 +5,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	"github.com/silenceper/wechat/v2/officialaccount/basic"
@@ -52,15 +53,15 @@ func (l *LoginWXQrcodeLogic) LoginWXQrcode(r *http.Request) (resp *types.LoginWX
 		Cache:          memory,
 	}
 	officialAccount := wc.GetOfficialAccount(cfg)
-
-	ticket, err := officialAccount.GetBasic().GetQRTicket(&basic.Request{
-		ExpireSeconds: 60,
-		ActionName:    "login",
-	})
+	tq := &basic.Request{}
+	tq.ExpireSeconds = 604800
+	tq.ActionName = "QR_STR_SCENE"
+	tq.ActionInfo.Scene.SceneStr = "login"
+	ticket, err := officialAccount.GetBasic().GetQRTicket(tq)
 	if err != nil {
 		return nil, err
 	}
 	return &types.LoginWXQrcodeResponse{
-		Qrcode: ticket.URL,
+		Qrcode: fmt.Sprintf(basic.ShowQRCode(ticket)),
 	}, nil
 }

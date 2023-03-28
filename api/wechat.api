@@ -4,10 +4,11 @@ type WeChatCallbackResponse {
 
 }
 type WechatValidateRequest {
-    Signature string `form:"signature"`
-    Timestamp string `form:"timestamp"`
-    Nonce string `form:"nonce"`
-    Echostr string `form:"echostr"`
+    AppKey string `path:"appkey"`
+    Signature string `form:"signature,optional"`
+    Timestamp string `form:"timestamp,optional"`
+    Nonce     string `form:"nonce,optional"`
+    Echostr   string `form:"echostr,optional"`
 }
 
 @server(
@@ -15,7 +16,10 @@ type WechatValidateRequest {
 )
 service tools {
     @handler validate
-    get /wechat/validate(WechatValidateRequest)  returns (WeChatCallbackResponse)
+    get /wechat/event/:appkey(WechatValidateRequest)  returns (WeChatCallbackResponse)
+
+    @handler event
+    post /wechat/event/:appkey(WechatValidateRequest)  returns (WeChatCallbackResponse)
 
     @handler subscribeCall
     post /wechat/callback/subscribe  returns (WeChatCallbackResponse)

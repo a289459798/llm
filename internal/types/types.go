@@ -470,10 +470,11 @@ type WeChatCallbackResponse struct {
 }
 
 type WechatValidateRequest struct {
-	Signature string `form:"signature"`
-	Timestamp string `form:"timestamp"`
-	Nonce     string `form:"nonce"`
-	Echostr   string `form:"echostr"`
+	AppKey    string `path:"appkey"`
+	Signature string `form:"signature,optional"`
+	Timestamp string `form:"timestamp,optional"`
+	Nonce     string `form:"nonce,optional"`
+	Echostr   string `form:"echostr,optional"`
 }
 
 type WechatPayResponse struct {
