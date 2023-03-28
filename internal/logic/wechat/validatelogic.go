@@ -28,7 +28,7 @@ func NewValidateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Validate
 	}
 }
 
-func (l *ValidateLogic) Validate(req types.WechatValidateRequest, w http.ResponseWriter, r *http.Request) (resp *types.WeChatCallbackResponse, err error) {
+func (l *ValidateLogic) Validate(req types.WechatValidateRequest, w http.ResponseWriter, r *http.Request) (resp string, err error) {
 	wc := wechat.NewWechat()
 	memory := cache.NewMemory()
 	var cfg = &offConfig.Config{
@@ -42,8 +42,9 @@ func (l *ValidateLogic) Validate(req types.WechatValidateRequest, w http.Respons
 
 	// 传入request和responseWriter
 	validate := officialAccount.GetServer(r, w).Validate()
+
 	if !validate {
-		return nil, errors.New("error")
+		return "", errors.New("error")
 	}
-	return
+	return req.Echostr, nil
 }

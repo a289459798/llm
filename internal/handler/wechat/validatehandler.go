@@ -12,17 +12,13 @@ import (
 func ValidateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.WechatValidateRequest
-		if err := httpx.Parse(r, &req); err != nil {
-			httpx.Error(w, err)
-			return
-		}
 		l := wechat.NewValidateLogic(r.Context(), svcCtx)
-		_, err := l.Validate(req, w, r)
+		resp, err := l.Validate(req, w, r)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("true"))
+			w.Write([]byte(resp))
 		}
 	}
 }
