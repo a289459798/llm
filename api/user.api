@@ -74,6 +74,11 @@ type AIEditRequest {
 
 type LoginWXQrcodeResponse {
     Qrcode string `json:"qrcode"`
+    SceneStr string `json:"sceneStr"`
+}
+
+type LoginCheckRequest {
+    SceneStr string `form:"sceneStr"`
 }
 
 @server(
@@ -85,6 +90,9 @@ service tools {
 
     @handler loginWXQrcode
     get /users/login/wxqrcode returns (LoginWXQrcodeResponse)
+
+    @handler loginCheck
+    get /users/login/check(LoginCheckRequest) returns (InfoResponse)
 }
 
 @server(

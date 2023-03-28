@@ -1,8 +1,14 @@
 package wechat
 
 import (
+	"chatgpt-tools/common/utils/appplatform"
+	"chatgpt-tools/model"
 	"context"
+	"errors"
 	"fmt"
+	"github.com/silenceper/wechat/v2"
+	"github.com/silenceper/wechat/v2/cache"
+	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	"net/http"
 
 	"chatgpt-tools/internal/svc"
@@ -29,6 +35,27 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 
 	fmt.Println(req.AppKey)
 	fmt.Println("事件")
-
+	appInfo := model.App{AppKey: req.AppKey}.Info(l.svcCtx.Db)
+	if appInfo.ID == 0 {
+		return nil, errors.New("App-Key 错误")
+	}
+	c, _ := appplatform.GetConf[appplatform.WechatOfficialConf](appInfo.Conf)
+	wc := wechat.NewWechat()
+	memory := cache.NewMemory()
+	var cfg = &offConfig.Config{
+		AppID:          c.AppId,
+		AppSecret:      c.AppSecret,
+		Token:          c.Token,
+		EncodingAESKey: c.EncodingAESKey,
+		Cache:          memory,
+	}
+	officialAccount := wc.GetOfficialAccount(cfg)
+	server := officialAccount.GetServer(r, w)
+	openId := server.GetOpenID()
+	info, err := officialAccount.GetUser().GetUserInfo(openId)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(info)
 	return
 }

@@ -40,6 +40,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/users/login/wxqrcode",
 				Handler: user.LoginWXQrcodeHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/login/check",
+				Handler: user.LoginCheckHandler(serverCtx),
+			},
 		},
 	)
 

@@ -4,6 +4,8 @@ import (
 	"chatgpt-tools/common/utils/appplatform"
 	"chatgpt-tools/model"
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/silenceper/wechat/v2"
@@ -11,6 +13,7 @@ import (
 	"github.com/silenceper/wechat/v2/officialaccount/basic"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	"net/http"
+	"time"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -56,12 +59,21 @@ func (l *LoginWXQrcodeLogic) LoginWXQrcode(r *http.Request) (resp *types.LoginWX
 	tq := &basic.Request{}
 	tq.ExpireSeconds = 604800
 	tq.ActionName = "QR_STR_SCENE"
-	tq.ActionInfo.Scene.SceneStr = "login"
+	str := fmt.Sprintf("%d", time.Now().Unix())
+	md5sum := md5.Sum([]byte(str))
+	newSign := hex.EncodeToString(md5sum[:16])
+	sceneStr := fmt.Sprintf("login_%s", newSign)
+	tq.ActionInfo.Scene.SceneStr = sceneStr
 	ticket, err := officialAccount.GetBasic().GetQRTicket(tq)
 	if err != nil {
 		return nil, err
 	}
+	l.svcCtx.Db.Create(&model.ScanScene{
+		Scene: sceneStr,
+		Type:  "login",
+	})
 	return &types.LoginWXQrcodeResponse{
-		Qrcode: fmt.Sprintf(basic.ShowQRCode(ticket)),
+		Qrcode:   fmt.Sprintf(basic.ShowQRCode(ticket)),
+		SceneStr: sceneStr,
 	}, nil
 }

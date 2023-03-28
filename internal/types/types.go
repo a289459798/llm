@@ -74,7 +74,12 @@ type AIEditRequest struct {
 }
 
 type LoginWXQrcodeResponse struct {
-	Qrcode string `json:"qrcode"`
+	Qrcode   string `json:"qrcode"`
+	SceneStr string `json:"sceneStr"`
+}
+
+type LoginCheckRequest struct {
+	SceneStr string `form:"sceneStr"`
 }
 
 type ChatHistoryListResponse struct {
