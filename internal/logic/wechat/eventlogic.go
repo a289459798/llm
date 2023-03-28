@@ -43,17 +43,19 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 	wc := wechat.NewWechat()
 	memory := cache.NewMemory()
 	var cfg = &offConfig.Config{
-		AppID:          c.AppId,
-		AppSecret:      c.AppSecret,
-		Token:          c.Token,
-		EncodingAESKey: c.EncodingAESKey,
-		Cache:          memory,
+		AppID:     c.AppId,
+		AppSecret: c.AppSecret,
+		Token:     c.Token,
+		Cache:     memory,
 	}
 	officialAccount := wc.GetOfficialAccount(cfg)
 	server := officialAccount.GetServer(r, w)
+	fmt.Println(server.RequestMsg)
 	openId := server.GetOpenID()
+	fmt.Println("openId：" + openId)
 	info, err := officialAccount.GetUser().GetUserInfo(openId)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 	fmt.Println(info)
