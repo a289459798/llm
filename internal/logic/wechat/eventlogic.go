@@ -11,6 +11,7 @@ import (
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 	"net/http"
+	"strings"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -67,7 +68,6 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 
 	err = server.Serve()
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	openId := server.GetOpenID()
@@ -77,30 +77,34 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 		case message.EventScan:
 			fmt.Println("openId：" + openId)
 			fmt.Println(server.RequestMsg.EventKey)
-			info, err := officialAccount.GetUser().GetUserInfo(openId)
-			fmt.Println("UnionID" + info.UnionID)
-			if err != nil {
-				return nil, err
-			}
-			// 查找
-			//_, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
-			//	OpenID:       openId,
-			//	UnionID:      info.UnionID,
-			//	Channel:      req.Channel,
-			//	AppKey:       req.AppKey,
-			//	AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
-			//	AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
-			//})
+			if strings.Index(server.RequestMsg.EventKey, "login_") >= 0 {
+				scan := &model.ScanScene{}
+				l.svcCtx.Db.Where("scene = ?", server.RequestMsg.EventKey).First(&scan)
+				if scan.ID > 0 {
+					info, err := officialAccount.GetUser().GetUserInfo(openId)
+					fmt.Println("UnionID" + info.UnionID)
+					if err != nil {
+						return nil, err
+					}
+					_, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
+						OpenID:       openId,
+						UnionID:      info.UnionID,
+						Channel:      scan.Channel,
+						AppKey:       req.AppKey,
+						AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
+						AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
+					})
 
-			if err != nil {
-				return nil, err
+					if err != nil {
+						return nil, err
+					}
+					scan.Data = tokenString
+					l.svcCtx.Db.Save(&scan)
+				}
 			}
-			//fmt.Println(tokenString)
 			break
 		}
-
 		break
-
 	}
 	server.Send()
 	return

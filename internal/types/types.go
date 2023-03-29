@@ -82,6 +82,10 @@ type LoginCheckRequest struct {
 	SceneStr string `form:"sceneStr"`
 }
 
+type WxqrcodeRequest struct {
+	Channel string `form:"channel,optional"`
+}
+
 type ChatHistoryListResponse struct {
 	Pagination Pagination        `json:"pagination"`
 	Data       []ChatHistoryData `json:"data"`

@@ -35,7 +35,7 @@ func NewLoginWXQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Log
 	}
 }
 
-func (l *LoginWXQrcodeLogic) LoginWXQrcode(r *http.Request) (resp *types.LoginWXQrcodeResponse, err error) {
+func (l *LoginWXQrcodeLogic) LoginWXQrcode(req types.WxqrcodeRequest, r *http.Request) (resp *types.LoginWXQrcodeResponse, err error) {
 	appKey := r.Header.Get("App-Key")
 	if appKey == "" {
 		return nil, errors.New("App-Key 错误")
@@ -69,8 +69,9 @@ func (l *LoginWXQrcodeLogic) LoginWXQrcode(r *http.Request) (resp *types.LoginWX
 		return nil, err
 	}
 	l.svcCtx.Db.Create(&model.ScanScene{
-		Scene: sceneStr,
-		Type:  "login",
+		Scene:   sceneStr,
+		Type:    "login",
+		Channel: req.Channel,
 	})
 	return &types.LoginWXQrcodeResponse{
 		Qrcode:   fmt.Sprintf(basic.ShowQRCode(ticket)),

@@ -81,6 +81,10 @@ type LoginCheckRequest {
     SceneStr string `form:"sceneStr"`
 }
 
+type WxqrcodeRequest {
+    Channel string `form:"channel,optional"`
+}
+
 @server(
     group: user
 )
@@ -89,7 +93,7 @@ service tools {
     post /users/login (LoginRequest) returns (InfoResponse)
 
     @handler loginWXQrcode
-    get /users/login/wxqrcode returns (LoginWXQrcodeResponse)
+    get /users/login/wxqrcode(WxqrcodeRequest) returns (LoginWXQrcodeResponse)
 
     @handler loginCheck
     get /users/login/check(LoginCheckRequest) returns (InfoResponse)
