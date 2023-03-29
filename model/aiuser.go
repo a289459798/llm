@@ -35,7 +35,7 @@ func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, err
 	if user.Uid == 0 {
 		// 判断UnionID是否存在
 		db.Where("union_id = ?", userLogin.UnionID).First(&user)
-		if user.Uid == 0 {
+		if user.Uid == 0 || userLogin.UnionID == "" {
 			tx := db.Begin()
 			// 创建用户
 			u := User{}
