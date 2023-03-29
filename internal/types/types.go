@@ -150,7 +150,7 @@ type ReportResponse struct {
 type ImageRequest struct {
 	Content string `json:"content"`
 	Model   string `json:"model,optional,options=DALL-E|GPT-PLUS|StableDiffusion|Midjourney"`
-	Number  int    `json:"number,optional,options=1|4"`
+	Number  int    `json:"number,optional,options=1|2|4"`
 	Clarity string `json:"clarity,optional,options=standard|high|superhigh"`
 }
 

@@ -26,6 +26,10 @@ func NewVipGiveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipGiveLo
 }
 
 func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
+	return &types.VipGiveResponse{
+		Day:    0,
+		Expiry: "",
+	}, nil
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	day := 0
