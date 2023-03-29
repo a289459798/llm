@@ -51,7 +51,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	message := []gogpt.ChatCompletionMessage{
 		{
 			Role:    "system",
-			Content: "请帮我解决一些问题",
+			Content: "请帮我解决一些问题，回答用markdown的格式输出",
 		},
 	}
 
