@@ -69,7 +69,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		if len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
 			imageCreate.Prompt = stream.Choices[0].Message.Content
 			if req.Model == "Midjourney" {
-				imageCreate.Prompt = fmt.Sprintf("midjourney-v4 style %s", stream.Choices[0].Message.Content)
+				imageCreate.Prompt = fmt.Sprintf("mdjrny-v4 style %s", stream.Choices[0].Message.Content)
 			}
 		}
 	}
