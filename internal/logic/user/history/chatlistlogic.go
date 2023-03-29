@@ -6,7 +6,6 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
-	"errors"
 	"math"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,11 +27,6 @@ func NewChatListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatList
 
 func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistoryListResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	isVip := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
-	if !isVip {
-		return nil, errors.New("非VIP")
-	}
-
 	offset := req.Offset
 	limit := req.Limit
 	tx := l.svcCtx.Db.Model(&model.Record{}).

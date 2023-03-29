@@ -109,6 +109,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: userhistory.ChatListHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodDelete,
+					Path:    "/users/history/chat",
+					Handler: userhistory.CleanChatListHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/users/history/suanli",
 					Handler: userhistory.SuanliListHandler(serverCtx),

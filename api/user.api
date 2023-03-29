@@ -176,6 +176,9 @@ service tools {
     @handler chatList
     get /users/history/chat(PageRequest) returns (ChatHistoryListResponse)
 
+    @handler cleanChatList
+    delete /users/history/chat returns (ChatHistoryListResponse)
+
     @handler suanliList
     get /users/history/suanli(PageRequest) returns (SuanliHistoryListResponse)
 
