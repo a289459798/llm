@@ -3,7 +3,7 @@ package svc
 import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
-	"chatgpt-tools/model"
+	log2 "github.com/sirupsen/logrus"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -63,10 +63,16 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.VipCode{})
 	//db.AutoMigrate(&model.Vip{})
 	//db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.AIUserVip{})
+	//db.AutoMigrate(&model.AIUserVip{})
 	//db.AutoMigrate(&model.App{})
 	//db.AutoMigrate(&model.RequestLog{})
-	db.AutoMigrate(&model.ScanScene{})
+	//db.AutoMigrate(&model.ScanScene{})
+
+	if c.Mode == "dev" {
+		log2.SetLevel(log2.DebugLevel)
+	} else {
+		log2.SetLevel(log2.WarnLevel)
+	}
 	return &ServiceContext{
 		Config:     c,
 		Db:         db,
