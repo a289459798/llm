@@ -42,6 +42,10 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 		if user.IsVip() {
 			suanli = 2
 		}
+		// 判断是否存在图片
+		if _, ok := paramsMap["image"]; ok {
+			suanli += 5
+		}
 		break
 
 	}

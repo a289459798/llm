@@ -43,9 +43,6 @@ func (l *Image2TextLogic) Image2Text(req *types.Image2TextRequest, w http.Respon
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(imageText)
-
 	prompt := fmt.Sprintf("一张图片包含以下内容：%s，请帮我组织一下语言形成一篇短文，用中文输出", imageText)
 
 	message := []gogpt.ChatCompletionMessage{

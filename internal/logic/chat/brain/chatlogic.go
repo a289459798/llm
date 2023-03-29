@@ -91,8 +91,8 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		})
 	}
 
-	// 根据模版提问
 	msg := req.Message
+	// 根据模版提问
 	if req.TemplateId > 0 {
 		template := &model.ChatTemplate{}
 		l.svcCtx.Db.Where("id = ?", req.TemplateId).Where("is_del = 0").Find(&template)
@@ -116,6 +116,19 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		}
 
 	}
+
+	// 获取图片内容
+	imageText, err := l.getImageText(req.Image)
+	if err != nil {
+		return nil, err
+	}
+
+	ShowContent := ""
+	if imageText != "" {
+		ShowContent = fmt.Sprintf("[](%s)\n\n%s", req.Image, msg)
+		msg = fmt.Sprintf("接下来对话中,我有一张图片里面的内容：%s，你回答下面问题；%s", imageText, msg)
+	}
+
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role: "user",
 		Content: func() string {
@@ -200,15 +213,23 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		return nil, errors.New("数据为空")
 	}
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:        uint32(uid),
-		Type:       "chat/chat",
-		Content:    msg,
-		Result:     result,
-		ShowResult: showResult,
-		ChatId:     req.ChatId,
-		Model:      req.Model,
-		Platform:   r.Header.Get("platform"),
-	}, nil)
+		Uid:         uint32(uid),
+		Type:        "chat/chat",
+		Content:     msg,
+		ShowContent: ShowContent,
+		Result:      result,
+		ShowResult:  showResult,
+		ChatId:      req.ChatId,
+		Model:       req.Model,
+		Platform:    r.Header.Get("platform"),
+	}, &service.RecordParams{
+		Params: func() string {
+			if imageText != "" {
+				return "{\"image\": \"image\"}"
+			}
+			return ""
+		}(),
+	})
 
 	return
 }
@@ -262,6 +283,22 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 			Result:  strings.Join(stream, ","),
 		}, nil)
 		return fmt.Sprintf("\n\n![](%s)", stream[0]), nil
+	}
+	return "", nil
+}
+
+func (l *ChatLogic) getImageText(image string) (string, error) {
+	if image != "" {
+		ai := sanmuai.GetAI("Salesforce", sanmuai.SanmuData{
+			Ctx:    l.ctx,
+			SvcCtx: l.svcCtx,
+		})
+
+		imageText, err := ai.ImageText(sanmuai.Image2Text{Image: image})
+		if err != nil {
+			return "", err
+		}
+		return imageText, nil
 	}
 	return "", nil
 }

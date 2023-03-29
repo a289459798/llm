@@ -349,6 +349,7 @@ type ChatRequest struct {
 	TemplateId uint32 `json:"templateId"`
 	Message    string `json:"message"`
 	Model      string `json:"model,optional,options=GPT-3.5|GPT-4"`
+	Image      string `json:"image,optional"`
 }
 
 type ChatHistoryRequest struct {
