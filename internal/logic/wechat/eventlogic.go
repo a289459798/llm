@@ -83,19 +83,19 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 				return nil, err
 			}
 			// 查找
-			_, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
-				OpenID:       openId,
-				UnionID:      info.UnionID,
-				Channel:      req.Channel,
-				AppKey:       req.AppKey,
-				AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
-				AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
-			})
+			//_, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
+			//	OpenID:       openId,
+			//	UnionID:      info.UnionID,
+			//	Channel:      req.Channel,
+			//	AppKey:       req.AppKey,
+			//	AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
+			//	AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
+			//})
 
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(tokenString)
+			//fmt.Println(tokenString)
 			break
 		}
 

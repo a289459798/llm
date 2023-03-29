@@ -48,16 +48,16 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			account.Date = date
 			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&account)
 
-			isVip := AIUser{Uid: uid}.IsVip()
-			if isVip {
-				var vipAmount uint32 = 200
-				account.ChatAmount += vipAmount
+			user := AIUser{Uid: uid}.Find(tx)
+			isVip := user.IsVip()
+			if isVip && user.Vip.Amount > 0 {
+				account.ChatAmount += user.Vip.Amount
 				tx.Create(&AccountRecord{
 					Uid:           uid,
 					RecordId:      0,
 					Way:           1,
 					Type:          "vip",
-					Amount:        vipAmount,
+					Amount:        user.Vip.Amount,
 					CurrentAmount: account.ChatAmount - amount - account.ChatUse,
 				})
 			}

@@ -63,7 +63,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.VipCode{})
 	//db.AutoMigrate(&model.Vip{})
 	//db.AutoMigrate(&model.User{})
-	//db.AutoMigrate(&model.AIUserVip{})
+	db.AutoMigrate(&model.AIUserVip{})
 	//db.AutoMigrate(&model.App{})
 	//db.AutoMigrate(&model.RequestLog{})
 	db.AutoMigrate(&model.ScanScene{})

@@ -114,6 +114,7 @@ func (user AIUser) SetVip(db *gorm.DB, vipCode *VipCode) error {
 		} else {
 			user.Vip.Uid = user.Uid
 			user.Vip.VipId = vipCode.VipId
+			user.Vip.Amount = vipCode.Vip.Amount
 			err = tx.Create(&user.Vip).Error
 		}
 		if err != nil {
