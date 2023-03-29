@@ -38,22 +38,22 @@ func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, err
 		if user.Uid == 0 || userLogin.UnionID == "" {
 			tx := db.Begin()
 			// 创建用户
-			u := User{}
+			u := &User{}
 			tx.Create(u)
 			user.OpenId = userLogin.OpenID
 			user.UnionId = userLogin.UnionID
 			user.AppKey = userLogin.AppKey
 			user.Channel = userLogin.Channel
 			user.Uid = u.ID
+			user.ID = 0
 			err := tx.Create(&user).Error
 			if err != nil {
 				tx.Rollback()
-				return nil, "", errors.New("错误")
+				return nil, "", err
 			}
-
 			tx.Commit()
 		} else {
-			newUser := AIUser{}
+			newUser := &AIUser{}
 			newUser.OpenId = userLogin.OpenID
 			newUser.UnionId = userLogin.UnionID
 			newUser.AppKey = userLogin.AppKey
@@ -61,14 +61,13 @@ func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, err
 			newUser.Uid = user.Uid
 			err := db.Create(&newUser).Error
 			if err != nil {
-				return nil, "", errors.New("错误")
+				return nil, "", err
 			}
 		}
 	} else if user.UnionId == "" {
 		user.UnionId = userLogin.UnionID
 		db.Save(user)
 	}
-
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Unix() + userLogin.AccessExpire
 	claims["iat"] = time.Now().Unix()

@@ -5,7 +5,6 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
@@ -75,14 +74,11 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 	case message.MsgTypeEvent:
 		switch server.RequestMsg.Event {
 		case message.EventScan:
-			fmt.Println("openId：" + openId)
-			fmt.Println(server.RequestMsg.EventKey)
 			if strings.Index(server.RequestMsg.EventKey, "login_") >= 0 {
 				scan := &model.ScanScene{}
 				l.svcCtx.Db.Where("scene = ?", server.RequestMsg.EventKey).First(&scan)
 				if scan.ID > 0 {
 					info, err := officialAccount.GetUser().GetUserInfo(openId)
-					fmt.Println("UnionID" + info.UnionID)
 					if err != nil {
 						return nil, err
 					}

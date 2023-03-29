@@ -28,7 +28,7 @@ func NewLoginCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginC
 
 func (l *LoginCheckLogic) LoginCheck(req *types.LoginCheckRequest) (resp *types.InfoResponse, err error) {
 	data := &model.ScanScene{}
-	l.svcCtx.Db.Where("scene = ?", req.SceneStr).First(&data)
+	l.svcCtx.Db.Where("scene = ?", req.SceneStr).Where("data != ?", "").First(&data)
 	if data.ID == 0 {
 		return nil, errors.New(string(http.StatusNotFound))
 	}
