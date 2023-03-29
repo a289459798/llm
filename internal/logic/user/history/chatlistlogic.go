@@ -40,11 +40,11 @@ func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistory
 		return &types.ChatHistoryListResponse{}, nil
 	}
 	records := []model.Record{}
-	tx.Order("id desc").Offset((offset - 1) * limit).Limit(limit).Select("min(id), chat_id, content,created_at").Find(&records)
+	tx.Order("id desc").Offset((offset - 1) * limit).Limit(limit).Select("min(id), LEFT(show_content, 30) as show_content, chat_id, created_at").Find(&records)
 	data := []types.ChatHistoryData{}
 	for _, record := range records {
 		data = append(data, types.ChatHistoryData{
-			Q:      record.Content,
+			Q:      record.ShowContent,
 			ChatId: record.ChatId,
 			Time:   record.CreatedAt.Format("01-02 15:04"),
 		})

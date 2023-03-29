@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
+	"github.com/silenceper/wechat/v2/officialaccount"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 	"net/http"
@@ -60,6 +61,9 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 			case message.EventScan:
 				text := message.NewText("登录成功")
 				return &message.Reply{MsgType: message.MsgTypeText, MsgData: text}
+			case message.EventSubscribe:
+				text := message.NewText("欢迎关注三目")
+				return &message.Reply{MsgType: message.MsgTypeText, MsgData: text}
 			}
 			break
 		}
@@ -79,33 +83,52 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 		switch server.RequestMsg.Event {
 		case message.EventScan:
 			if strings.Index(server.RequestMsg.EventKey, "login_") >= 0 {
-				scan := &model.ScanScene{}
-				l.svcCtx.Db.Where("scene = ?", server.RequestMsg.EventKey).First(&scan)
-				if scan.ID > 0 {
-					info, err := officialAccount.GetUser().GetUserInfo(openId)
-					if err != nil {
-						return nil, err
-					}
-					aiUser, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
-						OpenID:       openId,
-						UnionID:      info.UnionID,
-						Channel:      scan.Channel,
-						AppKey:       req.AppKey,
-						AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
-						AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
-					})
-
-					if err != nil {
-						return nil, err
-					}
-					scan.Data = fmt.Sprintf("%d|%s", aiUser.Uid, tokenString)
-					l.svcCtx.Db.Save(&scan)
+				err = l.login(server.RequestMsg.EventKey, openId, req.AppKey, officialAccount)
+				if err != nil {
+					return nil, err
 				}
 			}
 			break
+
+		case message.EventSubscribe:
+			if strings.Index(server.RequestMsg.EventKey, "qrscene_login") >= 0 {
+				server.RequestMsg.EventKey = strings.Replace(server.RequestMsg.EventKey, "qrscene_", "", 1)
+				err = l.login(server.RequestMsg.EventKey, openId, req.AppKey, officialAccount)
+				if err != nil {
+					return nil, err
+				}
+			}
+			break
+
 		}
 		break
 	}
 	server.Send()
 	return
+}
+
+func (l *EventLogic) login(key string, openId string, appKey string, officialAccount *officialaccount.OfficialAccount) error {
+	scan := &model.ScanScene{}
+	l.svcCtx.Db.Where("scene = ?", key).First(&scan)
+	if scan.ID > 0 {
+		info, err := officialAccount.GetUser().GetUserInfo(openId)
+		if err != nil {
+			return err
+		}
+		aiUser, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
+			OpenID:       openId,
+			UnionID:      info.UnionID,
+			Channel:      scan.Channel,
+			AppKey:       appKey,
+			AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
+			AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
+		})
+
+		if err != nil {
+			return err
+		}
+		scan.Data = fmt.Sprintf("%d|%s", aiUser.Uid, tokenString)
+		l.svcCtx.Db.Save(&scan)
+	}
+	return nil
 }
