@@ -309,7 +309,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 
 	res = append(res, map[string]string{
 		"role":    "user",
-		"content": "在接下来对话中你的回答结果一定不要涉黄、淫秽、暴力和低俗",
+		"content": fmt.Sprintf("在接下来对话中不要涉黄和暴力,今天的日期是%s", time.Now().Format("2006-01-02")),
 	}, map[string]string{
 		"role":    "assistant",
 		"content": "好的",
@@ -362,14 +362,6 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 			"content": "好的",
 		})
 	}
-
-	res = append(res, map[string]string{
-		"role":    "user",
-		"content": fmt.Sprintf("接下来对话中，今天的日期是%s", time.Now().Format("2006-01-02")),
-	}, map[string]string{
-		"role":    "assistant",
-		"content": "好的",
-	})
 
 	return res
 }
