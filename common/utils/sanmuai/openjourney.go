@@ -82,6 +82,11 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 						return
 					}
 					fmt.Println(respData.Prediction)
+					if respData.Prediction.Error != "" {
+						resultChan <- respData.Prediction.Output
+						close(quitChan)
+						return
+					}
 					if respData.Prediction.Output != nil {
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
@@ -98,6 +103,10 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 		err = errors.New("timeout")
 	}
 	timer.Stop()
+
+	if len(result) == 0 {
+		err = errors.New("系统错误请重试")
+	}
 	return
 }
 
