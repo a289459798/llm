@@ -5,6 +5,8 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -33,7 +35,10 @@ func (l *LoginCheckLogic) LoginCheck(req *types.LoginCheckRequest) (resp *types.
 		return nil, errors.New(string(http.StatusNotFound))
 	}
 
+	str := strings.Split(data.Data, "|")
+	uid, _ := strconv.Atoi(str[0])
 	return &types.InfoResponse{
-		Token: data.Data,
+		Token: str[1],
+		Uid:   uint32(uid),
 	}, nil
 }

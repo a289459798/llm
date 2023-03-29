@@ -5,6 +5,7 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
@@ -70,6 +71,9 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 		return nil, err
 	}
 	openId := server.GetOpenID()
+	fmt.Println(server.RequestMsg.MsgType)
+	fmt.Println(server.RequestMsg.Event)
+	fmt.Println(server.RequestMsg.EventKey)
 	switch server.RequestMsg.MsgType {
 	case message.MsgTypeEvent:
 		switch server.RequestMsg.Event {
@@ -82,7 +86,7 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 					if err != nil {
 						return nil, err
 					}
-					_, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
+					aiUser, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
 						OpenID:       openId,
 						UnionID:      info.UnionID,
 						Channel:      scan.Channel,
@@ -94,7 +98,7 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 					if err != nil {
 						return nil, err
 					}
-					scan.Data = tokenString
+					scan.Data = fmt.Sprintf("%d|%s", aiUser.Uid, tokenString)
 					l.svcCtx.Db.Save(&scan)
 				}
 			}
