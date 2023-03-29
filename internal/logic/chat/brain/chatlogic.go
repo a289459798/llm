@@ -125,7 +125,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 
 	ShowContent := ""
 	if imageText != "" {
-		ShowContent = fmt.Sprintf("[](%s)\n\n%s", req.Image, msg)
+		ShowContent = fmt.Sprintf("%s\n\n[](%s)", req.Image, msg)
 		msg = fmt.Sprintf("接下来对话中,我有一张图片里面的内容：%s，你回答下面问题；%s", imageText, msg)
 	}
 
