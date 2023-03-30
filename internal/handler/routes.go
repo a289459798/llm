@@ -504,6 +504,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/hashrate/price",
 					Handler: hashrate.HashRatePriceHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/hashrate/code-generate",
+					Handler: hashrate.HashRateCodeGenerateHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

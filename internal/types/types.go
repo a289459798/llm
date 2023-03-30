@@ -480,6 +480,16 @@ type HashRateResponse struct {
 	Day    uint32  `json:"day"`
 }
 
+type HashRateCodeGenerateRequest struct {
+	Day    uint32 `json:"day"`
+	Amount uint32 `json:"amount"`
+	AICode string `json:"aiCode"`
+}
+
+type HashRateCodeGenerateResponse struct {
+	Code string `json:"code"`
+}
+
 type VipPayRequest struct {
 	Platform string `json:"platform,options=wechat|alipay"`
 }
