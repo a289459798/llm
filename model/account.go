@@ -79,6 +79,11 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 		return nil
 	})
 
-	account.Amount = account.ChatAmount + exchange - account.ChatUse
+	account.Amount = func() uint32 {
+		if account.ChatAmount+exchange > account.ChatUse {
+			return account.ChatAmount + exchange - account.ChatUse
+		}
+		return 0
+	}()
 	return account
 }
