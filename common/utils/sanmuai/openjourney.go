@@ -9,6 +9,7 @@ import (
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -120,7 +121,13 @@ func (ai *Journey) ImageRepair(image ImageRepair) (result []string, err error) {
 }
 
 func create(cookie string, image ImageCreate) (uuid string, err error) {
+	ip := GetProxyIp()
 	client := &http.Client{}
+	if ip != "" {
+		proxyUrl, _ := url.Parse(ip)
+		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	}
+
 	s := strings.Split(image.Size, "x")
 	width, _ := strconv.Atoi(s[0])
 	height, _ := strconv.Atoi(s[1])

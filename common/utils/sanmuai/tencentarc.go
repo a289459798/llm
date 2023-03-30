@@ -9,6 +9,7 @@ import (
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -108,7 +109,12 @@ func (ai *Tencentarc) CreateImage(image ImageCreate) (result []string, err error
 }
 
 func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
+	ip := GetProxyIp()
 	client := &http.Client{}
+	if ip != "" {
+		proxyUrl, _ := url.Parse(ip)
+		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	}
 	data := map[string]map[string]interface{}{
 		"inputs": {
 			"img":     image.Image,

@@ -3,7 +3,10 @@ package sanmuai
 import (
 	"chatgpt-tools/internal/svc"
 	"context"
+	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
+	"math/rand"
+	"time"
 )
 
 type SanmuAI interface {
@@ -32,4 +35,22 @@ func GetAI(model string, data SanmuData) SanmuAI {
 	} else {
 		return NewOpenAi(data.Ctx, data.SvcCtx)
 	}
+}
+
+func GetProxyIp() string {
+	ips := []string{
+		"http://27.159.66.131:11054",
+		"http://27.159.66.131:11206",
+		"http://27.159.66.131:11091",
+		"http://27.159.66.131:11220",
+		"http://27.159.66.131:11050",
+		"",
+	}
+	rand.Seed(time.Now().UnixNano())
+	randomNum := rand.Intn(6)
+	fmt.Println(randomNum)
+	if randomNum < len(ips) {
+		return ips[randomNum]
+	}
+	return ""
 }

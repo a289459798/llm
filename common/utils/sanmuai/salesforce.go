@@ -9,6 +9,7 @@ import (
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -112,7 +113,12 @@ func (ai *Salesforce) ImageText(image Image2Text) (result string, err error) {
 }
 
 func createText(cookie string, image Image2Text) (uuid string, err error) {
+	ip := GetProxyIp()
 	client := &http.Client{}
+	if ip != "" {
+		proxyUrl, _ := url.Parse(ip)
+		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	}
 	data := map[string]map[string]interface{}{
 		"inputs": {
 			"image": image.Image,
