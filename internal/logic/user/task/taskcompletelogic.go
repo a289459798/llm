@@ -99,7 +99,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		Way:           1,
 		Type:          req.Type,
 		Amount:        add,
-		CurrentAmount: amount.ChatAmount - amount.ChatUse,
+		CurrentAmount: amount.Amount + add,
 	}).Error
 	if err != nil {
 		tx.Rollback()
@@ -129,7 +129,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 					Way:           1,
 					Type:          "welfare",
 					Amount:        welfare,
-					CurrentAmount: amount.ChatAmount - amount.ChatUse,
+					CurrentAmount: amount.Amount + add + welfare,
 				})
 
 			}
@@ -139,7 +139,7 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 	tx.Commit()
 
 	return &types.TaskCompleteResponse{
-		Total:   amount.Amount,
+		Total:   amount.Amount + add + welfare,
 		Amount:  add,
 		Welfare: welfare,
 	}, nil

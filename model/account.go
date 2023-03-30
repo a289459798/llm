@@ -31,6 +31,8 @@ func NewAccount(db *gorm.DB) *AccountModel {
 func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 
 	account := &Account{}
+	// 获取兑换算力
+	exchange := AIUserHashRate{Uid: uid}.GetTotalAmount(a.DB)
 	a.DB.Transaction(func(tx *gorm.DB) error {
 		tx.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).First(&account)
 		if account.ID == 0 {
@@ -59,7 +61,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 					Way:           1,
 					Type:          "vip",
 					Amount:        user.Vip.Amount,
-					CurrentAmount: account.ChatAmount - amount - account.ChatUse,
+					CurrentAmount: exchange + account.ChatAmount - amount - account.ChatUse,
 				})
 			}
 
@@ -71,14 +73,12 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 				Way:           1,
 				Type:          "open",
 				Amount:        amount,
-				CurrentAmount: account.ChatAmount - account.ChatUse,
+				CurrentAmount: exchange + account.ChatAmount - account.ChatUse,
 			})
 		}
 		return nil
 	})
 
-	// 获取兑换算力
-	exchange := AIUserHashRate{Uid: account.Uid}.GetTotalAmount(a.DB)
 	account.Amount = account.ChatAmount + exchange - account.ChatUse
 	return account
 }

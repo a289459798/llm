@@ -38,17 +38,17 @@ func (r *Record) Insert(record *model.Record, params *RecordParams) {
 			amount.ChatUse += chatUse
 		} else {
 			amount.ChatUse = amount.ChatAmount
-			chatUse = chatUse - (amount.ChatAmount - amount.ChatUse)
+			remainUse := chatUse - (amount.ChatAmount - amount.ChatUse)
 			hashRate := []model.AIUserHashRate{}
 			tx.Where("uid = ?", amount.Uid).Where("expiry >= ?", time.Now().Format("2006-01-02 15:04:05")).Where("amount > use_amount").Order("expiry asc, id asc").Find(&hashRate)
 			for _, rate := range hashRate {
-				tmpUse := int(chatUse) - (int(rate.Amount) - int(rate.UseAmount))
+				tmpUse := int(remainUse) - (int(rate.Amount) - int(rate.UseAmount))
 				if tmpUse <= 0 {
-					rate.UseAmount += chatUse
+					rate.UseAmount += remainUse
 					tx.Save(&rate)
 					break
 				}
-				chatUse = uint32(tmpUse)
+				remainUse = uint32(tmpUse)
 				rate.UseAmount = rate.Amount
 				tx.Save(&rate)
 			}
@@ -63,7 +63,7 @@ func (r *Record) Insert(record *model.Record, params *RecordParams) {
 			Way:           0,
 			Type:          record.Type,
 			Amount:        chatUse,
-			CurrentAmount: amount.ChatAmount - amount.ChatUse,
+			CurrentAmount: amount.Amount - chatUse,
 		})
 		return nil
 	})
