@@ -13,6 +13,7 @@ import (
 	creation "chatgpt-tools/internal/handler/creation"
 	divination "chatgpt-tools/internal/handler/divination"
 	game "chatgpt-tools/internal/handler/game"
+	hashrate "chatgpt-tools/internal/handler/hashrate"
 	image "chatgpt-tools/internal/handler/image"
 	order "chatgpt-tools/internal/handler/order"
 	report "chatgpt-tools/internal/handler/report"
@@ -488,6 +489,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/vip/privilege",
 					Handler: vip.VipPrivilegeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/hashrate/price",
+					Handler: hashrate.HashRatePriceHandler(serverCtx),
 				},
 			}...,
 		),

@@ -468,6 +468,18 @@ type VipPrivilegeResponse struct {
 	Title string `json:"title"`
 }
 
+type HashRatePriceResponse struct {
+	Data []HashRateResponse `json:"data"`
+}
+
+type HashRateResponse struct {
+	ID     uint32  `json:"id"`
+	Origin float32 `json:"origin"`
+	Price  float32 `json:"price"`
+	Amount uint32  `json:"amount"`
+	Day    uint32  `json:"day"`
+}
+
 type VipPayRequest struct {
 	Platform string `json:"platform,options=wechat|alipay"`
 }
