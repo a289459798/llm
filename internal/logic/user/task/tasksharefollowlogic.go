@@ -77,7 +77,7 @@ func (l *TaskShareFollowLogic) TaskShareFollow(req *types.TaskShareFollowRequest
 			Way:           1,
 			Type:          taskType,
 			Amount:        add,
-			CurrentAmount: amount.ChatAmount - amount.ChatUse,
+			CurrentAmount: amount.Amount + add,
 		})
 		return nil
 	})

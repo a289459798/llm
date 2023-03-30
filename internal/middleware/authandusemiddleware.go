@@ -83,7 +83,7 @@ func (m *AuthAndUseMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		amount := model.NewAccount(m.DB).GetAccount(uint32(uid2), time.Now())
-		if amount.ChatAmount <= amount.ChatUse {
+		if amount.Amount <= 0 {
 			errorx.Error(w, "次数已用完")
 			return
 		}

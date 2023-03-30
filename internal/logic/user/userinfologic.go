@@ -48,7 +48,7 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 	tokenString, err := token.SignedString([]byte(l.svcCtx.Config.Auth.AccessSecret))
 
 	return &types.InfoResponse{
-		Amount:    amount.ChatAmount - amount.ChatUse,
+		Amount:    amount.Amount,
 		Uid:       uint32(uid),
 		OpenId:    user.OpenId,
 		Vip:       user.IsVip(),

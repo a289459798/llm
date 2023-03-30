@@ -40,7 +40,7 @@ func (l *ValidChatLogic) ValidChat(req *types.ValidRequest) (resp *types.ValidRe
 		showAd = true
 	}
 	return &types.ValidResponse{
-		Data:    strconv.Itoa(int(amount.ChatAmount) - int(amount.ChatUse)),
+		Data:    strconv.Itoa(int(amount.Amount)),
 		ShowAd:  showAd,
 		Consume: consume,
 	}, nil

@@ -240,7 +240,7 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 		imageUse := uint32(utils.GetSuanLi(uid, "image/createMulti", "", l.svcCtx.Db))
 		chatUse := uint32(utils.GetSuanLi(uid, "chat/chat", "uid", l.svcCtx.Db))
 		amount := model.NewAccount(l.svcCtx.Db).GetAccount(uid, time.Now())
-		if (amount.ChatAmount - amount.ChatUse) < (chatUse + imageUse) {
+		if (amount.Amount) < (chatUse + imageUse) {
 			return "", errors.New("算力不足")
 		}
 		strArr := strings.Split(str, "准备画画中，将额外消耗5算力：")

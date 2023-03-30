@@ -120,7 +120,6 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 
 			if total == 12 {
 				welfare = uint32(tasksSetting["amount"].(float64))
-				amount := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
 				amount.ChatAmount += welfare
 				tx.Save(&amount)
 
@@ -137,11 +136,10 @@ func (l *TaskCompleteLogic) TaskComplete(req *types.TaskRequest, r *http.Request
 		}
 	}
 
-	totalAmount := amount.ChatAmount - amount.ChatUse
 	tx.Commit()
 
 	return &types.TaskCompleteResponse{
-		Total:   totalAmount,
+		Total:   amount.Amount,
 		Amount:  add,
 		Welfare: welfare,
 	}, nil

@@ -137,7 +137,7 @@ func (user AIUser) SetVip(db *gorm.DB, vipCode *VipCode) error {
 				Way:           1,
 				Type:          "vip",
 				Amount:        vipAmount,
-				CurrentAmount: amount.ChatAmount - amount.ChatUse,
+				CurrentAmount: amount.Amount + vipAmount,
 			}).Error
 			if err != nil {
 				return err

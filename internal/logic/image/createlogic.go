@@ -36,7 +36,7 @@ func (l *CreateLogic) Create(req *types.ImageRequest) (resp *types.ImageResponse
 	}
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	amount := model.NewAccount(l.svcCtx.Db).GetAccount(uint32(uid), time.Now())
-	if amount.ChatAmount-amount.ChatUse < 3 {
+	if amount.Amount < 3 {
 		return nil, errors.New("次数已用完")
 	}
 

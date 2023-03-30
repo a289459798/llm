@@ -33,7 +33,27 @@ func (r *Record) Insert(record *model.Record, params *RecordParams) {
 			return ""
 		}(), tx))
 		amount := model.NewAccount(tx).GetAccount(record.Uid, time.Now())
-		amount.ChatUse += chatUse
+		// 优先处理临时算力
+		if (amount.ChatAmount - amount.ChatUse) >= chatUse {
+			amount.ChatUse += chatUse
+		} else {
+			amount.ChatUse = amount.ChatAmount
+			chatUse = chatUse - (amount.ChatAmount - amount.ChatUse)
+			hashRate := []model.AIUserHashRate{}
+			tx.Where("uid = ?", amount.Uid).Where("expiry >= ?", time.Now().Format("2006-01-02 15:04:05")).Where("amount > use_amount").Order("expiry asc, id asc").Find(&hashRate)
+			for _, rate := range hashRate {
+				tmpUse := int(chatUse) - (int(rate.Amount) - int(rate.UseAmount))
+				if tmpUse <= 0 {
+					rate.UseAmount += chatUse
+					tx.Save(&rate)
+					break
+				}
+				chatUse = uint32(tmpUse)
+				rate.UseAmount = rate.Amount
+				tx.Save(&rate)
+			}
+		}
+
 		tx.Save(&amount)
 
 		// 记录

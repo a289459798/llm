@@ -15,6 +15,7 @@ type Account struct {
 	LoginCount uint32    `json:"login_count"`
 	CreatedAt  time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt   time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
+	Amount     uint32    `gorm:"-"`
 }
 
 type AccountModel struct {
@@ -76,5 +77,8 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 		return nil
 	})
 
+	// 获取兑换算力
+	exchange := AIUserHashRate{Uid: account.Uid}.GetTotalAmount(a.DB)
+	account.Amount = account.ChatAmount + exchange - account.ChatUse
 	return account
 }
