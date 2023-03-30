@@ -490,6 +490,13 @@ type HashRateCodeGenerateResponse struct {
 	Code string `json:"code"`
 }
 
+type HashRateCxchangeRequest struct {
+	Code string `json:"code"`
+}
+
+type HashRateCxchangeResponse struct {
+}
+
 type VipPayRequest struct {
 	Platform string `json:"platform,options=wechat|alipay"`
 }

@@ -21,6 +21,14 @@ type HashRateCodeGenerateResponse {
     Code string `json:"code"`
 }
 
+type HashRateCxchangeRequest {
+    Code string `json:"code"`
+}
+
+type HashRateCxchangeResponse {
+
+}
+
 
 @server(
     jwt: Auth
@@ -33,4 +41,7 @@ service tools {
 
     @handler hashRateCodeGenerate
     post /hashrate/code-generate(HashRateCodeGenerateRequest) returns (HashRateCodeGenerateResponse)
+
+    @handler hashRateCxchange
+    post /hashrate/exchange(HashRateCxchangeRequest) returns (HashRateCxchangeResponse)
 }

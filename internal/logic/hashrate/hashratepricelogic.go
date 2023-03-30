@@ -33,6 +33,4 @@ func (l *HashRatePriceLogic) HashRatePrice() (resp *types.HashRatePriceResponse,
 	return &types.HashRatePriceResponse{
 		Data: res,
 	}, nil
-
-	return
 }

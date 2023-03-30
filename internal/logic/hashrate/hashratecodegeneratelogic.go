@@ -59,6 +59,4 @@ func (l *HashRateCodeGenerateLogic) HashRateCodeGenerate(req *types.HashRateCode
 		return nil, err
 	}
 	return &types.HashRateCodeGenerateResponse{Code: code}, nil
-
-	return
 }
