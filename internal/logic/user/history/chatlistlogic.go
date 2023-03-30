@@ -46,9 +46,9 @@ func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistory
 		data = append(data, types.ChatHistoryData{
 			Q: func() string {
 				if record.ShowContent == "" {
-					return record.ShowContent
+					return record.Content
 				}
-				return record.Content
+				return record.ShowContent
 			}(),
 			ChatId: record.ChatId,
 			Time:   record.CreatedAt.Format("01-02 15:04"),

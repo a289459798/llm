@@ -13,6 +13,7 @@ import (
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 	"net/http"
 	"strings"
+	"time"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -58,9 +59,6 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 		switch server.RequestMsg.MsgType {
 		case message.MsgTypeEvent:
 			switch server.RequestMsg.Event {
-			case message.EventScan:
-				text := message.NewText("登录成功")
-				return &message.Reply{MsgType: message.MsgTypeText, MsgData: text}
 			case message.EventSubscribe:
 				text := message.NewText("欢迎关注三目")
 				return &message.Reply{MsgType: message.MsgTypeText, MsgData: text}
@@ -129,6 +127,29 @@ func (l *EventLogic) login(key string, openId string, appKey string, officialAcc
 		}
 		scan.Data = fmt.Sprintf("%d|%s", aiUser.Uid, tokenString)
 		l.svcCtx.Db.Save(&scan)
+
+		_, err = officialAccount.GetTemplate().Send(&message.TemplateMessage{
+			ToUser:     info.OpenID,
+			TemplateID: "sxKNKCHFXS9-r-WAM0Ay1DFTF4SUH0EeC8SrNOao3sw",
+			Data: map[string]*message.TemplateDataItem{
+				"first": {
+					Value: "登录成功",
+				},
+				"keyword1": {
+					Value: fmt.Sprintf("%b", aiUser.Uid),
+				},
+				"keyword2": {
+					Value: "三目",
+				},
+				"keyword3": {
+					Value: time.Now().Format("2006-01-02 15:04:05"),
+				},
+			},
+		})
+		if err != nil {
+			fmt.Println("TemplateMessage err")
+			fmt.Println(err)
+		}
 	}
 	return nil
 }
