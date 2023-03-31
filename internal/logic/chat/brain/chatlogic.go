@@ -100,21 +100,23 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 			msg = template.Question
 		}
 	}
+	title := req.Message
 	if req.ChatId != "" {
 		var records []model.Record
-
 		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? order by id desc limit 3", uid, req.ChatId).Scan(&records)
-		for i := len(records) - 1; i >= 0; i-- {
-			message = append(message, gogpt.ChatCompletionMessage{
-				Role:    "user",
-				Content: records[i].Content,
-			})
-			message = append(message, gogpt.ChatCompletionMessage{
-				Role:    "assistant",
-				Content: records[i].Result,
-			})
+		if len(records) > 0 {
+			title = ""
+			for i := len(records) - 1; i >= 0; i-- {
+				message = append(message, gogpt.ChatCompletionMessage{
+					Role:    "user",
+					Content: records[i].Content,
+				})
+				message = append(message, gogpt.ChatCompletionMessage{
+					Role:    "assistant",
+					Content: records[i].Result,
+				})
+			}
 		}
-
 	}
 
 	// 获取图片内容
@@ -215,6 +217,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:         uint32(uid),
 		Type:        "chat/chat",
+		Title:       title,
 		Content:     msg,
 		ShowContent: ShowContent,
 		Result:      result,
