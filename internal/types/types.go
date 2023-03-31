@@ -536,3 +536,6 @@ type PayRequest struct {
 	Type     string `path:"type"`
 	Merchant string `path:"merchant"`
 }
+
+type CronResponse struct {
+}

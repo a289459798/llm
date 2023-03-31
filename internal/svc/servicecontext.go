@@ -3,6 +3,7 @@ package svc
 import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
+	"chatgpt-tools/model"
 	log2 "github.com/sirupsen/logrus"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
@@ -19,6 +20,7 @@ type ServiceContext struct {
 	Db         *gorm.DB
 	AuthAndUse rest.Middleware
 	Sign       rest.Middleware
+	CronMiddle rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -70,6 +72,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.AIHashRate{})
 	//db.AutoMigrate(&model.AIHashRateCode{})
 	//db.AutoMigrate(&model.AIUserHashRate{})
+	db.AutoMigrate(&model.AINotify{})
 
 	if c.Mode == "dev" {
 		log2.SetLevel(log2.DebugLevel)
@@ -81,5 +84,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Db:         db,
 		AuthAndUse: middleware.NewAuthAndUseMiddleware(c, db).Handle,
 		Sign:       middleware.NewSignMiddleware(c).Handle,
+		CronMiddle: middleware.NewCronMiddleMiddleware().Handle,
 	}
 }

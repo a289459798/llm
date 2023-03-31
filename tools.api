@@ -24,4 +24,5 @@ import (
 	"api/order.api"
 	"api/wechat.api"
 	"api/callback.api"
+	"api/crontab.api"
 )

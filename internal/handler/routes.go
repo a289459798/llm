@@ -11,6 +11,7 @@ import (
 	common "chatgpt-tools/internal/handler/common"
 	convert "chatgpt-tools/internal/handler/convert"
 	creation "chatgpt-tools/internal/handler/creation"
+	crontab "chatgpt-tools/internal/handler/crontab"
 	divination "chatgpt-tools/internal/handler/divination"
 	game "chatgpt-tools/internal/handler/game"
 	hashrate "chatgpt-tools/internal/handler/hashrate"
@@ -566,5 +567,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: callbackpay.PayVipHandler(serverCtx),
 			},
 		},
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CronMiddle},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/crontab/vip-check",
+					Handler: crontab.VipCheckHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/crontab/hashrate-check",
+					Handler: crontab.HashRateCheckHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 }

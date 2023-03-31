@@ -1,0 +1,18 @@
+syntax = "v1"
+
+
+type CronResponse {
+
+}
+
+@server(
+    middleware: CronMiddle
+    group: crontab
+)
+service tools {
+    @handler vipCheck
+    get /crontab/vip-check returns (CronResponse)
+
+    @handler hashRateCheck
+    get /crontab/hashrate-check returns (CronResponse)
+}
