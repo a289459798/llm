@@ -48,6 +48,19 @@ func (l *HashRateCxchangeLogic) HashRateCxchange(req *types.HashRateCxchangeRequ
 		tx.Rollback()
 		return nil, errors.New("兑换错误")
 	}
+	account := model.NewAccount(tx).GetAccount(uint32(uid), time.Now())
+	err = tx.Create(&model.AccountRecord{
+		Uid:           hashRateCode.Uid,
+		RecordId:      0,
+		Way:           1,
+		Type:          "exchange",
+		Amount:        hashRateCode.Amount,
+		CurrentAmount: account.Amount + hashRateCode.Amount,
+	}).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, errors.New("兑换错误")
+	}
 	tx.Commit()
 
 	return &types.HashRateCxchangeResponse{}, nil

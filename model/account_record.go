@@ -24,6 +24,8 @@ func (a AccountRecord) GetType() string {
 		"ad":                "看广告",
 		"welfare":           "福利",
 		"group":             "加群",
+		"exchange":          "兑换",
+		"vip":               "会员福利",
 		"convert/translate": "翻译",
 		"chat/chat":         "对话",
 		"creation/article":  "作文",
