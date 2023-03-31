@@ -107,6 +107,7 @@ type SuanliHistoryData struct {
 	Desc   string `json:"desc"`
 	Time   string `json:"time"`
 	Way    uint8  `json:"way"`
+	Type   string `json:"type"`
 }
 
 type ToolsHistoryListResponse struct {

@@ -49,6 +49,7 @@ func (l *SuanliListLogic) SuanliList(req *types.PageRequest) (resp *types.Suanli
 			Desc:   record.GetType(),
 			Time:   record.CreatedAt.Format("15:04:05"),
 			Way:    record.Way,
+			Type:   record.Type,
 		})
 	}
 
