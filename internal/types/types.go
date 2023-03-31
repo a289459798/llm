@@ -142,6 +142,7 @@ type UserNotifyResponse struct {
 	Title    string `json:"title"`
 	Contennt string `json:"contennt"`
 	Status   bool   `json:"status"`
+	Time     string `json:"time"`
 }
 
 type Response struct {
