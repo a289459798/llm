@@ -212,7 +212,7 @@ type UserNotifyListResponse {
 
 type UserNotifyResponse {
     Title string `json:"title"`
-    Contennt string `json:"contennt"`
+    Content string `json:"content"`
     Status bool `json:"status"`
     Time string `json:"time"`
 }

@@ -100,7 +100,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 			msg = template.Question
 		}
 	}
-	title := req.Message
+	title := msg
 	if req.ChatId != "" {
 		var records []model.Record
 		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? order by id desc limit 3", uid, req.ChatId).Scan(&records)
@@ -215,9 +215,15 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		return nil, errors.New("数据为空")
 	}
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:         uint32(uid),
-		Type:        "chat/chat",
-		Title:       title,
+		Uid:  uint32(uid),
+		Type: "chat/chat",
+		Title: func() string {
+			titleRune := []rune(title)
+			if len(titleRune) > 30 {
+				return string(titleRune[:30])
+			}
+			return title
+		}(),
 		Content:     msg,
 		ShowContent: ShowContent,
 		Result:      result,

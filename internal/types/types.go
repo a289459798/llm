@@ -139,10 +139,10 @@ type UserNotifyListResponse struct {
 }
 
 type UserNotifyResponse struct {
-	Title    string `json:"title"`
-	Contennt string `json:"contennt"`
-	Status   bool   `json:"status"`
-	Time     string `json:"time"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Status  bool   `json:"status"`
+	Time    string `json:"time"`
 }
 
 type Response struct {
