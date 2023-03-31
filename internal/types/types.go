@@ -129,6 +129,20 @@ type HashRateExchange struct {
 	Status uint8  `json:"status"`
 }
 
+type UserNotifyUnreadResponse struct {
+	Status bool `json:"status"`
+}
+
+type UserNotifyListResponse struct {
+	Data []UserNotifyResponse `json:"data"`
+}
+
+type UserNotifyResponse struct {
+	Title    string `json:"title"`
+	Contennt string `json:"contennt"`
+	Status   bool   `json:"status"`
+}
+
 type Response struct {
 	Code    uint   `json:"code"`
 	Message string `json:"message"`

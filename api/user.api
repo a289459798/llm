@@ -200,3 +200,30 @@ service tools {
     @handler exchangeHashRateList
     get /users/history/hashrate-exchange returns (HashRateExchangeListResponse)
 }
+
+type UserNotifyUnreadResponse {
+    Status bool `json:"status"`
+}
+
+type UserNotifyListResponse {
+    Data []UserNotifyResponse `json:"data"`
+}
+
+type UserNotifyResponse {
+    Title string `json:"title"`
+    Contennt string `json:"contennt"`
+    Status bool `json:"status"`
+}
+
+@server(
+    jwt: Auth
+    middleware: Sign
+    group: user/notify
+)
+service tools {
+    @handler unread
+    get /users/notify/unread returns (UserNotifyUnreadResponse)
+
+    @handler list
+    get /users/notify returns (UserNotifyListResponse)
+}

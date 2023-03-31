@@ -21,6 +21,7 @@ import (
 	user "chatgpt-tools/internal/handler/user"
 	userai "chatgpt-tools/internal/handler/user/ai"
 	userhistory "chatgpt-tools/internal/handler/user/history"
+	usernotify "chatgpt-tools/internal/handler/user/notify"
 	usertask "chatgpt-tools/internal/handler/user/task"
 	vip "chatgpt-tools/internal/handler/vip"
 	wechat "chatgpt-tools/internal/handler/wechat"
@@ -129,6 +130,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/users/history/hashrate-exchange",
 					Handler: userhistory.ExchangeHashRateListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/notify/unread",
+					Handler: usernotify.UnreadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/notify",
+					Handler: usernotify.ListHandler(serverCtx),
 				},
 			}...,
 		),
