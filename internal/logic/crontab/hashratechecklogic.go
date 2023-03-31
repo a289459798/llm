@@ -35,7 +35,7 @@ func (l *HashRateCheckLogic) HashRateCheck() (resp *types.CronResponse, err erro
 		l.svcCtx.Db.Create(&model.AINotify{
 			Uid:     rate.Uid,
 			Title:   "算力即将过期提醒",
-			Content: fmt.Sprintf("您有部分算力将于%s过期，请及时使用", rate.Expiry),
+			Content: fmt.Sprintf("您有部分算力将于%s过期，请及时使用", rate.Expiry.Format("2006-01-02 15:04:05")),
 			Link:    "",
 			Status:  false,
 		})

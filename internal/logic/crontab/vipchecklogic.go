@@ -34,7 +34,7 @@ func (l *VipCheckLogic) VipCheck() (resp *types.CronResponse, err error) {
 		l.svcCtx.Db.Create(&model.AINotify{
 			Uid:     vip.Uid,
 			Title:   "会员即将过期提醒",
-			Content: fmt.Sprintf("您的会员将于%s过期，为了不影响您使用，请及时续费", vip.VipExpiry),
+			Content: fmt.Sprintf("您的会员将于%s过期，为了不影响您使用，请及时续费", vip.VipExpiry.Format("2006-01-02 15:04:05")),
 			Link:    "",
 			Status:  false,
 		})
