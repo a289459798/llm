@@ -167,6 +167,18 @@ type ToolsHistoryData {
     Key string `json:"key"`
 }
 
+type HashRateExchangeListResponse {
+    Data []HashRateExchange `json:"data"`
+}
+
+type HashRateExchange {
+    Date string `json:"date"`
+    Amount uint32 `json:"amount"`
+    Use uint32 `json:"use"`
+    Expiry string `json:"expiry"`
+    Status uint8 `json:"status"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -184,4 +196,7 @@ service tools {
 
     @handler toolsList
     get /users/history/tools returns (ToolsHistoryListResponse)
+
+    @handler exchangeHashRateList
+    get /users/history/hashrate-exchange returns (HashRateExchangeListResponse)
 }

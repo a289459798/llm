@@ -117,6 +117,18 @@ type ToolsHistoryData struct {
 	Key string `json:"key"`
 }
 
+type HashRateExchangeListResponse struct {
+	Data []HashRateExchange `json:"data"`
+}
+
+type HashRateExchange struct {
+	Date   string `json:"date"`
+	Amount uint32 `json:"amount"`
+	Use    uint32 `json:"use"`
+	Expiry string `json:"expiry"`
+	Status uint8  `json:"status"`
+}
+
 type Response struct {
 	Code    uint   `json:"code"`
 	Message string `json:"message"`

@@ -124,6 +124,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/users/history/tools",
 					Handler: userhistory.ToolsListHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/history/hashrate-exchange",
+					Handler: userhistory.ExchangeHashRateListHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
