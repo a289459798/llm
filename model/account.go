@@ -42,7 +42,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			tx.Where("uid = ?", uid).Where("date = ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")).First(&yesterdayAccount)
 			account.LoginCount = 1
 			if yesterdayAccount.ID > 0 {
-				//amount += yesterdayAccount.LoginCount
+				amount += yesterdayAccount.LoginCount
 				account.LoginCount += yesterdayAccount.LoginCount
 			}
 			account.Uid = uid
@@ -72,7 +72,15 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 				RecordId:      0,
 				Way:           1,
 				Type:          "open",
-				Amount:        amount,
+				Amount:        amount - 5,
+				CurrentAmount: exchange + account.ChatAmount - account.ChatUse - 5,
+			})
+			tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&AccountRecord{
+				Uid:           uid,
+				RecordId:      0,
+				Way:           1,
+				Type:          "welfare",
+				Amount:        5,
 				CurrentAmount: exchange + account.ChatAmount - account.ChatUse,
 			})
 		}
