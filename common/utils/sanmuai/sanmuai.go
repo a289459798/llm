@@ -40,14 +40,10 @@ func GetAI(model string, data SanmuData) SanmuAI {
 func GetProxyIp() string {
 	ips := []string{
 		"http://27.159.66.131:11054",
-		"http://27.159.66.131:11206",
-		"http://27.159.66.131:11091",
-		"http://27.159.66.131:11220",
-		"http://27.159.66.131:11050",
 		"",
 	}
 	rand.Seed(time.Now().UnixNano())
-	randomNum := rand.Intn(6)
+	randomNum := rand.Intn(2)
 	fmt.Println(randomNum)
 	if randomNum < len(ips) {
 		return ips[randomNum]
