@@ -36,13 +36,13 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 	a.DB.Transaction(func(tx *gorm.DB) error {
 		tx.Where("uid = ?", uid).Where("date = ?", date.Format("2006-01-02")).First(&account)
 		if account.ID == 0 {
-			var amount uint32 = 5
+			var amount uint32 = 10
 			// 获取连续天数
 			yesterdayAccount := &Account{}
 			tx.Where("uid = ?", uid).Where("date = ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")).First(&yesterdayAccount)
 			account.LoginCount = 1
 			if yesterdayAccount.ID > 0 {
-				amount += yesterdayAccount.LoginCount
+				//amount += yesterdayAccount.LoginCount
 				account.LoginCount += yesterdayAccount.LoginCount
 			}
 			account.Uid = uid
