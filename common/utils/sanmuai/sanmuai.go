@@ -38,6 +38,7 @@ func GetAI(model string, data SanmuData) SanmuAI {
 }
 
 func GetProxyIp() string {
+	return ""
 	ips := []string{
 		"http://27.159.66.131:11054",
 		"",
