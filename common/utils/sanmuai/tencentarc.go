@@ -130,14 +130,14 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	}
 	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return
+		return "", errors.New("错误，请重试1")
 	}
 	req.Header.Set("x-csrftoken", cookie)
 	req.Header.Set("Content-Type", "application/json")
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
 	if err != nil {
-		return
+		return "", errors.New("错误，请重试2")
 	}
 	defer resp.Body.Close()
 

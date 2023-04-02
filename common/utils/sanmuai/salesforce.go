@@ -133,14 +133,14 @@ func createText(cookie string, image Image2Text) (uuid string, err error) {
 	}
 	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/salesforce/blip/versions/2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return
+		return "", errors.New("错误，请重试1")
 	}
 	req.Header.Set("x-csrftoken", cookie)
 	req.Header.Set("Content-Type", "application/json")
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
 	if err != nil {
-		return
+		return "", errors.New("错误，请重试1")
 	}
 	defer resp.Body.Close()
 

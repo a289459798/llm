@@ -157,14 +157,14 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	}
 	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/prompthero/openjourney/versions/9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return
+		return "", errors.New("错误，请重试1")
 	}
 	req.Header.Set("x-csrftoken", cookie)
 	req.Header.Set("Content-Type", "application/json")
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
 	if err != nil {
-		return
+		return "", errors.New("错误，请重试2")
 	}
 	defer resp.Body.Close()
 
