@@ -36,6 +36,11 @@ type(
     UploadTokenResponse {
         Token string `json:"token"`
     }
+
+    ValidImageRequest {
+        Bucket string `json:"bucket"`
+        Key string `json:"key"`
+    }
 )
 
 @server(
@@ -60,4 +65,7 @@ service tools {
 
     @handler uploadToken
     get /common/upload-token returns (UploadTokenResponse)
+
+    @handler validImage
+    post /common/valid/image (ValidImageRequest) returns (ValidResponse)
 }

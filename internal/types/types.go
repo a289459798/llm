@@ -453,6 +453,11 @@ type UploadTokenResponse struct {
 	Token string `json:"token"`
 }
 
+type ValidImageRequest struct {
+	Bucket string `json:"bucket"`
+	Key    string `json:"key"`
+}
+
 type VipPriceResponse struct {
 	Data []VipDataResponse `json:"data"`
 }

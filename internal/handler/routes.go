@@ -483,6 +483,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/common/upload-token",
 				Handler: common.UploadTokenHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/common/valid/image",
+				Handler: common.ValidImageHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
