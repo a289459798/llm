@@ -32,7 +32,7 @@ func (l *ChatTemplateLogic) ChatTemplate(req types.ChatTemplateRequest) (resp *t
 	if req.Type != "" {
 		query = fmt.Sprintf("type='%s'", req.Type)
 	}
-	l.svcCtx.Db.Where(query).Where("is_del = 0").Order("sort desc").Select("id, title").Find(&template)
+	l.svcCtx.Db.Where(query).Where("is_del = 0").Select("id, title").Order("rand()").Limit(6).Find(&template)
 
 	list := []types.ChatTemplate{}
 	for _, chatTemplate := range template {
