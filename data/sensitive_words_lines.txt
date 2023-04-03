@@ -26854,3 +26854,7 @@ SM
 8964
 8964坦克
 八九六四坦克
+chatgpt
+CHATGPT
+gpt
+GPT
