@@ -334,12 +334,6 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	}, map[string]string{
 		"role":    "assistant",
 		"content": "好的",
-	}, map[string]string{
-		"role":    "user",
-		"content": "接下来对话中,问你是不是chatgpt、gpt相关问题,一定要否认",
-	}, map[string]string{
-		"role":    "assistant",
-		"content": "好的",
 	})
 
 	// 设置专属机器人
