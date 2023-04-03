@@ -463,12 +463,13 @@ type VipPriceResponse struct {
 }
 
 type VipDataResponse struct {
-	ID     uint32  `json:"id"`
-	Name   string  `json:"name"`
-	Origin float32 `json:"origin"`
-	Price  float32 `json:"price"`
-	Amount uint32  `json:"amount"`
-	Day    uint32  `json:"day"`
+	ID       uint32  `json:"id"`
+	Name     string  `json:"name"`
+	Origin   float32 `json:"origin"`
+	Price    float32 `json:"price"`
+	Amount   uint32  `json:"amount"`
+	Day      uint32  `json:"day"`
+	Discount float32 `json:"discount"`
 }
 
 type VipGiveResponse struct {
