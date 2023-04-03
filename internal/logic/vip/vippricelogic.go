@@ -25,7 +25,7 @@ func NewVipPriceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipPrice
 
 func (l *VipPriceLogic) VipPrice() (resp *types.VipPriceResponse, err error) {
 	vip := []model.Vip{}
-	l.svcCtx.Db.Find(&vip)
+	l.svcCtx.Db.Where("amount > 0").Find(&vip)
 	res := []types.VipDataResponse{}
 	copier.Copy(&res, &vip)
 	return &types.VipPriceResponse{
