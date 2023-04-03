@@ -266,7 +266,7 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 		}
 		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
 		if err == nil && len(conv.Choices) > 0 && conv.Choices[0].Message.Content != "" {
-			s1 = fmt.Sprintf("mdjrny-v4 style %s", conv.Choices[0].Message.Content)
+			s1 = fmt.Sprintf("%s", conv.Choices[0].Message.Content)
 		}
 
 		imageCreate := sanmuai.ImageCreate{
