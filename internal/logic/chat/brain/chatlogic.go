@@ -284,6 +284,10 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+
+		if len(stream) == 0 {
+			return "", errors.New("画图失败，请重试")
+		}
 		// 扣除算力
 		service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 			Uid:     uid,
@@ -324,7 +328,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 		"content": "好的",
 	}, map[string]string{
 		"role":    "user",
-		"content": "接下来对话中,让你画画、画图、生成图片以及改图片等相关问题，要回复固定格式：'准备画画中，将额外消耗5算力：{重述我的内容描述}|'，你不需要自由发挥组织语言",
+		"content": "接下来对话中,让你画画、画图、生成图片以及改图片等相关问题，要回复固定格式：'准备画画中，将额外消耗5算力：{重述我的内容描述}'，你不需要发我图片链接给我",
 	}, map[string]string{
 		"role":    "assistant",
 		"content": "好的，我只回复'准备画画中，将额外消耗5算力：{重述你的内容描述}'",
