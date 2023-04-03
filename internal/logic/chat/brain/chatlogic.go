@@ -324,7 +324,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 		"content": "好的",
 	}, map[string]string{
 		"role":    "user",
-		"content": "接下来对话中,让你画画、画图、生成图片以及改图片等相关问题，要回复固定格式：'准备画画中，将额外消耗5算力：{画画内容}'，不要说自己不会画图",
+		"content": "接下来对话中,让你画画、画图、生成图片以及改图片等相关问题，要回复固定格式：'准备画画中，将额外消耗5算力：{我的内容描述}|'，不要说自己不会画图",
 	}, map[string]string{
 		"role":    "assistant",
 		"content": "好的，我只回复'准备画画中，将额外消耗5算力：{画画内容}'，不说自己不会画图",
