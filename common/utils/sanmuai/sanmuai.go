@@ -3,10 +3,10 @@ package sanmuai
 import (
 	"chatgpt-tools/internal/svc"
 	"context"
+	"encoding/json"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
-	"math/rand"
-	"time"
+	"net/http"
 )
 
 type SanmuAI interface {
@@ -38,16 +38,37 @@ func GetAI(model string, data SanmuData) SanmuAI {
 }
 
 func GetProxyIp() string {
-	return ""
-	ips := []string{
-		"http://27.159.66.131:11054",
-		"",
+	client := &http.Client{}
+
+	req, err := http.NewRequest(http.MethodGet, "https://api.xiaoxiangdaili.com/ip/get?appKey=958271663739654144&appSecret=WWYrTxH9&cnt=&wt=json", nil)
+	if err != nil {
+		return ""
 	}
-	rand.Seed(time.Now().UnixNano())
-	randomNum := rand.Intn(2)
-	fmt.Println(randomNum)
-	if randomNum < len(ips) {
-		return ips[randomNum]
+	// 发送请求并获取响应
+	resp, err := client.Do(req)
+	if err != nil {
+		return ""
 	}
-	return ""
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return ""
+	}
+
+	respData := struct {
+		Code int `json:"code"`
+		Data []struct {
+			IP   string `json:"ip"`
+			Port int    `json:"port"`
+		}
+	}{}
+	if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
+		return ""
+	}
+
+	if respData.Code != 200 {
+		return ""
+	}
+
+	return fmt.Sprintf("http://%s:%d", respData.Data[0].IP, respData.Data[0].Port)
 }
