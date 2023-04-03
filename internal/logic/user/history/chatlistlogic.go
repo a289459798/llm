@@ -32,6 +32,7 @@ func (l *ChatListLogic) ChatList(req types.PageRequest) (resp *types.ChatHistory
 	tx := l.svcCtx.Db.Model(&model.Record{}).
 		Where("uid = ?", uid).
 		Where("type = ?", "chat/chat").
+		Where("is_delete = 0").
 		Where("title != ?", "").
 		Group("chat_id")
 	var total int64

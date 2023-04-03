@@ -27,7 +27,8 @@ func NewCleanChatListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cle
 
 func (l *CleanChatListLogic) CleanChatList() (resp *types.ChatHistoryListResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	err = l.svcCtx.Db.Where("uid = ?", uid).Where("type = ?", "chat/chat").Delete(&model.Record{}).Error
+	err = l.svcCtx.Db.Model(&model.Record{}).Where("uid = ?", uid).Where("type = ?", "chat/chat").Update("is_delete", 1).Error
+
 	if err != nil {
 		return nil, err
 	}

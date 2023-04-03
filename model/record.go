@@ -14,6 +14,7 @@ type Record struct {
 	ShowResult  string    `json:"show_result" gorm:"type:text"`
 	Model       string    `json:"model" gorm:"type:varchar(20)"`
 	Platform    string    `json:"platform" gorm:"type:varchar(20)"`
+	IsDelete    bool      `json:"is_delete" gorm:"default:0"`
 	CreatedAt   time.Time `gorm:"column:created_at;index:idx_created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt    time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
 }

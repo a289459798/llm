@@ -103,7 +103,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	title := msg
 	if req.ChatId != "" {
 		var records []model.Record
-		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? order by id desc limit 3", uid, req.ChatId).Scan(&records)
+		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit 3", uid, req.ChatId).Scan(&records)
 		if len(records) > 0 {
 			title = ""
 			for i := len(records) - 1; i >= 0; i-- {

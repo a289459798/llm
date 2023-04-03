@@ -30,6 +30,7 @@ func (l *ChatHistoryLogic) ChatHistory(req types.ChatHistoryRequest) (resp *type
 	records := []model.Record{}
 	l.svcCtx.Db.Where("uid = ?", uid).
 		Where("chat_id = ?", req.ChatId).
+		Where("is_delete = 0").
 		Order("id desc").
 		Find(&records)
 	history := []types.ChatHistory{}
