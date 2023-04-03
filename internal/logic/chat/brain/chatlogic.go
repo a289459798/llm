@@ -253,7 +253,9 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 			return "", errors.New("算力不足")
 		}
 		strArr := strings.Split(str, "准备画画中，将额外消耗5算力：")
-		s1 := strArr[1]
+		strArr2 := strings.Split(strArr[1], "。")
+
+		s1 := strArr2[0]
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "system",
