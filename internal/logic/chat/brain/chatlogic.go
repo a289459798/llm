@@ -111,7 +111,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 			maxToken = 1000
 		}
 		var records []model.Record
-		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", uid, req.ChatId, 10).Scan(&records)
+		l.svcCtx.Db.Raw("select id, content, LEFT(result, 200) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", uid, req.ChatId, 10).Scan(&records)
 		if len(records) > 0 {
 			title = ""
 			totalLen := 0
@@ -131,6 +131,8 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 				}
 			}
 		}
+
+		fmt.Println(message)
 	}
 
 	// 获取图片内容
@@ -147,9 +149,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role: "user",
 		Content: func() string {
-			if ai.ID > 0 {
-				return fmt.Sprintf("%s。用%s的语气回复", msg, ai.Role.Title)
-			}
 			return msg
 		}(),
 	})
