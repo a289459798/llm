@@ -42,7 +42,7 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 	// 获取信息
 	resultChan := make(chan []string)
 	quitChan := make(chan string)
-	timeout := time.After(300 * time.Second)
+	timeout := time.After(180 * time.Second)
 	timer := time.NewTicker(5 * time.Second)
 	go func() {
 		for {
@@ -164,13 +164,12 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", errors.New("错误，请重试2")
+		return create(cookie, image)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		err = errors.New(resp.Status)
-		return
+		return create(cookie, image)
 	}
 
 	respData := struct {
