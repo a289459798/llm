@@ -95,6 +95,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 
 	msg := req.Message
 	ShowContent := ""
+	title := req.Message
 	// 根据模版提问
 	if req.TemplateId > 0 {
 		template := &model.ChatTemplate{}
@@ -102,9 +103,10 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		if template.Question != "" {
 			msg = template.Question
 			ShowContent = req.Message
+			title = template.Title
 		}
 	}
-	title := msg
+
 	if req.ChatId != "" {
 		maxToken := 500
 		strLen := 100
