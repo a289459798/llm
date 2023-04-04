@@ -508,11 +508,12 @@ type HashRatePriceResponse struct {
 }
 
 type HashRateResponse struct {
-	ID     uint32  `json:"id"`
-	Origin float32 `json:"origin"`
-	Price  float32 `json:"price"`
-	Amount uint32  `json:"amount"`
-	Day    uint32  `json:"day"`
+	ID       uint32  `json:"id"`
+	Origin   float32 `json:"origin"`
+	Price    float32 `json:"price"`
+	VipPrice float32 `json:"vip_price"`
+	Amount   uint32  `json:"amount"`
+	Day      uint32  `json:"day"`
 }
 
 type HashRateCodeGenerateRequest struct {

@@ -3,6 +3,7 @@ package hashrate
 import (
 	"chatgpt-tools/model"
 	"context"
+	"encoding/json"
 	"github.com/jinzhu/copier"
 
 	"chatgpt-tools/internal/svc"
@@ -30,6 +31,17 @@ func (l *HashRatePriceLogic) HashRatePrice() (resp *types.HashRatePriceResponse,
 	l.svcCtx.Db.Find(&hashRate)
 	res := []types.HashRateResponse{}
 	copier.Copy(&res, &hashRate)
+
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := &model.AIUser{}
+	l.svcCtx.Db.Where("uid = ?", uid).Preload("Vip").Preload("Vip.Vip").First(user)
+
+	if user.IsVip() {
+		for i, re := range res {
+			res[i].VipPrice = re.Price * user.Vip.Vip.Discount / 10
+		}
+	}
+
 	return &types.HashRatePriceResponse{
 		Data: res,
 	}, nil
