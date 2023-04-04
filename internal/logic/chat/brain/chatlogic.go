@@ -106,7 +106,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	title := msg
 	if req.ChatId != "" {
-		maxToken := 300
+		maxToken := 500
 		strLen := 100
 		if user.IsVip() {
 			maxToken = 1000
