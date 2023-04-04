@@ -106,12 +106,14 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	title := msg
 	if req.ChatId != "" {
-		maxToken := 500
+		maxToken := 300
+		strLen := 100
 		if user.IsVip() {
 			maxToken = 1000
+			strLen = 200
 		}
 		var records []model.Record
-		l.svcCtx.Db.Raw("select id, content, LEFT(result, 200) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", uid, req.ChatId, 10).Scan(&records)
+		l.svcCtx.Db.Raw("select id, content, LEFT(result, ?) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", strLen, uid, req.ChatId, 10).Scan(&records)
 		if len(records) > 0 {
 			title = ""
 			totalLen := 0
