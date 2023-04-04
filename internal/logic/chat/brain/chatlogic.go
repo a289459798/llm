@@ -91,6 +91,8 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		})
 	}
 
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+
 	msg := req.Message
 	ShowContent := ""
 	// 根据模版提问
@@ -104,10 +106,15 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	title := msg
 	if req.ChatId != "" {
+		maxToken := 500
+		if user.IsVip() {
+			maxToken = 1000
+		}
 		var records []model.Record
-		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit 3", uid, req.ChatId).Scan(&records)
+		l.svcCtx.Db.Raw("select id, content, LEFT(result, 100) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", uid, req.ChatId, 10).Scan(&records)
 		if len(records) > 0 {
 			title = ""
+			totalLen := 0
 			for i := len(records) - 1; i >= 0; i-- {
 				message = append(message, gogpt.ChatCompletionMessage{
 					Role:    "user",
@@ -117,6 +124,11 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 					Role:    "assistant",
 					Content: records[i].Result,
 				})
+
+				totalLen += len([]rune(records[i].Content)) + len([]rune(records[i].Result))
+				if totalLen > maxToken {
+					break
+				}
 			}
 		}
 	}
