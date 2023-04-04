@@ -92,12 +92,14 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 
 	msg := req.Message
+	ShowContent := ""
 	// 根据模版提问
 	if req.TemplateId > 0 {
 		template := &model.ChatTemplate{}
 		l.svcCtx.Db.Where("id = ?", req.TemplateId).Where("is_del = 0").Find(&template)
 		if template.Question != "" {
 			msg = template.Question
+			ShowContent = req.Message
 		}
 	}
 	title := msg
@@ -125,7 +127,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		return nil, err
 	}
 
-	ShowContent := ""
 	if imageText != "" {
 		ShowContent = fmt.Sprintf("%s\n\n[](%s)", req.Image, msg)
 		msg = fmt.Sprintf("接下来对话中,我有一张图片里面的内容：%s，你回答下面问题；%s", imageText, msg)
