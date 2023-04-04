@@ -47,7 +47,7 @@ func (l *HashRateCodeGenerateLogic) HashRateCodeGenerate(req *types.HashRateCode
 	newSign := hex.EncodeToString(md5sum[:6])
 	code := strings.ToUpper(newSign)
 	err = l.svcCtx.Db.Create(&model.AIHashRateCode{
-		Uid:      uint32(uid),
+		Uid:      uint32(userId),
 		Code:     code,
 		Day:      req.Day,
 		Status:   false,
