@@ -108,10 +108,10 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 
 	if req.ChatId != "" {
-		maxToken := 500
+		maxToken := 300
 		strLen := 100
 		if user.IsVip() {
-			maxToken = 1000
+			maxToken = 800
 			strLen = 200
 		}
 		var records []model.Record
