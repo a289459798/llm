@@ -23,4 +23,7 @@ service tools {
 
     @handler subscribeCall
     post /wechat/callback/subscribe  returns (WeChatCallbackResponse)
+
+    @handler setMenu
+    post /wechat/menu  returns (WeChatCallbackResponse)
 }

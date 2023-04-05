@@ -581,6 +581,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/wechat/callback/subscribe",
 				Handler: wechat.SubscribeCallHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/wechat/menu",
+				Handler: wechat.SetMenuHandler(serverCtx),
+			},
 		},
 	)
 
