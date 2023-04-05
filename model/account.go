@@ -42,7 +42,7 @@ func (a *AccountModel) GetAccount(uid uint32, date time.Time) *Account {
 			tx.Where("uid = ?", uid).Where("date = ?", time.Now().AddDate(0, 0, -1).Format("2006-01-02")).First(&yesterdayAccount)
 			account.LoginCount = 1
 			if yesterdayAccount.ID > 0 {
-				amount += yesterdayAccount.LoginCount
+				//amount += yesterdayAccount.LoginCount
 				account.LoginCount += yesterdayAccount.LoginCount
 			}
 			account.Uid = uid
