@@ -135,8 +135,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 				}
 			}
 		}
-
-		fmt.Println(message)
 	}
 
 	// 获取图片内容
