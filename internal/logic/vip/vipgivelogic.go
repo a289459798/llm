@@ -39,7 +39,7 @@ func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
 			VipId: 1,
 			Day:   1,
 			Vip: model.Vip{
-				Amount: 68,
+				Amount: 38,
 				Day:    1,
 			},
 		})
