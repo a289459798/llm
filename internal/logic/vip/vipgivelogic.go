@@ -44,7 +44,8 @@ func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
 		}
 		day = 1
 		expiry = userVip.VipExpiry.Format("2006-01-02")
-		userVip.VipId = 1
+		userVip.VipId = 2
+		userVip.Amount = 68
 		err = l.svcCtx.Db.Create(userVip).Error
 		if err != nil {
 			return nil, err
