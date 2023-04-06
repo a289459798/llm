@@ -97,6 +97,9 @@ service tools {
 
     @handler chatTemplate
     get /chat/chat/template(ChatTemplateRequest) returns (ChatTemplateResponse)
+
+    @handler chatDelete
+    delete /chat/chat/:chatId(ChatHistoryRequest) returns (ChatHistoryResponse)
 }
 
 @server(

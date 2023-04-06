@@ -418,6 +418,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/chat/chat/template",
 					Handler: chatbrain.ChatTemplateHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/chat/chat/:chatId",
+					Handler: chatbrain.ChatDeleteHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
