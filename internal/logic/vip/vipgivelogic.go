@@ -6,8 +6,6 @@ import (
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
-	"time"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -36,17 +34,15 @@ func (l *VipGiveLogic) VipGive() (resp *types.VipGiveResponse, err error) {
 	expiry := ""
 	if user.Uid > 0 && user.Vip.ID == 0 {
 		// 赠送
-		userVip := &model.AIUserVip{}
-		userVip.Uid = user.Uid
-		userVip.VipExpiry, err = time.ParseInLocation("2006-01-02 15:04:05", time.Now().AddDate(0, 0, 1).Format("2006-01-02")+" 23:59:59", time.Local)
-		if err != nil {
-			return nil, err
-		}
 		day = 1
-		expiry = userVip.VipExpiry.Format("2006-01-02")
-		userVip.VipId = 2
-		userVip.Amount = 68
-		err = l.svcCtx.Db.Create(userVip).Error
+		err = user.SetVip(l.svcCtx.Db, &model.VipCode{
+			VipId: 1,
+			Day:   1,
+			Vip: model.Vip{
+				Amount: 68,
+				Day:    1,
+			},
+		})
 		if err != nil {
 			return nil, err
 		}
