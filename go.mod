@@ -9,7 +9,7 @@ require (
 	github.com/importcjj/sensitive v0.0.0-20200106142752-42d1c505be7b
 	github.com/jinzhu/copier v0.3.5
 	github.com/qiniu/go-sdk/v7 v7.14.0
-	github.com/sashabaranov/go-openai v1.5.5
+	github.com/sashabaranov/go-openai v1.7.0
 	github.com/silenceper/wechat/v2 v2.1.4
 	github.com/zeromicro/go-zero v1.4.4
 	gorm.io/driver/mysql v1.4.6
