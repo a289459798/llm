@@ -146,8 +146,6 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 
 	message = l.studyPic(allContent, allResult, message)
 
-	fmt.Println(message)
-
 	// 获取图片内容
 	imageText, err := l.getImageText(req.Image)
 	if err != nil {
