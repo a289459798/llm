@@ -33,7 +33,7 @@ func NewWeekLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WeekLogic {
 
 func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
-	tools := "report/week"
+	tools := model.ToolsReportWeek
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)

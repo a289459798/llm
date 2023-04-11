@@ -34,7 +34,7 @@ func NewDayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DayLogic {
 
 func (l *DayLogic) Day(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
-	tools := "report/day"
+	tools := model.ToolsReportDay
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)

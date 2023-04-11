@@ -34,7 +34,7 @@ func NewWorkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WorkLogic {
 }
 
 func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
-	tools := "report/work"
+	tools := model.ToolsReportWork
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
