@@ -78,6 +78,7 @@ func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMess
 func getContent(t string) (string, error) {
 	prompt := map[string]string{
 		"report/week": "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容、下周计划、本周总结,用 markdown 格式以分点叙述的形式输出",
+		"report/day":  "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil

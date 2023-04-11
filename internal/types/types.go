@@ -162,11 +162,12 @@ type PageRequest struct {
 }
 
 type ReportRequest struct {
-	ChatId  string `json:"chatId"`
+	ChatId  string `json:"chatId,optional"`
 	Content string `json:"content"`
 }
 
 type WorkRequest struct {
+	ChatId    string `json:"chatId,optional"`
 	Use       string `json:"use"`
 	Introduce string `json:"introduce"`
 	Content   string `json:"content"`

@@ -103,7 +103,7 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:         uint32(uid),
-		Type:        "report/week",
+		Type:        tools,
 		Title:       title,
 		Content:     content,
 		ShowContent: showContent,
