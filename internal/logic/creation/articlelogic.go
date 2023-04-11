@@ -33,42 +33,35 @@ func NewArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ArticleLo
 }
 
 func (l *ArticleLogic) Article(req *types.ArticleRequest, w http.ResponseWriter) (resp *types.CreationResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := model.ToolsArticle
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		showContent = fmt.Sprintf("字数：%s\n类型：%s\n主题：%s\n说明：%s", req.Number, req.Type, req.Subject, req.Content)
+		title = showContent
+		content = fmt.Sprintf("字数不能少于%s字，文章类型是%s，文章的主题是%s，还有有以下补充说明：%s", req.Number, req.Type, req.Subject, req.Content)
+
+	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
+
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
-
-	prompt := fmt.Sprintf("帮我写一篇作文，字数不能少于%s字，文章类型是%s，文章的主题是%s，还有有以下补充说明：%s", req.Number, req.Type, req.Subject, req.Content)
-
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "帮我写一篇作文",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
-	}
 
 	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
@@ -108,12 +101,14 @@ func (l *ArticleLogic) Article(req *types.ArticleRequest, w http.ResponseWriter)
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "creation/article",
-		Content: req.Content,
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }

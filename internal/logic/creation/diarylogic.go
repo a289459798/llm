@@ -35,7 +35,7 @@ func NewDiaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiaryLogic 
 }
 
 func (l *DiaryLogic) Diary(req *types.DiaryRequest, w http.ResponseWriter) (resp *types.CreationResponse, err error) {
-	tools := model.ToolsTranslate
+	tools := model.ToolsDiary
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
