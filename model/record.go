@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"errors"
+	gogpt "github.com/sashabaranov/go-openai"
+	"gorm.io/gorm"
+	"time"
+)
 
 type Record struct {
 	ID          uint32    `gorm:"primary_key" json:"id"`
@@ -17,4 +22,63 @@ type Record struct {
 	IsDelete    bool      `json:"is_delete" gorm:"default:0"`
 	CreatedAt   time.Time `gorm:"column:created_at;index:idx_created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
 	UpdateAt    time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
+}
+
+func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMessage, error) {
+	var message []gogpt.ChatCompletionMessage
+	prompt, err := getContent(r.Type)
+	if err != nil {
+		return nil, err
+	}
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: "不要回复与下面问题无关的问题",
+	}, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: prompt,
+	}, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleAssistant,
+		Content: "好的",
+	})
+
+	if r.ChatId != "" {
+		maxToken := 300
+		strLen := 100
+		if user.IsVip() {
+			maxToken = 800
+			strLen = 200
+		}
+		var records []Record
+		db.Raw("select id, content, LEFT(result, ?) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", strLen, r.Uid, r.ChatId, 10).Scan(&records)
+		if len(records) > 0 {
+			totalLen := 0
+			for i := len(records) - 1; i >= 0; i-- {
+				message = append(message, gogpt.ChatCompletionMessage{
+					Role:    "user",
+					Content: records[i].Content,
+				})
+				message = append(message, gogpt.ChatCompletionMessage{
+					Role:    "assistant",
+					Content: records[i].Result,
+				})
+
+				totalLen += len([]rune(records[i].Content)) + len([]rune(records[i].Result))
+				if totalLen > maxToken {
+					break
+				}
+			}
+		}
+	}
+
+	return message, nil
+}
+
+func getContent(t string) (string, error) {
+	prompt := map[string]string{
+		"report/week": "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容、下周计划、本周总结,用 markdown 格式以分点叙述的形式输出",
+	}
+	if s, ok := prompt[t]; ok {
+		return s, nil
+	}
+	return "", errors.New("类型不存在")
 }

@@ -32,37 +32,21 @@ func NewWeekLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WeekLogic {
 
 func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
 
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := "report/week"
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	prompt := "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容、下周计划、本周总结,用 markdown 格式以分点叙述的形式输出:" + req.Content
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: req.Content,
+	})
 
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "帮我完善一下周报",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
-	}
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
@@ -106,11 +90,12 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "report/week",
 		Content: req.Content,
+		ChatId:  req.ChatId,
 		Result:  "",
 	}, nil)
 	return

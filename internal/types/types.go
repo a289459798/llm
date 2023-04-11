@@ -162,6 +162,7 @@ type PageRequest struct {
 }
 
 type ReportRequest struct {
+	ChatId  string `json:"chatId"`
 	Content string `json:"content"`
 }
 
