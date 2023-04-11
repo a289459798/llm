@@ -34,59 +34,30 @@ func NewGenerateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Generate
 }
 
 func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
-	}
+	tools := model.ToolsCodeGenerate
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	content := fmt.Sprintf("请用编程语言%s实现以下需求:%s，请提供代码和demo，用 markdown 的格式输出", req.Lang, req.Content)
-
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "编程问题咨询",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	if req.ChatId != "" {
-		var records []model.Record
-
-		l.svcCtx.Db.Where("uid = ?", uid).Where("chat_id = ?", req.ChatId).Order("id asc").Find(&records)
-		for _, v := range records {
-			message = append(message, gogpt.ChatCompletionMessage{
-				Role:    "user",
-				Content: v.Content,
-			})
-			message = append(message, gogpt.ChatCompletionMessage{
-				Role:    "assistant",
-				Content: v.Result,
-			})
-		}
-		content = fmt.Sprintf("%s，用%s语言", req.Content, req.Lang)
-		message = append(message, gogpt.ChatCompletionMessage{
-			Role:    "user",
-			Content: fmt.Sprintf("%s，用%s语言", req.Content, req.Lang),
-		})
-	} else {
-		message = append(message, gogpt.ChatCompletionMessage{
-			Role:    "user",
-			Content: content,
-		})
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = req.Content
+		content = fmt.Sprintf("用%s编程语言帮我实现一下需求:%s", req.Lang, req.Content)
 	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
+
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
@@ -131,11 +102,13 @@ func (l *GenerateLogic) Generate(req *types.GenerateRequest, w http.ResponseWrit
 		return nil, errors.New("数据为空")
 	}
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "code/generate",
-		Content: content,
-		Result:  result,
-		ChatId:  req.ChatId,
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }

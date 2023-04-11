@@ -301,11 +301,13 @@ type GameResponse struct {
 
 type RegularRequest struct {
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type ExamRequest struct {
 	Content string `json:"content"`
 	Type    string `json:"type"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type GenerateRequest struct {
@@ -318,11 +320,13 @@ type NameRequest struct {
 	Content string `json:"content"`
 	Lang    string `json:"lang"`
 	Type    string `json:"type"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type PlaygroundRequest struct {
 	Content string `json:"content"`
 	Lang    string `json:"lang,optional"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type CodeResponse struct {

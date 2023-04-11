@@ -3,11 +3,13 @@ syntax = "v1"
 type(
     RegularRequest {
         Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
     }
 
     ExamRequest {
         Content string `json:"content"`
         Type string `json:"type"`
+        ChatId string `json:"chatId,optional"`
     }
 
     GenerateRequest {
@@ -20,11 +22,13 @@ type(
         Content string `json:"content"`
         Lang string `json:"lang"`
         Type string `json:"type"`
+        ChatId string `json:"chatId,optional"`
     }
 
     PlaygroundRequest {
         Content string `json:"content"`
         Lang string `json:"lang,optional"`
+        ChatId string `json:"chatId,optional"`
     }
 
     CodeResponse {
