@@ -17,6 +17,7 @@ const (
 	ToolsIntroduce  = "chat/introduce"
 	ToolsPursue     = "chat/pursue"
 	ToolsReject     = "chat/reject"
+	ToolsTranslate  = "convert/translate"
 )
 
 type Record struct {
@@ -98,6 +99,7 @@ func getContent(t string) (string, error) {
 		ToolsIntroduce:  "从现在开始你要充当演讲大师，结合我的情况，给我写一份自我介绍，希望可以让大家很快记住我",
 		ToolsPursue:     "从现在开始你化身为恋爱大师，根据我的情况，教我一步步去追求TA，需要包含具体的计划、步骤、行动等以及如何应对被拒绝的尴尬",
 		ToolsReject:     "从现在开始你化身为沟通大师，教我如何去拒绝别人的请求，能够很好的缓解尴尬",
+		ToolsTranslate:  "我希望你能担任翻译官、拼写校对和修辞改进的角色。我会用任何语言和你交流，你会识别语言，将其翻译并用更为优美和精炼的语句回答我。请将我简单的词汇和句子替换成更为优美和高雅的表达方式，确保意思不变，但使其更具文学性。请仅回答更正和改进的部分，不要写解释",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil

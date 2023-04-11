@@ -423,6 +423,7 @@ type ChatTemplateRequest struct {
 type TranslateRequest struct {
 	Content string `json:"content"`
 	Lang    string `json:"lang"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type ConvertResponse struct {
