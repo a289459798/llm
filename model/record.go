@@ -24,11 +24,11 @@ type Record struct {
 	UpdateAt    time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
 }
 
-func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMessage, error) {
+func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMessage, bool, error) {
 	var message []gogpt.ChatCompletionMessage
 	prompt, err := getContent(r.Type)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    gogpt.ChatMessageRoleUser,
@@ -41,6 +41,7 @@ func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMess
 		Content: "好的",
 	})
 
+	isFirst := true
 	if r.ChatId != "" {
 		maxToken := 300
 		strLen := 100
@@ -51,6 +52,7 @@ func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMess
 		var records []Record
 		db.Raw("select id, content, LEFT(result, ?) as result from gpt_record where uid = ? and chat_id = ? and is_delete = 0 order by id desc limit ?", strLen, r.Uid, r.ChatId, 10).Scan(&records)
 		if len(records) > 0 {
+			isFirst = false
 			totalLen := 0
 			for i := len(records) - 1; i >= 0; i-- {
 				message = append(message, gogpt.ChatCompletionMessage{
@@ -70,7 +72,7 @@ func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMess
 		}
 	}
 
-	return message, nil
+	return message, isFirst, nil
 }
 
 func getContent(t string) (string, error) {

@@ -10,6 +10,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
@@ -35,14 +36,23 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 	tools := "report/week"
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
-	message, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
 	if err != nil {
 		return nil, err
 	}
 
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = req.Content
+		content = fmt.Sprintf("本周工作基本内容：%s", content)
+	}
+
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    gogpt.ChatMessageRoleUser,
-		Content: req.Content,
+		Content: content,
 	})
 
 	// 创建上下文
@@ -92,11 +102,13 @@ func (l *WeekLogic) Week(req *types.ReportRequest, w http.ResponseWriter) (resp 
 	}
 
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "report/week",
-		Content: req.Content,
-		ChatId:  req.ChatId,
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        "report/week",
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }

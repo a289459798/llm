@@ -238,15 +238,9 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		return nil, errors.New("数据为空")
 	}
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:  uint32(uid),
-		Type: "chat/chat",
-		Title: func() string {
-			titleRune := []rune(title)
-			if len(titleRune) > 30 {
-				return string(titleRune[:30])
-			}
-			return title
-		}(),
+		Uid:         uint32(uid),
+		Type:        "chat/chat",
+		Title:       title,
 		Content:     msg,
 		ShowContent: ShowContent,
 		Result:      result,

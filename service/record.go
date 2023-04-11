@@ -22,6 +22,13 @@ func NewRecord(db *gorm.DB) *Record {
 }
 
 func (r *Record) Insert(record *model.Record, params *RecordParams) {
+	record.Title = func() string {
+		titleRune := []rune(record.Title)
+		if len(titleRune) > 30 {
+			return string(titleRune[:30])
+		}
+		return record.Title
+	}()
 	r.DB.Create(record)
 
 	r.DB.Transaction(func(tx *gorm.DB) error {
