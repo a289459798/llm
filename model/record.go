@@ -16,6 +16,7 @@ const (
 	ToolsJieMeng    = "divination/jiemeng"
 	ToolsIntroduce  = "chat/introduce"
 	ToolsPursue     = "chat/pursue"
+	ToolsReject     = "chat/reject"
 )
 
 type Record struct {
@@ -96,6 +97,7 @@ func getContent(t string) (string, error) {
 		ToolsJieMeng:    "从现在开始你要充当周公，结合我的梦境，给我详细解释一下这个梦所预示的含义",
 		ToolsIntroduce:  "从现在开始你要充当演讲大师，结合我的情况，给我写一份自我介绍，希望可以让大家很快记住我",
 		ToolsPursue:     "从现在开始你化身为恋爱大师，根据我的情况，教我一步步去追求TA，需要包含具体的计划、步骤、行动等以及如何应对被拒绝的尴尬",
+		ToolsReject:     "从现在开始你化身为沟通大师，教我如何去拒绝别人的请求，能够很好的缓解尴尬",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil

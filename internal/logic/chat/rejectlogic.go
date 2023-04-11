@@ -35,40 +35,30 @@ func NewRejectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RejectLogi
 
 func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (resp *types.ChatResponse, err error) {
 
-	content := ""
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := model.ToolsReject
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	prompt := fmt.Sprintf("收到了一个%s消息，我希望能通过%s的态度回绝对方，%s，请用mackdown的格式输出", req.Type, req.Way, content)
-
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "请教我怎么拒绝",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = fmt.Sprintf("语气：%s\n类型:%s\n其他说明：%s\n", req.Way, req.Type, req.Content)
+		content = fmt.Sprintf("用%s的语气，来拒绝%s，其他补充:%s", req.Way, req.Type, req.Content)
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
+
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
@@ -112,12 +102,14 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "chat/reject",
-		Content: "",
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }

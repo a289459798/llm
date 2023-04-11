@@ -53,9 +53,7 @@ func (l *IntroduceLogic) Introduce(req *types.IntroduceRequest, w http.ResponseW
 		if req.Way != "" {
 			way = "用" + req.Way + "的方式介绍"
 		}
-		if req.Content != "" {
-			content = fmt.Sprintf("我叫%s,来自%s, 喜欢%s，其他补充:%s, %s", req.Name, req.Native, req.Interest, req.Content, way)
-		}
+		content = fmt.Sprintf("我叫%s,来自%s, 喜欢%s，其他补充:%s, %s", req.Name, req.Native, req.Interest, req.Content, way)
 	}
 
 	message = append(message, gogpt.ChatCompletionMessage{
