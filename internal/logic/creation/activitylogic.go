@@ -34,43 +34,34 @@ func NewActivityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Activity
 }
 
 func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWriter) (resp *types.CreationResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+
+	tools := model.ToolsActivity
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
+
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		showContent = fmt.Sprintf("活动类型：%s\n活动目的：%s\n活动时间：%s\n用户：%s\n说明：%s", req.Way, req.Target, req.Date, req.User, req.Content)
+		title = showContent
+		content = fmt.Sprintf("活动类型是%s，活动主要目的%s，时间周期为%s，主要针对%s，以下是主要活动内容：%s", req.Way, req.Target, req.Date, req.User, req.Content)
+	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
 
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
-
 	ch := make(chan struct{})
-
-	prompt := fmt.Sprintf("请帮我完善一份策划方案，活动类型是%s，活动主要目的%s，时间周期为%s，主要针对%s，以下是主要活动内容：%s，需要提供完整的活动方案，包括但不限于前期准备、活动的实施方案、活动过程跟踪、效果不及预期的方案、活动效果、需要的支持等，请用mackdown的格式输出", req.Way, req.Target, req.Date, req.User, req.Content)
-
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "帮我写一份活动策划",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
-	}
-
 	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
@@ -109,12 +100,14 @@ func (l *ActivityLogic) Activity(req *types.ActivityRequest, w http.ResponseWrit
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "creation/activity",
-		Content: req.Content,
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }

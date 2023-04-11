@@ -335,12 +335,14 @@ type ActivityRequest struct {
 	Date    string `json:"date"`
 	User    string `json:"user"`
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type DiaryRequest struct {
 	City    string `json:"city"`
 	Weather string `json:"weather"`
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type ArticleRequest struct {
@@ -348,6 +350,7 @@ type ArticleRequest struct {
 	Type    string `json:"type"`
 	Number  string `json:"number"`
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type CreationResponse struct {
