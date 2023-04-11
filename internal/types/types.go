@@ -360,20 +360,24 @@ type IntroduceRequest struct {
 	Interest string `json:"interest"`
 	Way      string `json:"way,optional"`
 	Content  string `json:"content,optional"`
+	ChatId   string `json:"chatId,optional"`
 }
 
 type SalaryRequest struct {
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type RejectRequest struct {
 	Type    string `json:"type"`
 	Way     string `json:"way"`
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type PursueRequest struct {
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type ChatResponse struct {

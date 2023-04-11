@@ -7,20 +7,24 @@ type(
         Interest string `json:"interest"`
         Way string `json:"way,optional"`
         Content string `json:"content,optional"`
+        ChatId string `json:"chatId,optional"`
     }
 
     SalaryRequest {
         Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
     }
 
     RejectRequest {
         Type string `json:"type"`
         Way string `json:"way"`
         Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
     }
 
     PursueRequest {
         Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
     }
 
     ChatResponse {
