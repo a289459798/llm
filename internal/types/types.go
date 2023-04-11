@@ -339,8 +339,6 @@ type ActivityRequest struct {
 }
 
 type DiaryRequest struct {
-	City    string `json:"city"`
-	Weather string `json:"weather"`
 	Content string `json:"content"`
 	ChatId  string `json:"chatId,optional"`
 }
