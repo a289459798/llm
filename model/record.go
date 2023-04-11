@@ -79,6 +79,7 @@ func getContent(t string) (string, error) {
 	prompt := map[string]string{
 		"report/week": "请帮我把以下的工作内容填充为一篇完整的周报包含本周内容、下周计划、本周总结,用 markdown 格式以分点叙述的形式输出",
 		"report/day":  "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出",
+		"report/plot": "从现在开始你要充当一名编剧，想一些很创意的剧本，从想出有趣的角色、故事的背景、角色之间的对话等开始。一旦你的角色发展完成——创造一个充满曲折的激动人心的故事情节，让观众一直悬念到最后",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil

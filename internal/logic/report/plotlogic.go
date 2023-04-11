@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
@@ -33,37 +34,30 @@ func NewPlotLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlotLogic {
 }
 
 func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := "report/plot"
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	prompt := "请帮我用以下内容完善拍摄剧本，包含故事概要和主题、人物设定、场景设定、故事结构和情节、台词和对白、拍摄风格和视觉效果、音效和音乐,用 markdown 格式以分点叙述的形式输出：" + req.Content
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "帮我策划一个剧本",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = req.Content
+		content = fmt.Sprintf("请以一下内容生成一个剧本：%s", content)
 	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
 
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
@@ -107,12 +101,14 @@ func (l *PlotLogic) Plot(req *types.ReportRequest, w http.ResponseWriter) (resp 
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "report/plot",
-		Content: req.Content,
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }
