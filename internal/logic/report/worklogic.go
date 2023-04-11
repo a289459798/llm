@@ -34,37 +34,30 @@ func NewWorkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WorkLogic {
 }
 
 func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *types.ReportResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := "report/work"
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	prompt := fmt.Sprintf("请帮生成一份完整的述职报告用于%s,我的基本信息是%s，我工作上我有以下信息%s，需要包含个人信息、工作职责、工作成果、工作总结、个人总结、工作计划、对公司的建议等，用 markdown 格式以分点叙述的形式输出", req.Use, req.Introduce, req.Content)
-
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "帮我完善一下述职报告",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = fmt.Sprintf("用途：%s\n基本介绍：%s\n工作情况：%s", req.Use, req.Introduce, req.Content)
+		content = fmt.Sprintf("报告用于%s,我的基本信息是%s，工作情况如下：%s", req.Use, req.Introduce, req.Content)
 	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
+
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
@@ -108,12 +101,14 @@ func (l *WorkLogic) Work(req *types.WorkRequest, w http.ResponseWriter) (resp *t
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "report/week",
-		Content: req.Content,
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }
