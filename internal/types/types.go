@@ -244,10 +244,12 @@ type QiMingRequest struct {
 	Sex      string `json:"sex"`
 	Fix      string `json:"fix,optional"`
 	Other    string `json:"other,optional"`
+	ChatId   string `json:"chatId,optional"`
 }
 
 type JieMengRequest struct {
 	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type SuanMingRequest struct {
@@ -255,6 +257,7 @@ type SuanMingRequest struct {
 	Birthday string `json:"birthday"`
 	Sex      string `json:"sex,optional"`
 	Content  string `json:"content,optional"`
+	ChatId   string `json:"chatId,optional"`
 }
 
 type GSQiMingRequest struct {
@@ -262,17 +265,20 @@ type GSQiMingRequest struct {
 	Range    string `json:"range"`
 	Culture  string `json:"culture,optional"`
 	Other    string `json:"other,optional"`
+	ChatId   string `json:"chatId,optional"`
 }
 
 type YYQiMingRequest struct {
-	Name  string `json:"name"`
-	Sex   string `json:"sex"`
-	Other string `json:"other,optional"`
+	Name   string `json:"name"`
+	Sex    string `json:"sex"`
+	Other  string `json:"other,optional"`
+	ChatId string `json:"chatId,optional"`
 }
 
 type HoroscopeRequest struct {
 	Birthday      string `json:"birthday,optional"`
 	Constellation string `json:"constellation,optional"`
+	ChatId        string `json:"chatId,optional"`
 }
 
 type DivinationResponse struct {

@@ -12,6 +12,7 @@ const (
 	ToolsReportWeek = "report/week"
 	ToolsReportWork = "report/work"
 	ToolsReportPlot = "report/plot"
+	ToolsSuanMing   = "divination/suanming"
 )
 
 type Record struct {
@@ -88,6 +89,7 @@ func getContent(t string) (string, error) {
 		ToolsReportDay:  "请帮我把以下的工作内容填充为一篇完整的日报，包含今日工作内容、明天工作计划以及总结,用 markdown 格式以分点叙述的形式输出",
 		ToolsReportPlot: "从现在开始你要充当一名编剧，想一些很创意的剧本，从想出有趣的角色、故事的背景、角色之间的对话等开始。一旦你的角色发展完成——创造一个充满曲折的激动人心的故事情节，让观众一直悬念到最后",
 		ToolsReportWork: "从现在开始你要充当一名职业导师，根据我的基本情况，帮助我完成一份述职报告，需要包含个人信息、工作职责、工作成果、工作总结、个人总结、工作计划、对公司的建议等",
+		ToolsSuanMing:   "从限制开始你要充当一名占卜大师，结合我的情况给一份详细的算命报告，包含八字分析、五行分析、命理分析、事业分析、爱情分析、财运分析等相关内容，请用markdown格式输出",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil

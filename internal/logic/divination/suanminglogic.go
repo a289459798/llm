@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
 
@@ -33,24 +34,45 @@ func NewSuanmingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Suanming
 }
 
 func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWriter) (resp *types.DivinationResponse, err error) {
-	sex := ""
-	content := ""
-	if req.Sex != "" {
-		sex = "，性别为" + req.Sex
+	tools := model.ToolsSuanMing
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
-	if req.Content != "" {
-		content = "，还有以下内容参考：" + req.Content
-	}
-	prompt := fmt.Sprintf("请帮我算命，我叫%s，出生年月为%s%s%s，给一份详情的算命报告，包含八字分析、五行分析、命理分析、事业分析、爱情分析、财运分析等相关内容，请用markdown格式输出", req.Name, req.Birthday, sex, content)
 
-	w.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = fmt.Sprintf("姓名：%s\n性别：%s\n生日：%s\n其他说明：%s", req.Name, req.Sex, req.Birthday, req.Content)
+		sex := ""
+		content := ""
+		if req.Sex != "" {
+			sex = "，性别为" + req.Sex
+		}
+		if req.Content != "" {
+			content = "，还有以下内容参考：" + req.Content
+		}
+		content = fmt.Sprintf("我叫%s，出生年月为%s%s%s", req.Name, req.Birthday, sex, content)
+
+	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
+
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +89,8 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
@@ -93,12 +115,14 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "divination/suanming",
-		Content: "",
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }
