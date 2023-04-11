@@ -22,6 +22,7 @@ const (
 	ToolsDiary        = "creation/diary"
 	ToolsArticle      = "creation/article"
 	ToolsCodeGenerate = "code/generate"
+	ToolsCodeRegular  = "code/regular"
 )
 
 type Record struct {
@@ -108,6 +109,7 @@ func getContent(t string) (string, error) {
 		ToolsDiary:        "从现在开始你化身为文学大家，根据我提供的信息完成一篇日记",
 		ToolsArticle:      "从现在开始你化身为文学大家，根据我提供的信息完成一篇佳作",
 		ToolsCodeGenerate: "我希望你能担任全栈开发工程师，可以结合我的需求一步步教我如何实现以及如何编写代码",
+		ToolsCodeRegular:  "我希望你充当正则表达式生成器。您的角色是生成匹配文本中特定模式的正则表达式。您应该以一种可以轻松复制并粘贴到支持正则表达式的文本编辑器或编程语言中的格式提供正则表达式。不要写正则表达式如何工作的解释或例子；只需提供正则表达式本身",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil

@@ -313,7 +313,7 @@ type ExamRequest struct {
 type GenerateRequest struct {
 	Content string `json:"content"`
 	Lang    string `json:"lang,optional"`
-	ChatId  string `json:"chat_id,optional"`
+	ChatId  string `json:"chatId,optional"`
 }
 
 type NameRequest struct {

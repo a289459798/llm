@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	gogpt "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
 
@@ -33,24 +34,36 @@ func NewRegularLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegularLo
 }
 
 func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := model.ToolsCodeRegular
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	prompt := fmt.Sprintf("请用以下描述生成一个正则表达式：%s，并通过markdown格式输出", req.Content)
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = req.Content
+		content = fmt.Sprintf("表达式是:%s", req.Content)
+	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
+
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
 	ch := make(chan struct{})
 
-	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateCompletionStream(prompt)
+	stream, err := sanmuai.NewOpenAi(ctx, l.svcCtx).CreateChatCompletionStream(message)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +79,8 @@ func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter)
 				break
 			}
 			if len(response.Choices) > 0 {
-				w.Write([]byte(utils.EncodeURL(response.Choices[0].Text)))
-				result += response.Choices[0].Text
+				w.Write([]byte(utils.EncodeURL(response.Choices[0].Delta.Content)))
+				result += response.Choices[0].Delta.Content
 				if f, ok := w.(http.Flusher); ok {
 					f.Flush()
 				}
@@ -88,12 +101,14 @@ func (l *RegularLogic) Regular(req *types.RegularRequest, w http.ResponseWriter)
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "code/regular",
-		Content: "",
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }
