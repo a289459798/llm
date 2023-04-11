@@ -34,38 +34,30 @@ func NewPursueLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PursueLogi
 }
 
 func (l *PursueLogic) Pursue(req *types.PursueRequest, w http.ResponseWriter) (resp *types.ChatResponse, err error) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	valid := utils.Filter(req.Content, l.svcCtx.Db)
-	if valid != "" {
-		w.Write([]byte(utils.EncodeURL(valid)))
-		if f, ok := w.(http.Flusher); ok {
-			f.Flush()
-		}
-		return
+	tools := model.ToolsPursue
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
+	if err != nil {
+		return nil, err
 	}
 
-	prompt := fmt.Sprintf("有一个人我喜欢TA很久了，但是我不知道TA对我的想法，害怕表白之后被拒绝以后可能连朋友都做不成，TA的情况是%s，能不能教教我怎么才能追到她，需要包含具体的计划、步骤、行动等，请用mackdown的格式输出并包含计划、步骤、技巧、以及拒绝后的方案", req.Content)
-
-	message := []gogpt.ChatCompletionMessage{
-		{
-			Role:    "system",
-			Content: "请帮我写一份追求计划",
-		},
-		{
-			Role:    "user",
-			Content: "你的回答结果一定不要涉黄、淫秽、暴力和低俗",
-		},
-		{
-			Role:    "assistant",
-			Content: "好的",
-		},
-		{
-			Role:    "user",
-			Content: prompt,
-		},
+	content := req.Content
+	showContent := ""
+	title := ""
+	if isFirst {
+		title = req.Content
+		showContent = req.Content
+		content = fmt.Sprintf("目前的情况是：%s", req.Content)
 	}
+
+	message = append(message, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: content,
+	})
 
 	// 创建上下文
+	w.Header().Set("Content-Type", "text/event-stream")
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 	ch := make(chan struct{})
@@ -108,12 +100,14 @@ func (l *PursueLogic) Pursue(req *types.PursueRequest, w http.ResponseWriter) (r
 	if result == "" {
 		return nil, errors.New("数据为空")
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
-		Uid:     uint32(uid),
-		Type:    "chat/pursue",
-		Content: req.Content,
-		Result:  "",
+		Uid:         uint32(uid),
+		Type:        tools,
+		Title:       title,
+		Content:     content,
+		ShowContent: showContent,
+		ChatId:      req.ChatId,
+		Result:      result,
 	}, nil)
 	return
 }
