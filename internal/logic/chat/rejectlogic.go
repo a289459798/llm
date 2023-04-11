@@ -47,8 +47,8 @@ func (l *RejectLogic) Reject(req *types.RejectRequest, w http.ResponseWriter) (r
 	showContent := ""
 	title := ""
 	if isFirst {
-		title = req.Content
 		showContent = fmt.Sprintf("语气：%s\n类型:%s\n其他说明：%s\n", req.Way, req.Type, req.Content)
+		title = showContent
 		content = fmt.Sprintf("用%s的语气，来拒绝%s，其他补充:%s", req.Way, req.Type, req.Content)
 	}
 

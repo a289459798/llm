@@ -46,8 +46,8 @@ func (l *SuanmingLogic) Suanming(req *types.SuanMingRequest, w http.ResponseWrit
 	showContent := ""
 	title := ""
 	if isFirst {
-		title = req.Content
 		showContent = fmt.Sprintf("姓名：%s\n性别：%s\n生日：%s\n其他说明：%s", req.Name, req.Sex, req.Birthday, req.Content)
+		title = showContent
 		sex := ""
 		content := ""
 		if req.Sex != "" {

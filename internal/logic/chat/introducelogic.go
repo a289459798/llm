@@ -47,8 +47,8 @@ func (l *IntroduceLogic) Introduce(req *types.IntroduceRequest, w http.ResponseW
 	showContent := ""
 	title := ""
 	if isFirst {
-		title = req.Content
 		showContent = fmt.Sprintf("姓名：%s\n籍贯:%s\n爱好：%s\n方式：%s\n其他说明：%s\n", req.Name, req.Native, req.Interest, req.Way, req.Content)
+		title = showContent
 		way := ""
 		if req.Way != "" {
 			way = "用" + req.Way + "的方式介绍"
