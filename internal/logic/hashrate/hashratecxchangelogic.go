@@ -55,7 +55,7 @@ func (l *HashRateCxchangeLogic) HashRateCxchange(req *types.HashRateCxchangeRequ
 		Way:           1,
 		Type:          "exchange",
 		Amount:        hashRateCode.Amount,
-		CurrentAmount: account.Amount + hashRateCode.Amount,
+		CurrentAmount: account.Amount,
 	}).Error
 	if err != nil {
 		tx.Rollback()
