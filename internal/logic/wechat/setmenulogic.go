@@ -54,12 +54,12 @@ func (l *SetMenuLogic) SetMenu() (resp *types.WeChatCallbackResponse, err error)
 			SubButtons: []*menu.Button{
 				{
 					Type: "view",
-					Name: "加群",
+					Name: "加群讨论",
 					URL:  "http://img.smuai.com/wx/qw.png",
 				},
 				{
 					Type: "view",
-					Name: "重置",
+					Name: "获取算力",
 					URL:  "http://img.smuai.com/wx/kf.jpg",
 				},
 			},
