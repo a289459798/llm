@@ -154,7 +154,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 
 	if imageText != "" {
 		ShowContent = fmt.Sprintf("%s\n\n![](%s)", msg, req.Image)
-		msg = fmt.Sprintf("接下来对话中,我有一张图片里面的内容：%s，你回答下面问题；%s", imageText, msg)
+		msg = fmt.Sprintf("接下来对话中,加入我有一张图片里面的内容是：%s，你要基于图片内容回答下面问题；%s", imageText, msg)
 	}
 
 	message = append(message, gogpt.ChatCompletionMessage{
