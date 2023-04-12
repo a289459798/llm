@@ -107,6 +107,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Content:     imageCreate.Prompt,
 		Result:      fmt.Sprintf("%s|||%s", imageCreate.Prompt, strings.Join(stream, ",")),
 		Model:       req.Model,
+		ChatId:      "111",
 	}, &service.RecordParams{
 		Params: func() string {
 			if paramsMap != nil {

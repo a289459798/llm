@@ -46,6 +46,7 @@ func (l *Old2newLogic) Old2new(req *types.PicRepairRequest) (resp *types.ImageMu
 		Content: req.Image,
 		Result:  strings.Join(stream, ","),
 		Model:   "Tencentarc",
+		ChatId:  "111",
 	}, nil)
 
 	for i := 0; i < len(stream); i++ {
