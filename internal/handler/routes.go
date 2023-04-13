@@ -13,6 +13,7 @@ import (
 	creation "chatgpt-tools/internal/handler/creation"
 	crontab "chatgpt-tools/internal/handler/crontab"
 	divination "chatgpt-tools/internal/handler/divination"
+	efficiency "chatgpt-tools/internal/handler/efficiency"
 	game "chatgpt-tools/internal/handler/game"
 	hashrate "chatgpt-tools/internal/handler/hashrate"
 	image "chatgpt-tools/internal/handler/image"
@@ -549,6 +550,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/hashrate/exchange",
 					Handler: hashrate.HashRateCxchangeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthAndUse},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/efficiency/mind",
+					Handler: efficiency.MindHandler(serverCtx),
 				},
 			}...,
 		),

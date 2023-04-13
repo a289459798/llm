@@ -21,6 +21,7 @@ import (
 	"api/common.api"
 	"api/vip.api"
 	"api/hashrate.api"
+	"api/efficiency.api"
 	"api/order.api"
 	"api/wechat.api"
 	"api/callback.api"

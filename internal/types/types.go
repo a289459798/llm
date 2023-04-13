@@ -551,6 +551,15 @@ type HashRateCxchangeRequest struct {
 type HashRateCxchangeResponse struct {
 }
 
+type MindRequest struct {
+	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
+}
+
+type EfficiencyResponse struct {
+	Data string `json:"data"`
+}
+
 type VipPayRequest struct {
 	Platform string `json:"platform,options=wechat|alipay"`
 }
