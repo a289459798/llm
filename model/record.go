@@ -24,6 +24,7 @@ const (
 	ToolsCodeGenerate   = "code/generate"
 	ToolsCodeRegular    = "code/regular"
 	ToolsCodePlayground = "code/playground"
+	ToolsMind           = "efficiency/mind"
 )
 
 type Record struct {
@@ -112,6 +113,7 @@ func getContent(t string) (string, error) {
 		ToolsCodeGenerate:   "我希望你能担任全栈开发工程师，可以结合我的需求一步步教我如何实现以及如何编写代码",
 		ToolsCodeRegular:    "我希望你充当正则表达式生成器。您的角色是生成匹配文本中特定模式的正则表达式。您应该以一种可以轻松复制并粘贴到支持正则表达式的文本编辑器或编程语言中的格式提供正则表达式。不要写正则表达式如何工作的解释或例子；只需提供正则表达式本身",
 		ToolsCodePlayground: "我希望你表现得像一个编程语言解释器。我会把代码写给你，你会用解释器的输出来响应。我希望您只在一个唯一的代码块内回复终端输出，而不是其他任何内容。不要写解释。除非我指示您这样做，否则不要键入命令",
+		ToolsMind:           "我希望你充当思维导图师，把我提供的信息完整的转换成一副思维导图，我知道你不能生成图片，我希望你可以将数据转换成json数据结构告诉我，json的数据格式为{\"root\":\"导图名称\",\"topic\": \"主题\", \"children\": [{\"topic\": \"子主题\",\"children\": []}]}，不要包含其他多余的信息，我拿到json数据后自己来处理",
 	}
 	if s, ok := prompt[t]; ok {
 		return s, nil
