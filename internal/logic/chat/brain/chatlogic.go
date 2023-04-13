@@ -461,7 +461,7 @@ func (l *ChatLogic) studyPic(content string, result string, message []gogpt.Chat
 		copy(message[index:], []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "接下来对话中，我主动让改图或是PS的时候并不是真正让你PS，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思，回复我以下格式就行：'准备PS，将额外消耗5算力'，比如我说把头发去掉，你回复：准备PS，将额外消耗5算力,不要反我以及加其他多余内容",
+				Content: "接下来对话中，我主动让改图或是PS的时候并不是真正让你PS，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思,不要反问我以及加其他多余内容，回复我以下格式就行：'准备PS，将额外消耗5算力'，比如我说把头发去掉，你回复：准备PS，将额外消耗5算力",
 			},
 			{
 				Role:    "assistant",
