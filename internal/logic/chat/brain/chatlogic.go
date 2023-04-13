@@ -338,7 +338,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 
 		if img == "" {
 			r := &model.Record{}
-			l.svcCtx.Db.Where("chat_id = ?", "chat_"+chatId).Where("type = ?", "image/ps").Where("is_delete = 0").Order("id desc").First(&r)
+			l.svcCtx.Db.Where("uid = ?", uid).Where("chat_id = ?", "chat_"+chatId).Where("type = ?", "image/ps").Where("is_delete = 0").Order("id desc").First(&r)
 			img = r.Result
 		}
 
