@@ -155,7 +155,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		}
 
 		if imageText != "" {
-			msg = fmt.Sprintf("接下来对话中,假如我有一张图片里面的内容是：%s，你要基于图片内容回答下面问题；%s", imageText, msg)
+			msg = fmt.Sprintf("接下来对话中,假设有一张图片，里面的内容是：%s，你要结合给你的信息，回答下面问题；%s", imageText, msg)
 		}
 	}
 
