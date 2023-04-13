@@ -136,3 +136,9 @@ func (ai *OpenAi) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, er
 func (ai *OpenAi) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
 	return
 }
+func (ai *OpenAi) ImagePS(image ImagePS) (result []string, err error) {
+	return
+}
+func (ai *OpenAi) ImagePSAsync(image ImagePS) (result ImageAsyncTask, err error) {
+	return
+}

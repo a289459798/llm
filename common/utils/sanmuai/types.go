@@ -15,6 +15,11 @@ type Image2Text struct {
 	Image string `json:"image"`
 }
 
+type ImagePS struct {
+	Image string `json:"image"`
+	Text  string `json:"text"`
+}
+
 type ImageAsyncTask struct {
 	Task    string
 	Session string

@@ -147,14 +147,17 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	message = l.studyPic(allContent, allResult, message)
 
 	// 获取图片内容
-	imageText, err := l.getImageText(req.Image)
-	if err != nil {
-		return nil, err
-	}
+	imageText := ""
+	if !strings.Contains(msg, "修改") && !strings.Contains(strings.ToUpper(msg), "PS") && !strings.Contains(strings.ToUpper(msg), "P") {
+		imageText, err = l.getImageText(req.Image)
+		if err != nil {
+			return nil, err
+		}
 
-	if imageText != "" {
-		ShowContent = fmt.Sprintf("%s\n\n![](%s)", msg, req.Image)
-		msg = fmt.Sprintf("接下来对话中,假如我有一张图片里面的内容是：%s，你要基于图片内容回答下面问题；%s", imageText, msg)
+		if imageText != "" {
+			ShowContent = fmt.Sprintf("%s\n\n![](%s)", msg, req.Image)
+			msg = fmt.Sprintf("接下来对话中,假如我有一张图片里面的内容是：%s，你要基于图片内容回答下面问题；%s", imageText, msg)
+		}
 	}
 
 	message = append(message, gogpt.ChatCompletionMessage{
@@ -209,7 +212,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 
 		}
 
-		img, err := l.getImage(uint32(uid), result)
+		img, err := l.getImage(req.ChatId, uint32(uid), msg, result, req.Image)
 		if err != nil {
 			w.Write([]byte(utils.EncodeURL(err.Error())))
 			if f, ok := w.(http.Flusher); ok {
@@ -260,7 +263,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	return
 }
 
-func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
+func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, img string) (string, error) {
 	if strings.Contains(str, "准备画画中，将额外消耗5算力：") {
 		// 判断算力消耗
 		imageUse := uint32(utils.GetSuanLi(uid, "image/createMulti", "", l.svcCtx.Db))
@@ -274,8 +277,8 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 		s1 := strArr2[0]
 		message := []gogpt.ChatCompletionMessage{
 			{
-				Role:    "system",
-				Content: "帮我翻译",
+				Role:    "user",
+				Content: "我希望你能担任翻译官，我会用任何语言和你交流，你会识别语言，将其翻译成英文回答我。不要写解释",
 			},
 			{
 				Role:    "user",
@@ -312,6 +315,62 @@ func (l *ChatLogic) getImage(uid uint32, str string) (string, error) {
 			Type:    "image/createMulti",
 			Content: s1,
 			Result:  strings.Join(stream, ","),
+		}, nil)
+		return fmt.Sprintf("\n\n![](%s)", stream[0]), nil
+	} else if strings.Contains(str, "准备PS，将额外消耗5算力：") {
+		// 判断算力消耗
+		imageUse := uint32(utils.GetSuanLi(uid, "image/ps", "", l.svcCtx.Db))
+		chatUse := uint32(utils.GetSuanLi(uid, "chat/chat", "uid", l.svcCtx.Db))
+		amount := model.NewAccount(l.svcCtx.Db).GetAccount(uid, time.Now())
+		if (amount.Amount) < (chatUse + imageUse) {
+			return "", errors.New("算力不足")
+		}
+
+		message := []gogpt.ChatCompletionMessage{
+			{
+				Role:    "user",
+				Content: "我希望你能担任翻译官，我会用任何语言和你交流，你会识别语言，将其翻译成英文回答我。不要写解释",
+			},
+			{
+				Role:    "user",
+				Content: msg,
+			},
+		}
+		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
+		if err == nil && len(conv.Choices) > 0 && conv.Choices[0].Message.Content != "" {
+			msg = conv.Choices[0].Message.Content
+		}
+
+		if img == "" {
+			r := &model.Record{}
+			l.svcCtx.Db.Where("chat_id = ?", "chat_"+chatId).Where("type = ?", "image/ps").Order("is desc").First(&r)
+			img = r.Result
+		}
+
+		imageCreate := sanmuai.ImagePS{
+			Image: img,
+			Text:  msg,
+		}
+		ai := sanmuai.GetAI("Paintbytext", sanmuai.SanmuData{
+			Ctx:    l.ctx,
+			SvcCtx: l.svcCtx,
+		})
+
+		stream, err := ai.ImagePS(imageCreate)
+		if err != nil {
+			return "", err
+		}
+
+		if len(stream) == 0 {
+			return "", errors.New("PS失败，请重试")
+		}
+		// 扣除算力
+		service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
+			Uid:     uid,
+			Type:    "image/ps",
+			Content: msg,
+			Result:  strings.Join(stream, ","),
+			ChatId:  "chat_" + chatId,
 		}, nil)
 		return fmt.Sprintf("\n\n![](%s)", stream[0]), nil
 	}
@@ -392,11 +451,26 @@ func (l *ChatLogic) studyPic(content string, result string, message []gogpt.Chat
 		copy(message[index:], []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "接下来对话中，我主动让你绘图的时候并不是真正让你绘图或改图，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思，回复我以下格式就行：'准备画画中，将额外消耗5算力：{画画内容}'，比如我说画一只猫，你回复：准备画画中，将额外消耗5算力：画一只猫，我继续说：白色的，你回复：准备画画中，将额外消耗5算力：画一只白色的猫",
+				Content: "接下来对话中，我主动让你绘图的时候并不是真正让你绘图，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思，回复我以下格式就行不要在反问我：'准备画画中，将额外消耗5算力：{画画内容}'，比如我说画一只猫，你回复：准备画画中，将额外消耗5算力：画一只猫，我继续说：白色的，你回复：准备画画中，将额外消耗5算力：画一只白色的猫",
 			},
 			{
 				Role:    "assistant",
 				Content: "好的，我回复固定格式：准备画画中，将额外消耗5算力：{画画内容}",
+			},
+		})
+	}
+
+	if strings.Contains(strings.ToUpper(content), "PS") || strings.Contains(strings.ToUpper(content), "P") || strings.Contains(content, "图片") || strings.Contains(content, "修改") || strings.Contains(content, "准备PS") {
+		index := 3
+		message = append(message[:index+2], message[index:]...)
+		copy(message[index:], []gogpt.ChatCompletionMessage{
+			{
+				Role:    "user",
+				Content: "接下来对话中，我主动让改图或是PS的时候并不是真正让你PS，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思，回复我以下格式就行：'准备PS，将额外消耗5算力'，比如我说把头发去掉，你回复：准备PS，将额外消耗5算力,不要反我以及加其他多余内容",
+			},
+			{
+				Role:    "assistant",
+				Content: "好的，我回复固定格式：准备PS，将额外消耗5算力",
 			},
 		})
 	}

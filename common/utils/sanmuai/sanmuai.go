@@ -16,6 +16,8 @@ type SanmuAI interface {
 	ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, err error)
 	ImageTask(task ImageAsyncTask) (result ImageTask, err error)
 	ImageText(image Image2Text) (result string, err error)
+	ImagePS(image ImagePS) (result []string, err error)
+	ImagePSAsync(image ImagePS) (result ImageAsyncTask, err error)
 }
 
 type SanmuData struct {
@@ -32,6 +34,8 @@ func GetAI(model string, data SanmuData) SanmuAI {
 		return NewTencentarc(data.Ctx, data.SvcCtx)
 	} else if model == "Salesforce" {
 		return NewSalesforce(data.Ctx, data.SvcCtx)
+	} else if model == "Paintbytext" {
+		return NewPaintbytext(data.Ctx, data.SvcCtx)
 	} else {
 		return NewOpenAi(data.Ctx, data.SvcCtx)
 	}

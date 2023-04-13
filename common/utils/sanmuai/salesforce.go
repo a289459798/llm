@@ -191,3 +191,10 @@ func (ai *Salesforce) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask
 func (ai *Salesforce) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
 	return
 }
+
+func (ai *Salesforce) ImagePS(image ImagePS) (result []string, err error) {
+	return
+}
+func (ai *Salesforce) ImagePSAsync(image ImagePS) (result ImageAsyncTask, err error) {
+	return
+}

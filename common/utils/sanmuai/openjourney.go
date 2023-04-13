@@ -218,3 +218,10 @@ func (ai *Journey) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask, e
 func (ai *Journey) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
 	return
 }
+
+func (ai *Journey) ImagePS(image ImagePS) (result []string, err error) {
+	return
+}
+func (ai *Journey) ImagePSAsync(image ImagePS) (result ImageAsyncTask, err error) {
+	return
+}

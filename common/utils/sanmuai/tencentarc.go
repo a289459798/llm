@@ -234,3 +234,10 @@ func (ai *Tencentarc) ImageTask(task ImageAsyncTask) (result ImageTask, err erro
 	result.Output = respData.Prediction.Output
 	return
 }
+
+func (ai *Tencentarc) ImagePS(image ImagePS) (result []string, err error) {
+	return
+}
+func (ai *Tencentarc) ImagePSAsync(image ImagePS) (result ImageAsyncTask, err error) {
+	return
+}
