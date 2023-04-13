@@ -155,9 +155,12 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 		}
 
 		if imageText != "" {
-			ShowContent = fmt.Sprintf("%s\n\n![](%s)", msg, req.Image)
 			msg = fmt.Sprintf("接下来对话中,假如我有一张图片里面的内容是：%s，你要基于图片内容回答下面问题；%s", imageText, msg)
 		}
+	}
+
+	if req.Image != "" {
+		ShowContent = fmt.Sprintf("%s\n\n![](%s)", msg, req.Image)
 	}
 
 	message = append(message, gogpt.ChatCompletionMessage{
@@ -278,7 +281,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，将我说的话翻译成英文回答我。不要写解释",
+				Content: "我希望你能担任翻译官，不管我说什么都要将我说的话翻译成英文回答我。不要写解释",
 			},
 			{
 				Role:    "user",
@@ -329,7 +332,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，将我说的话翻译成英文回答我。不要写解释",
+				Content: "我希望你能担任翻译官，不管我说什么都要将我说的话翻译成英文回答我。不要写解释",
 			},
 			{
 				Role:    "user",
@@ -343,7 +346,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 
 		if img == "" {
 			r := &model.Record{}
-			l.svcCtx.Db.Where("chat_id = ?", "chat_"+chatId).Where("type = ?", "image/ps").Order("id desc").First(&r)
+			l.svcCtx.Db.Where("chat_id = ?", "chat_"+chatId).Where("type = ?", "image/ps").Where("is_delete = 0").Order("id desc").First(&r)
 			img = r.Result
 		}
 
