@@ -278,7 +278,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，我会用任何语言和你交流，你会识别语言，将其翻译成英文回答我。不要写解释",
+				Content: "我希望你能担任翻译官，将我说的话翻译成英文回答我。不要写解释",
 			},
 			{
 				Role:    "user",
@@ -329,7 +329,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，我会用任何语言和你交流，你会识别语言，将其翻译成英文回答我。不要写解释",
+				Content: "我希望你能担任翻译官，将我说的话翻译成英文回答我。不要写解释",
 			},
 			{
 				Role:    "user",
