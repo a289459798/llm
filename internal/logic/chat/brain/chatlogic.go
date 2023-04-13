@@ -281,7 +281,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，只需要翻译就行了不要写解释，把以下内容翻译成英文：" + msg,
+				Content: "现在起你化身为翻译官，把我提供内容翻译成英文，引号里面的不要翻译，也不需要任何解释，比如我说狗，你回复\"dog\"，第一句要翻译的内容是：" + msg,
 			},
 		}
 		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
@@ -328,7 +328,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，只需要翻译就行了不要写解释，把以下内容翻译成英文：" + msg,
+				Content: "现在起你化身为翻译官，把我提供内容翻译成英文，引号里面的不要翻译,也不需要任何解释，比如我说狗，你回复\"dog\"，第一句要翻译的内容是：" + msg,
 			},
 		}
 		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
