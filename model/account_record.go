@@ -35,9 +35,10 @@ func (a AccountRecord) GetType() string {
 		"report/day":        "日报",
 		"image/pic2pic":     "以图绘图",
 		"chat/introduce":    "自我介绍",
+		"image/ps":          "P图",
 	}
 	if v, ok := types[a.Type]; ok {
 		return v
 	}
-	return "其他根工具"
+	return "其他工具"
 }
