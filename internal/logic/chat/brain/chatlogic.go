@@ -281,7 +281,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，将我说的话翻译成英文回答我。不要写解释，要翻译的内容是：" + msg,
+				Content: "我希望你能担任翻译官，只需要翻译就行了不要写解释，把以下内容翻译成英文：" + msg,
 			},
 		}
 		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
@@ -328,7 +328,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 		message := []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "我希望你能担任翻译官，将我说的话翻译成英文回答我。不要写解释，要翻译的内容是：" + msg,
+				Content: "我希望你能担任翻译官，只需要翻译就行了不要写解释，把以下内容翻译成英文：" + msg,
 			},
 		}
 		conv, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
@@ -446,7 +446,7 @@ func (l *ChatLogic) studyPic(content string, result string, message []gogpt.Chat
 		copy(message[index:], []gogpt.ChatCompletionMessage{
 			{
 				Role:    "user",
-				Content: "接下来对话中，我主动让你绘图的时候并不是真正让你绘图，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思，回复我以下格式就行不要在反问我：'准备画画中，将额外消耗5算力：{画画内容}'，比如我说画一只猫，你回复：准备画画中，将额外消耗5算力：画一只猫，我继续说：白色的，你回复：准备画画中，将额外消耗5算力：画一只白色的猫",
+				Content: "接下来对话中，我主动让你绘图的时候并不是真正让你绘图，而是考考你是否懂我的意思，你只需要结合上下文理解我的意思，回复我以下格式就行不要反问我也不要其他解释：'准备画画中，将额外消耗5算力：{画画内容}'，比如我说画一只猫，你回复：准备画画中，将额外消耗5算力：画一只猫，我继续说：白色的，你回复：准备画画中，将额外消耗5算力：画一只白色的猫",
 			},
 			{
 				Role:    "assistant",
