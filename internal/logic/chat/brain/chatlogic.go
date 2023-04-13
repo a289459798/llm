@@ -317,7 +317,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 			Result:  strings.Join(stream, ","),
 		}, nil)
 		return fmt.Sprintf("\n\n![](%s)", stream[0]), nil
-	} else if strings.Contains(str, "准备PS，将额外消耗5算力：") {
+	} else if strings.Contains(str, "准备PS，将额外消耗5算力") {
 		// 判断算力消耗
 		imageUse := uint32(utils.GetSuanLi(uid, "image/ps", "", l.svcCtx.Db))
 		chatUse := uint32(utils.GetSuanLi(uid, "chat/chat", "uid", l.svcCtx.Db))
