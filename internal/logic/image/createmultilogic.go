@@ -87,7 +87,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			imageCreate.Prompt += " 8k"
 		}
 	} else {
-		req.Model = "StableDiffusion"
+		req.Model = "GPT-PLUS"
 	}
 
 	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
