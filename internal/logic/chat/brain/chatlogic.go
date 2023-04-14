@@ -340,6 +340,19 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 			r := &model.Record{}
 			l.svcCtx.Db.Where("uid = ?", uid).Where("chat_id = ?", "chat_"+chatId).Where("type = ?", "image/ps").Where("is_delete = 0").Order("id desc").First(&r)
 			img = r.Result
+		} else {
+			// 记录原图
+			l.svcCtx.Db.Create(&model.Record{
+				Uid:     uid,
+				Type:    "image/ps",
+				Content: msg,
+				Result:  img,
+				ChatId:  "chat_" + chatId,
+			})
+		}
+
+		if img == "" {
+			return "", errors.New("请先提供图片")
 		}
 
 		imageCreate := sanmuai.ImagePS{
