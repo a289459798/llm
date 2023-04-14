@@ -2,10 +2,12 @@ package sanmuai
 
 import (
 	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -75,4 +77,10 @@ func GetProxyIp() string {
 	}
 
 	return fmt.Sprintf("http://%s:%d", respData.Data[0].IP, respData.Data[0].Port)
+}
+
+func GetKey(db *gorm.DB, channel string) string {
+	apikey := &model.Apikey{}
+	db.Where("channel = ?", channel).Where("status = ?", 1).Order("rand()").First(&apikey)
+	return apikey.Key
 }

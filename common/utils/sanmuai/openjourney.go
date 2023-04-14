@@ -34,7 +34,7 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 		return
 	}
 
-	uuid, err := create(cookie, image)
+	uuid, err := ai.create(cookie, image)
 	if err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func (ai *Journey) ImageRepair(image ImageRepair) (result []string, err error) {
 	return
 }
 
-func create(cookie string, image ImageCreate) (uuid string, err error) {
+func (ai *Journey) create(cookie string, image ImageCreate) (uuid string, err error) {
 	ip := GetProxyIp()
 	client := &http.Client{}
 	if ip != "" {
@@ -158,6 +158,12 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/prompthero/openjourney/versions/9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", errors.New("错误，请重试1")
+	}
+	if ip == "" {
+		authorization := GetKey(ai.SvcCtx.Db, "replicate")
+		if authorization != "" {
+			req.Header.Add("Authorization", authorization)
+		}
 	}
 	req.Header.Set("x-csrftoken", cookie)
 	req.Header.Set("Content-Type", "application/json")
