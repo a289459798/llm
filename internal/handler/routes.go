@@ -371,6 +371,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/creation/article",
 					Handler: creation.ArticleHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/creation/pyq",
+					Handler: creation.PyqHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/creation/xhs",
+					Handler: creation.XhsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/creation/ad",
+					Handler: creation.AdHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

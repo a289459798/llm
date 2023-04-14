@@ -355,6 +355,21 @@ type ArticleRequest struct {
 	ChatId  string `json:"chatId,optional"`
 }
 
+type PyqRequest struct {
+	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
+}
+
+type XhsRequest struct {
+	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
+}
+
+type ADRequest struct {
+	Content string `json:"content"`
+	ChatId  string `json:"chatId,optional"`
+}
+
 type CreationResponse struct {
 	Data string `json:"data"`
 }

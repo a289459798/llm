@@ -23,6 +23,21 @@ type(
         ChatId string `json:"chatId,optional"`
     }
 
+    PyqRequest {
+        Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
+    }
+
+    XhsRequest {
+        Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
+    }
+
+    ADRequest {
+        Content string `json:"content"`
+        ChatId string `json:"chatId,optional"`
+    }
+
     CreationResponse {
         Data string `json:"data"`
     }
@@ -42,4 +57,13 @@ service tools {
 
     @handler article
     post /creation/article (ArticleRequest) returns (CreationResponse)
+
+    @handler pyq
+    post /creation/pyq (PyqRequest) returns (CreationResponse)
+
+    @handler xhs
+    post /creation/xhs (XhsRequest) returns (CreationResponse)
+
+    @handler ad
+    post /creation/ad (ADRequest) returns (CreationResponse)
 }
