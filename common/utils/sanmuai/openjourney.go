@@ -164,12 +164,12 @@ func create(cookie string, image ImageCreate) (uuid string, err error) {
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
 	if err != nil {
-		return create(cookie, image)
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		return create(cookie, image)
+		return "", errors.New(resp.Status)
 	}
 
 	respData := struct {
