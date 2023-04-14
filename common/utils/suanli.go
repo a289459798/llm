@@ -47,6 +47,9 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 			suanli += 5
 		}
 		break
+	case model.ToolsMind:
+		suanli = 3
+		break
 
 	}
 	return suanli
