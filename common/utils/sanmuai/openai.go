@@ -20,9 +20,15 @@ func NewOpenAi(c context.Context, svcCtx *svc.ServiceContext) *OpenAi {
 	}
 }
 
-func (ai *OpenAi) getClient() *gogpt.Client {
+func (ai *OpenAi) getClient(isImage bool) *gogpt.Client {
 	apikey := &model.Apikey{}
-	ai.SvcCtx.Db.Where("channel = ?", "openai").Where("status = ?", 1).Order("rand()").Limit(1).Find(apikey)
+	tx := ai.SvcCtx.Db.Where("channel = ?", "openai").Where("status = ?", 1)
+	if isImage {
+		tx.Where("type = ?", 1)
+	} else {
+		tx.Where("type = ?", 0)
+	}
+	tx.Order("rand()").Limit(1).Find(apikey)
 	if apikey.Ori != "" {
 		return gogpt.NewOrgClient(apikey.Key, apikey.Ori)
 	} else {
@@ -42,7 +48,7 @@ func (ai *OpenAi) CreateCompletionStream(content string) (stream *gogpt.Completi
 		N:                1,
 	}
 
-	return ai.getClient().CreateCompletionStream(ai.Ctx, gptReq)
+	return ai.getClient(false).CreateCompletionStream(ai.Ctx, gptReq)
 }
 
 func (ai *OpenAi) CreateCompletion(content string) (stream gogpt.CompletionResponse, err error) {
@@ -57,7 +63,7 @@ func (ai *OpenAi) CreateCompletion(content string) (stream gogpt.CompletionRespo
 		N:                1,
 	}
 
-	return ai.getClient().CreateCompletion(ai.Ctx, gptReq)
+	return ai.getClient(false).CreateCompletion(ai.Ctx, gptReq)
 }
 
 func (ai *OpenAi) CreateChatCompletionStream(content []gogpt.ChatCompletionMessage) (stream *gogpt.ChatCompletionStream, err error) {
@@ -72,7 +78,7 @@ func (ai *OpenAi) CreateChatCompletionStream(content []gogpt.ChatCompletionMessa
 		N:                1,
 	}
 
-	return ai.getClient().CreateChatCompletionStream(ai.Ctx, gptReq)
+	return ai.getClient(false).CreateChatCompletionStream(ai.Ctx, gptReq)
 }
 
 func (ai *OpenAi) CreateChatCompletion(content []gogpt.ChatCompletionMessage) (stream gogpt.ChatCompletionResponse, err error) {
@@ -87,11 +93,11 @@ func (ai *OpenAi) CreateChatCompletion(content []gogpt.ChatCompletionMessage) (s
 		N:                1,
 	}
 
-	return ai.getClient().CreateChatCompletion(ai.Ctx, gptReq)
+	return ai.getClient(false).CreateChatCompletion(ai.Ctx, gptReq)
 }
 
 func (ai *OpenAi) CreateImage(req ImageCreate) (stream []string, err error) {
-	res, err := ai.getClient().CreateImage(ai.Ctx, gogpt.ImageRequest{
+	res, err := ai.getClient(true).CreateImage(ai.Ctx, gogpt.ImageRequest{
 		Prompt:         req.Prompt,
 		N:              req.N,
 		Size:           req.Size,
@@ -119,7 +125,7 @@ func (ai *OpenAi) CreateEditImage(file *os.File, content string) (stream gogpt.I
 		Size:   "256x256",
 	}
 
-	return ai.getClient().CreateEditImage(ai.Ctx, gptReq)
+	return ai.getClient(true).CreateEditImage(ai.Ctx, gptReq)
 }
 
 func (ai *OpenAi) ImageRepair(image ImageRepair) (result []string, err error) {
