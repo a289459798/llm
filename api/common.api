@@ -54,9 +54,6 @@ service tools {
     @handler validChat
     post /common/valid/chat (ValidRequest) returns (ValidResponse)
 
-    @handler message
-    get /common/message returns (MessageResponse)
-
     @handler qrcode
     get /common/qrcode(QrCodeRequest) returns (QrCodeResponse)
     
@@ -68,4 +65,12 @@ service tools {
 
     @handler validImage
     post /common/valid/image (ValidImageRequest) returns (ValidResponse)
+}
+
+@server(
+    group: common
+)
+service tools {
+    @handler message
+    get /common/message returns (MessageResponse)
 }

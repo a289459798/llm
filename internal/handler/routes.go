@@ -435,11 +435,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: chatbrain.ChatHistoryHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
-					Path:    "/chat/chat/template",
-					Handler: chatbrain.ChatTemplateHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodDelete,
 					Path:    "/chat/chat/:chatId",
 					Handler: chatbrain.ChatDeleteHandler(serverCtx),
@@ -461,6 +456,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/chat/chat/template",
+				Handler: chatbrain.ChatTemplateHandler(serverCtx),
+			},
+		},
 	)
 
 	server.AddRoutes(
@@ -491,11 +496,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/common/message",
-				Handler: common.MessageHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
 				Path:    "/common/qrcode",
 				Handler: common.QrcodeHandler(serverCtx),
 			},
@@ -516,6 +516,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/common/message",
+				Handler: common.MessageHandler(serverCtx),
+			},
+		},
 	)
 
 	server.AddRoutes(

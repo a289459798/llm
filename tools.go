@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/handler"
@@ -20,7 +21,11 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf, rest.WithCors())
+	server := rest.MustNewServer(c.RestConf, rest.WithCors(), rest.WithUnauthorizedCallback(func(w http.ResponseWriter, r *http.Request, err error) {
+		if r.URL.Path == "/users" {
+			w.WriteHeader(http.StatusForbidden)
+		}
+	}))
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
