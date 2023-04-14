@@ -144,7 +144,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 	allContent += msg
 
-	message = l.studyPic(allContent, allResult, message)
+	message = l.studyPic(allContent, allResult, message, req.Image)
 
 	// 获取图片内容
 	imageText := ""
@@ -439,7 +439,7 @@ func (l *ChatLogic) getStudy(ai model.AI) []map[string]string {
 	return res
 }
 
-func (l *ChatLogic) studyPic(content string, result string, message []gogpt.ChatCompletionMessage) []gogpt.ChatCompletionMessage {
+func (l *ChatLogic) studyPic(content string, result string, message []gogpt.ChatCompletionMessage, image string) []gogpt.ChatCompletionMessage {
 	if strings.Contains(content, "画") || strings.Contains(content, "图片") || strings.Contains(result, "准备画画") || strings.Contains(content, "设计") || strings.Contains(content, "制作") {
 		index := 3
 		message = append(message[:index+2], message[index:]...)
@@ -455,7 +455,7 @@ func (l *ChatLogic) studyPic(content string, result string, message []gogpt.Chat
 		})
 	}
 
-	if strings.Contains(strings.ToUpper(content), "PS") || strings.Contains(strings.ToUpper(content), "P") || strings.Contains(content, "图片") || strings.Contains(content, "修改") || strings.Contains(content, "准备PS") {
+	if image != "" || strings.Contains(strings.ToUpper(content), "PS") || strings.Contains(strings.ToUpper(content), "P") || strings.Contains(content, "图片") || strings.Contains(content, "修改") || strings.Contains(content, "准备PS") {
 		index := 3
 		message = append(message[:index+2], message[index:]...)
 		copy(message[index:], []gogpt.ChatCompletionMessage{
