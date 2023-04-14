@@ -9,7 +9,6 @@ import (
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -28,13 +27,9 @@ func NewJourney(c context.Context, svcCtx *svc.ServiceContext) *Journey {
 }
 
 func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
-	cookie, err := getCookie()
-	if cookie == "" {
-		err = errors.New("cookie is empty")
-		return
-	}
+	authorization := GetKey(ai.SvcCtx.Db, "replicate")
 
-	uuid, err := ai.create(cookie, image)
+	uuid, err := ai.create(authorization, image)
 	if err != nil {
 		return
 	}
@@ -52,11 +47,11 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 			case <-timer.C:
 				go func(resultChan chan []string, quitChan chan string) {
 					client := &http.Client{}
-					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/prompthero/openjourney/versions/9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb/predictions/%s", uuid), nil)
+					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://api.replicate.com/v1/predictions/%s", uuid), nil)
 					if err != nil {
 						return
 					}
-					req.Header.Set("x-csrftoken", cookie)
+					req.Header.Set("Authorization", "Token "+authorization)
 					req.Header.Set("Content-Type", "application/json")
 					// 发送请求并获取响应
 					resp, err := client.Do(req)
@@ -71,25 +66,23 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 					}
 
 					respData := struct {
-						Prediction struct {
-							Output    []string `json:"output"`
-							CreatedAt string   `json:"created_at"`
-							Uuid      string   `json:"uuid"`
-							Error     string   `json:"error"`
-							Status    string   `json:"status"`
-						} `json:"prediction"`
+						Output    []string `json:"output"`
+						CreatedAt string   `json:"created_at"`
+						Uuid      string   `json:"uuid"`
+						Error     string   `json:"error"`
+						Status    string   `json:"status"`
 					}{}
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					fmt.Println(respData.Prediction)
-					if respData.Prediction.Error != "" {
-						resultChan <- respData.Prediction.Output
+					fmt.Println(respData)
+					if respData.Error != "" {
+						resultChan <- respData.Output
 						close(quitChan)
 						return
 					}
-					if respData.Prediction.Output != nil {
-						resultChan <- respData.Prediction.Output
+					if respData.Output != nil {
+						resultChan <- respData.Output
 						close(quitChan)
 					}
 				}(resultChan, quitChan)
@@ -121,13 +114,7 @@ func (ai *Journey) ImageRepair(image ImageRepair) (result []string, err error) {
 }
 
 func (ai *Journey) create(cookie string, image ImageCreate) (uuid string, err error) {
-	ip := GetProxyIp()
 	client := &http.Client{}
-	if ip != "" {
-		proxyUrl, _ := url.Parse(ip)
-		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
-	}
-
 	s := strings.Split(image.Size, "x")
 	width, _ := strconv.Atoi(s[0])
 	height, _ := strconv.Atoi(s[1])
@@ -138,15 +125,15 @@ func (ai *Journey) create(cookie string, image ImageCreate) (uuid string, err er
 	if height > 768 {
 		height = 768
 	}
-	data := map[string]map[string]interface{}{
-		"inputs": {
+	data := map[string]interface{}{
+		"version": "9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb",
+		"input": map[string]interface{}{
 			"guidance_scale":      7,
 			"width":               width,
 			"height":              height,
 			"num_inference_steps": 50,
 			"num_outputs":         image.N,
 			"prompt":              image.Prompt,
-			"seed":                nil,
 		},
 	}
 
@@ -155,17 +142,12 @@ func (ai *Journey) create(cookie string, image ImageCreate) (uuid string, err er
 	if err != nil {
 		return
 	}
-	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/prompthero/openjourney/versions/9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb/predictions", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(http.MethodPost, "https://api.replicate.com/v1/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", errors.New("错误，请重试1")
 	}
-	if ip == "" {
-		authorization := GetKey(ai.SvcCtx.Db, "replicate")
-		if authorization != "" {
-			req.Header.Add("Authorization", authorization)
-		}
-	}
-	req.Header.Set("x-csrftoken", cookie)
+
+	req.Header.Set("Authorization", "Token "+cookie)
 	req.Header.Set("Content-Type", "application/json")
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
@@ -179,12 +161,12 @@ func (ai *Journey) create(cookie string, image ImageCreate) (uuid string, err er
 	}
 
 	respData := struct {
-		UUID string `json:"uuid"`
+		ID string `json:"id"`
 	}{}
 	if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 		return
 	}
-	uuid = respData.UUID
+	uuid = respData.ID
 	return
 }
 
