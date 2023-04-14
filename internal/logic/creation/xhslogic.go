@@ -34,7 +34,7 @@ func NewXhsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *XhsLogic {
 }
 
 func (l *XhsLogic) Xhs(req *types.XhsRequest, w http.ResponseWriter) (resp *types.CreationResponse, err error) {
-	tools := model.ToolsAD
+	tools := model.ToolsXHS
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
