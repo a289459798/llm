@@ -18,9 +18,9 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 		suanli = 5
 		if clarity, ok := paramsMap["clarity"]; ok {
 			if clarity == "superhigh" {
-				suanli = 20
-			} else if clarity == "high" {
 				suanli = 10
+			} else if clarity == "high" {
+				suanli = 5
 			}
 		}
 		if number, ok := paramsMap["number"]; ok {
