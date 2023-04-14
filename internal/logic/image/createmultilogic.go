@@ -59,7 +59,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			},
 			{
 				Role:    "user",
-				Content: fmt.Sprintf("帮我把以下内容翻译成英文:%s,回复内容只需要译文", req.Content),
+				Content: fmt.Sprintf("现在起你化身为翻译官，把我提供内容翻译成英文，引号里面的不要翻译,也不需要任何解释，比如我说狗，你回复\"dog\"，第一句要翻译的内容是：%s", req.Content),
 			},
 		}
 		stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
