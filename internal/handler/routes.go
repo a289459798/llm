@@ -234,6 +234,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/images/pic-repair-async",
 					Handler: image.Old2newAsyncHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/images/ps",
+					Handler: image.PsHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

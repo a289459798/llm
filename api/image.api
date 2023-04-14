@@ -57,6 +57,11 @@ type(
         Image string `json:"image"`
     }
 
+    PSRequest {
+        Image string `json:"image"`
+        Content string `json:"content"`
+    }
+
     Image2TextResponse {
         Data string `json:"data"`
     }
@@ -94,6 +99,9 @@ service tools {
 
     @handler old2newAsync
     post /images/pic-repair-async (PicRepairRequest) returns (ImageMultiAsyncResponse)
+
+    @handler ps
+    post /images/ps (PSRequest) returns (ImageMultiAsyncResponse)
 }
 
 @server(

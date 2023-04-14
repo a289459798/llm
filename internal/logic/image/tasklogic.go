@@ -29,7 +29,7 @@ func NewTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TaskLogic {
 }
 
 func (l *TaskLogic) Task(req *types.ImageTaskRequest) (resp *types.ImageMultiAsyncResponse, err error) {
-	ai := sanmuai.GetAI("Tencentarc", sanmuai.SanmuData{
+	ai := sanmuai.GetAI(req.Model, sanmuai.SanmuData{
 		Ctx:    l.ctx,
 		SvcCtx: l.svcCtx,
 	})
@@ -44,7 +44,6 @@ func (l *TaskLogic) Task(req *types.ImageTaskRequest) (resp *types.ImageMultiAsy
 		uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 		record := &model.Record{}
 		l.svcCtx.Db.Where("uid = ?", uid).
-			Where("type = ?", "image/pic-repair").
 			Where("chat_id = ?", req.Task).
 			First(&record)
 		if record.ID > 0 {

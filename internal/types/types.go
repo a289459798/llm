@@ -233,6 +233,11 @@ type Image2TextRequest struct {
 	Image string `json:"image"`
 }
 
+type PSRequest struct {
+	Image   string `json:"image"`
+	Content string `json:"content"`
+}
+
 type Image2TextResponse struct {
 	Data string `json:"data"`
 }
