@@ -82,6 +82,9 @@ func (ai *Journey) CreateImage(image ImageCreate) (result []string, err error) {
 						return
 					}
 					if respData.Output != nil {
+						for i := 0; i < len(respData.Output); i++ {
+							respData.Output[i] = strings.Replace(respData.Output[i], "https://replicate.delivery/", "http://img2.smuai.com/", 1)
+						}
 						resultChan <- respData.Output
 						close(quitChan)
 					}
