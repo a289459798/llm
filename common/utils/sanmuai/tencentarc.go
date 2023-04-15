@@ -83,7 +83,7 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 					}
 					if respData.Prediction.Output != nil && len(respData.Prediction.Output) > 0 {
 						for i := 0; i < len(respData.Prediction.Output); i++ {
-							respData.Prediction.Output[i] = strings.Replace(respData.Prediction.Output[i], "https://replicate.delivery/", "http://img2.smuai.com/", 1)
+							respData.Prediction.Output[i] = strings.Replace(respData.Prediction.Output[i], "https://replicate.delivery/", "https://img2.smuai.com/", 1)
 						}
 						resultChan <- respData.Prediction.Output
 						close(quitChan)
