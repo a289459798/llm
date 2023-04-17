@@ -35,42 +35,40 @@ func (d Distributor) AddMoney(db *gorm.DB, record DistributorAdd) error {
 	if d.ID == 0 {
 		return nil
 	}
-	tx := db.Begin()
-	money := record.Money
-	if record.Way == 0 {
-		money = record.Money * d.Ratio / 100
-		err := tx.Create(&DistributorPayRecord{
-			DistributorUid: 0,
-			Uid:            record.Uid,
-			Pay:            record.Money,
-			Ratio:          d.Ratio,
+	return db.Transaction(func(tx *gorm.DB) error {
+		money := record.Money
+		if record.Way == 0 {
+			money = record.Money * d.Ratio / 100
+			err := tx.Create(&DistributorPayRecord{
+				DistributorUid: d.Uid,
+				Uid:            record.Uid,
+				Pay:            record.Money,
+				Ratio:          d.Ratio,
+				Money:          money,
+			}).Error
+			if err != nil {
+				return err
+			}
+		}
+		err := tx.Create(&DistributorMoneyRecord{
+			DistributorUid: d.Uid,
 			Money:          money,
+			Way:            record.Way,
+			Type:           record.Type,
+			Remark:         record.Remark,
 		}).Error
 		if err != nil {
-			tx.Rollback()
 			return err
 		}
-	}
-	err := tx.Create(&DistributorMoneyRecord{
-		DistributorUid: d.Uid,
-		Money:          money,
-		Way:            record.Way,
-		Type:           record.Type,
-		Remark:         record.Remark,
-	}).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	// 修改余额
-	d.Money = func() float32 {
-		if record.Way == 0 {
-			return d.Money + money
-		} else {
-			return d.Money - money
-		}
-	}()
-	tx.Save(d)
-	tx.Commit()
-	return nil
+		// 修改余额
+		d.Money = func() float32 {
+			if record.Way == 0 {
+				return d.Money + money
+			} else {
+				return d.Money - money
+			}
+		}()
+		tx.Save(d)
+		return nil
+	})
 }

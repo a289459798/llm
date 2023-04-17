@@ -16,3 +16,13 @@ type DistributorRecord struct {
 func (dr DistributorRecord) Create(db *gorm.DB) {
 	db.Create(&dr)
 }
+
+func (dr DistributorRecord) TotalWithDate(db *gorm.DB, uid uint32, timeRange []string) uint32 {
+	var total int64
+	tx := db.Model(DistributorRecord{}).Where("distributor_uid = ?", uid)
+	if timeRange != nil {
+		tx.Where("created_at between ? and ?", timeRange[0], timeRange[1])
+	}
+	tx.Count(&total)
+	return uint32(total)
+}

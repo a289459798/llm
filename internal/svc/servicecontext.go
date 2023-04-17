@@ -76,6 +76,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	db.AutoMigrate(&model.Distributor{})
 	db.AutoMigrate(&model.DistributorLevel{})
 	db.AutoMigrate(&model.DistributorRecord{})
+	db.AutoMigrate(&model.DistributorPayRecord{})
+	db.AutoMigrate(&model.DistributorMoneyRecord{})
 
 	if c.Mode == "dev" {
 		log2.SetLevel(log2.DebugLevel)

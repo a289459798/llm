@@ -620,6 +620,19 @@ type DistributorInfoResponse struct {
 	Money float32 `json:"money"`
 }
 
+type DistributorStatisticsRequest struct {
+}
+
+type DistributorStatisticsResponse struct {
+	UserTotal  uint32  `json:"user_total"`
+	UserMonth  uint32  `json:"user_month"`
+	UserDay    uint32  `json:"user_day"`
+	PayTotal   float32 `json:"pay_total"`
+	MoneyTotal float32 `json:"money_total"`
+	MoneyMonth float32 `json:"money_month"`
+	MoneyDay   float32 `json:"money_day"`
+}
+
 type WeChatCallbackResponse struct {
 }
 
