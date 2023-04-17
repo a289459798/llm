@@ -15,6 +15,8 @@ type DistributorRecord struct {
 
 func (dr DistributorRecord) Create(db *gorm.DB) {
 	db.Create(&dr)
+
+	Distributor{Uid: dr.DistributorUid}.CheckUpgrade(db)
 }
 
 func (dr DistributorRecord) TotalWithDate(db *gorm.DB, uid uint32, timeRange []string) uint32 {

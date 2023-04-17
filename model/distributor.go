@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
@@ -25,6 +26,38 @@ type DistributorAdd struct {
 	Remark string
 }
 
+func (d Distributor) CheckUpgrade(db *gorm.DB) {
+	if d.LevelId == 0 {
+		db.Where("uid = ?", d.Uid).Where("status = 1").First(&d)
+	}
+	if d.ID == 0 {
+		return
+	}
+	// 下一级要求
+	level := DistributorLevel{}
+	db.Where("id > ?", d.LevelId).Order("id asc").First(&level)
+	if level.ID == 0 {
+		return
+	}
+	// 查看条件
+	totalUser := DistributorRecord{}.TotalWithDate(db, d.Uid, nil)
+	totalPay := DistributorPayRecord{}.TotalPayWithDate(db, d.Uid, nil)
+
+	if totalUser >= level.UserNumber && totalPay >= level.UserPrice {
+		// 升级
+		d.LevelId = level.ID
+		db.Save(d)
+		// 站内信呢
+		db.Create(&AINotify{
+			Uid:     d.Uid,
+			Title:   "推广员等级变更",
+			Content: fmt.Sprintf("恭喜您升级为%s", level.Name),
+			Link:    "",
+			Status:  false,
+		})
+	}
+}
+
 func (d Distributor) AddMoney(db *gorm.DB, record DistributorAdd) error {
 
 	db.Model(DistributorRecord{}).
@@ -35,7 +68,7 @@ func (d Distributor) AddMoney(db *gorm.DB, record DistributorAdd) error {
 	if d.ID == 0 {
 		return nil
 	}
-	return db.Transaction(func(tx *gorm.DB) error {
+	err := db.Transaction(func(tx *gorm.DB) error {
 		money := record.Money
 		if record.Way == 0 {
 			money = record.Money * d.Ratio / 100
@@ -49,6 +82,7 @@ func (d Distributor) AddMoney(db *gorm.DB, record DistributorAdd) error {
 			if err != nil {
 				return err
 			}
+
 		}
 		err := tx.Create(&DistributorMoneyRecord{
 			DistributorUid: d.Uid,
@@ -71,4 +105,10 @@ func (d Distributor) AddMoney(db *gorm.DB, record DistributorAdd) error {
 		tx.Save(d)
 		return nil
 	})
+
+	if err != nil {
+		return err
+	}
+	d.CheckUpgrade(db)
+	return err
 }
