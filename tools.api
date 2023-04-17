@@ -23,6 +23,7 @@ import (
 	"api/hashrate.api"
 	"api/efficiency.api"
 	"api/order.api"
+	"api/distributor.api"
 	"api/wechat.api"
 	"api/callback.api"
 	"api/crontab.api"

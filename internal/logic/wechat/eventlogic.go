@@ -73,9 +73,6 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 		return nil, err
 	}
 	openId := server.GetOpenID()
-	fmt.Println(server.RequestMsg.MsgType)
-	fmt.Println(server.RequestMsg.Event)
-	fmt.Println(server.RequestMsg.EventKey)
 	switch server.RequestMsg.MsgType {
 	case message.MsgTypeEvent:
 		switch server.RequestMsg.Event {

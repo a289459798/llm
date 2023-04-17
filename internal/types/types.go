@@ -588,6 +588,12 @@ type PayResponse struct {
 	Data string `json:"data"`
 }
 
+type DistributorApplyRequest struct {
+}
+
+type DistributorApplyResponse struct {
+}
+
 type WeChatCallbackResponse struct {
 }
 

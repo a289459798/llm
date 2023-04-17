@@ -12,6 +12,7 @@ import (
 	convert "chatgpt-tools/internal/handler/convert"
 	creation "chatgpt-tools/internal/handler/creation"
 	crontab "chatgpt-tools/internal/handler/crontab"
+	distributor "chatgpt-tools/internal/handler/distributor"
 	divination "chatgpt-tools/internal/handler/divination"
 	efficiency "chatgpt-tools/internal/handler/efficiency"
 	game "chatgpt-tools/internal/handler/game"
@@ -608,6 +609,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/order/vip",
 					Handler: order.VipOrderCreateHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Sign},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/distributor/apply",
+					Handler: distributor.ApplyHandler(serverCtx),
 				},
 			}...,
 		),

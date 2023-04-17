@@ -1,0 +1,19 @@
+syntax = "v1"
+
+type DistributorApplyRequest {
+
+}
+
+type DistributorApplyResponse {
+
+}
+
+@server(
+    jwt: Auth
+    middleware: Sign
+    group: distributor
+)
+service tools {
+    @handler apply
+    post /distributor/apply(DistributorApplyRequest) returns (DistributorApplyResponse)
+}
