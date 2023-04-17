@@ -8,6 +8,21 @@ type DistributorApplyResponse {
 
 }
 
+type DistributorLevelRequest {
+
+}
+
+type DistributorLevelResponse {
+    Data []DistributorLevel `json:"data"`
+}
+
+type DistributorLevel {
+    Name string `json:"name"`
+    UserNumber uint32 `json:"user_number"`
+    UserPrice float32 `json:"user_price"`
+    Ratio float32 `json:"ratio"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -16,4 +31,7 @@ type DistributorApplyResponse {
 service tools {
     @handler apply
     post /distributor/apply(DistributorApplyRequest) returns (DistributorApplyResponse)
+
+    @handler level
+    get /distributor/level(DistributorLevelRequest) returns (DistributorLevelResponse)
 }

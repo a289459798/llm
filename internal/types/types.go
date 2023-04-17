@@ -594,6 +594,20 @@ type DistributorApplyRequest struct {
 type DistributorApplyResponse struct {
 }
 
+type DistributorLevelRequest struct {
+}
+
+type DistributorLevelResponse struct {
+	Data []DistributorLevel `json:"data"`
+}
+
+type DistributorLevel struct {
+	Name       string  `json:"name"`
+	UserNumber uint32  `json:"user_number"`
+	UserPrice  float32 `json:"user_price"`
+	Ratio      float32 `json:"ratio"`
+}
+
 type WeChatCallbackResponse struct {
 }
 
