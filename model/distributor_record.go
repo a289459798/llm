@@ -16,12 +16,12 @@ type DistributorRecord struct {
 func (dr DistributorRecord) Create(db *gorm.DB) {
 	err := db.Create(&dr).Error
 	if err != nil {
-		var amount uint32 = 10
+		var amount uint32 = 20
 		db.Create(AIUserHashRate{
 			Uid:       dr.DistributorUid,
 			Amount:    amount,
 			UseAmount: 0,
-			Expiry:    time.Now().AddDate(0, 0, 5),
+			Expiry:    time.Now().AddDate(0, 0, 30),
 		})
 
 		account := NewAccount(db).GetAccount(dr.DistributorUid, time.Now())
