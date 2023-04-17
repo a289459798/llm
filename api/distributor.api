@@ -23,6 +23,16 @@ type DistributorLevel {
     Ratio float32 `json:"ratio"`
 }
 
+type DistributorInfoRequest {
+}
+
+type DistributorInfoResponse {
+    Level string `json:"level"`
+    Ratio float32 `json:"ratio"`
+    Link string `json:"link"`
+    Money float32 `json:"money"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -34,4 +44,7 @@ service tools {
 
     @handler level
     get /distributor/level(DistributorLevelRequest) returns (DistributorLevelResponse)
+
+    @handler detail
+    get /distributor(DistributorInfoRequest) returns (DistributorInfoResponse)
 }

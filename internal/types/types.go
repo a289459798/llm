@@ -608,6 +608,16 @@ type DistributorLevel struct {
 	Ratio      float32 `json:"ratio"`
 }
 
+type DistributorInfoRequest struct {
+}
+
+type DistributorInfoResponse struct {
+	Level string  `json:"level"`
+	Ratio float32 `json:"ratio"`
+	Link  string  `json:"link"`
+	Money float32 `json:"money"`
+}
+
 type WeChatCallbackResponse struct {
 }
 

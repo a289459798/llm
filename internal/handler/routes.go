@@ -629,6 +629,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/distributor/level",
 					Handler: distributor.LevelHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/distributor",
+					Handler: distributor.DetailHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
