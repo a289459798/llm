@@ -16,6 +16,7 @@ type HashRateCodeGenerateRequest {
     Day uint32 `json:"day"`
     Amount uint32 `json:"amount"`
     AICode string `json:"aiCode"`
+    Money float32 `json:"money"`
 }
 
 type HashRateCodeGenerateResponse {

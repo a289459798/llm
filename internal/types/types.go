@@ -523,9 +523,10 @@ type VipCxchangeResponse struct {
 }
 
 type VipCodeGenerateRequest struct {
-	VipId  uint32 `json:"vipId"`
-	Day    uint32 `json:"day"`
-	AICode string `json:"aiCode"`
+	VipId  uint32  `json:"vipId"`
+	Day    uint32  `json:"day"`
+	AICode string  `json:"aiCode"`
+	Money  float32 `json:"money"`
 }
 
 type VipCodeGenerateResponse struct {
@@ -555,9 +556,10 @@ type HashRateResponse struct {
 }
 
 type HashRateCodeGenerateRequest struct {
-	Day    uint32 `json:"day"`
-	Amount uint32 `json:"amount"`
-	AICode string `json:"aiCode"`
+	Day    uint32  `json:"day"`
+	Amount uint32  `json:"amount"`
+	AICode string  `json:"aiCode"`
+	Money  float32 `json:"money"`
 }
 
 type HashRateCodeGenerateResponse struct {

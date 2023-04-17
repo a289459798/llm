@@ -45,7 +45,8 @@ func (l *VipCodeGenerateLogic) VipCodeGenerate(req *types.VipCodeGenerateRequest
 	md5sum := md5.Sum([]byte(str))
 	newSign := hex.EncodeToString(md5sum[:6])
 	code := strings.ToUpper(newSign)
-	err = l.svcCtx.Db.Create(&model.VipCode{
+	tx := l.svcCtx.Db.Begin()
+	err = tx.Create(&model.VipCode{
 		Uid:      uint32(userId),
 		Code:     code,
 		VipId:    req.VipId,
@@ -55,7 +56,22 @@ func (l *VipCodeGenerateLogic) VipCodeGenerate(req *types.VipCodeGenerateRequest
 		AICode:   req.AICode,
 	}).Error
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
+	// 增加提成
+	if req.Money > 0 {
+		err = model.Distributor{}.AddMoney(tx, model.DistributorAdd{
+			Uid:   uint32(userId),
+			Money: req.Money,
+			Way:   0,
+			Type:  "vip",
+		})
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+	}
+	tx.Commit()
 	return &types.VipCodeGenerateResponse{Code: code}, nil
 }

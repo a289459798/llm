@@ -46,7 +46,8 @@ func (l *HashRateCodeGenerateLogic) HashRateCodeGenerate(req *types.HashRateCode
 	md5sum := md5.Sum([]byte(str))
 	newSign := hex.EncodeToString(md5sum[:6])
 	code := strings.ToUpper(newSign)
-	err = l.svcCtx.Db.Create(&model.AIHashRateCode{
+	tx := l.svcCtx.Db.Begin()
+	err = tx.Create(&model.AIHashRateCode{
 		Uid:      uint32(userId),
 		Code:     code,
 		Day:      req.Day,
@@ -58,5 +59,19 @@ func (l *HashRateCodeGenerateLogic) HashRateCodeGenerate(req *types.HashRateCode
 	if err != nil {
 		return nil, err
 	}
+	// 增加提成
+	if req.Money > 0 {
+		err = model.Distributor{}.AddMoney(tx, model.DistributorAdd{
+			Uid:   uint32(userId),
+			Money: req.Money,
+			Way:   0,
+			Type:  "hashrate",
+		})
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+	}
+	tx.Commit()
 	return &types.HashRateCodeGenerateResponse{Code: code}, nil
 }
