@@ -160,7 +160,7 @@ func (l *ChatLogic) Chat(req *types.ChatRequest, w http.ResponseWriter, r *http.
 	}
 
 	if req.Image != "" {
-		ShowContent = fmt.Sprintf("%s\n\n![](%s)", req.Message, req.Image)
+		ShowContent = fmt.Sprintf("%s\n\n![](%s)\n*（图片仅保留一天）*", req.Message, req.Image)
 	}
 
 	message = append(message, gogpt.ChatCompletionMessage{
@@ -315,7 +315,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 			Content: s1,
 			Result:  strings.Join(stream, ","),
 		}, nil)
-		return fmt.Sprintf("\n\n![](%s)", stream[0]), nil
+		return fmt.Sprintf("\n\n![](%s)\n*（图片仅保留一天）*", stream[0]), nil
 	} else if strings.Contains(str, "准备PS，将额外消耗5算力") {
 		// 判断算力消耗
 		imageUse := uint32(utils.GetSuanLi(uid, "image/ps", "", l.svcCtx.Db))
@@ -380,7 +380,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 			Result:  strings.Join(stream, ","),
 			ChatId:  "chat_" + chatId,
 		}, nil)
-		return fmt.Sprintf("\n\n![](%s)", stream[0]), nil
+		return fmt.Sprintf("\n\n![](%s)\n*（图片仅保留一天）*", stream[0]), nil
 	}
 	return "", nil
 }
