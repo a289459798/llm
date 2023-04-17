@@ -14,9 +14,28 @@ type DistributorRecord struct {
 }
 
 func (dr DistributorRecord) Create(db *gorm.DB) {
-	db.Create(&dr)
+	err := db.Create(&dr).Error
+	if err != nil {
+		var amount uint32 = 10
+		db.Create(AIUserHashRate{
+			Uid:       dr.DistributorUid,
+			Amount:    amount,
+			UseAmount: 0,
+			Expiry:    time.Now().AddDate(0, 0, 5),
+		})
 
-	Distributor{Uid: dr.DistributorUid}.CheckUpgrade(db)
+		account := NewAccount(db).GetAccount(dr.DistributorUid, time.Now())
+		db.Create(AccountRecord{
+			Uid:           dr.DistributorUid,
+			RecordId:      0,
+			Way:           1,
+			Type:          "invite",
+			Amount:        amount,
+			CurrentAmount: account.Amount,
+		})
+
+		Distributor{Uid: dr.DistributorUid}.CheckUpgrade(db)
+	}
 }
 
 func (dr DistributorRecord) TotalWithDate(db *gorm.DB, uid uint32, timeRange []string) uint32 {

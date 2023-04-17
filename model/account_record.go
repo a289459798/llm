@@ -18,6 +18,7 @@ type AccountRecord struct {
 
 func (a AccountRecord) GetType() string {
 	types := map[string]string{
+		"invite":            "推广",
 		"open":              "活跃",
 		"share":             "分享",
 		"share_follow":      "分享打开",
