@@ -83,7 +83,7 @@ type LoginCheckRequest struct {
 }
 
 type WxqrcodeRequest struct {
-	Channel string `form:"channel,optional"`
+	Channel string `form:"c,optional"`
 }
 
 type ChatHistoryListResponse struct {

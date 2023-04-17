@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
@@ -62,6 +63,16 @@ func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, err
 			err := db.Create(&newUser).Error
 			if err != nil {
 				return nil, "", err
+			}
+
+			if userLogin.Channel != "" {
+				distributorUid, err := strconv.Atoi(userLogin.Channel)
+				if err == nil {
+					DistributorRecord{
+						DistributorUid: uint32(distributorUid),
+						Uid:            user.Uid,
+					}.Create(db)
+				}
 			}
 		}
 	} else if user.UnionId == "" {

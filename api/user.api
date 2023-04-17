@@ -82,7 +82,7 @@ type LoginCheckRequest {
 }
 
 type WxqrcodeRequest {
-    Channel string `form:"channel,optional"`
+    Channel string `form:"c,optional"`
 }
 
 @server(
