@@ -22,7 +22,7 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 
 	server := rest.MustNewServer(c.RestConf, rest.WithCors(), rest.WithUnauthorizedCallback(func(w http.ResponseWriter, r *http.Request, err error) {
-		if r.URL.Path == "/users" {
+		if r.URL.Path == "/users" || r.URL.Path == "users/notify/unread" || r.URL.Path == "/users/history/chat" {
 			w.WriteHeader(http.StatusForbidden)
 		}
 	}))
