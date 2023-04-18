@@ -1,7 +1,10 @@
 package pay
 
 import (
+	"chatgpt-tools/common/utils/pay"
 	"context"
+	"fmt"
+	"net/http"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -23,8 +26,20 @@ func NewPayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayLogic {
 	}
 }
 
-func (l *PayLogic) Pay(req *types.PayRequest) (resp *types.WechatPayResponse, err error) {
-	// todo: add your logic here and delete this line
+func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.WechatPayResponse, err error) {
+	payModel := pay.GetPay(req.Type, pay.PayData{
+		Ctx:      l.ctx,
+		Config:   "",
+		Merchant: req.Merchant,
+	})
 
-	return
+	payNotify, err := payModel.PayNotify(r)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(payNotify)
+
+	return &types.WechatPayResponse{
+		Data: "success",
+	}, nil
 }
