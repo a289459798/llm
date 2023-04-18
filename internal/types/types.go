@@ -334,6 +334,12 @@ type PlaygroundRequest struct {
 	ChatId  string `json:"chatId,optional"`
 }
 
+type ConvertRequest struct {
+	Content string `json:"content"`
+	Lang    string `json:"lang"`
+	ChatId  string `json:"chatId,optional"`
+}
+
 type CodeResponse struct {
 	Data string `json:"data"`
 }

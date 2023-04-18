@@ -19,22 +19,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PlaygroundLogic struct {
+type ConvertLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewPlaygroundLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaygroundLogic {
-	return &PlaygroundLogic{
+func NewConvertLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConvertLogic {
+	return &ConvertLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PlaygroundLogic) Playground(req *types.PlaygroundRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
-	tools := model.ToolsCodePlayground
+func (l *ConvertLogic) Convert(req *types.ConvertRequest, w http.ResponseWriter) (resp *types.CodeResponse, err error) {
+	tools := model.ToolsCodeConvert
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	message, isFirst, err := model.Record{Uid: uint32(uid), ChatId: req.ChatId, Type: tools}.GetMessage(l.svcCtx.Db, user)
@@ -48,7 +48,7 @@ func (l *PlaygroundLogic) Playground(req *types.PlaygroundRequest, w http.Respon
 	if isFirst {
 		title = req.Content
 		showContent = req.Content
-		content = fmt.Sprintf("帮我输出这段代码的结果:%s", req.Content)
+		content = fmt.Sprintf("我希望你帮我把以下代码转换成%s:%s", req.Lang, req.Content)
 	}
 
 	message = append(message, gogpt.ChatCompletionMessage{
@@ -110,5 +110,6 @@ func (l *PlaygroundLogic) Playground(req *types.PlaygroundRequest, w http.Respon
 		ChatId:      req.ChatId,
 		Result:      result,
 	}, nil)
+
 	return
 }

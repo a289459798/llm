@@ -31,6 +31,12 @@ type(
         ChatId string `json:"chatId,optional"`
     }
 
+    ConvertRequest {
+        Content string `json:"content"`
+        Lang string `json:"lang"`
+        ChatId string `json:"chatId,optional"`
+    }
+
     CodeResponse {
         Data string `json:"data"`
     }
@@ -56,4 +62,7 @@ service tools {
 
     @handler playground
     post /code/playground (PlaygroundRequest) returns (CodeResponse)
+
+    @handler convert
+    post /code/convert (ConvertRequest) returns (CodeResponse)
 }

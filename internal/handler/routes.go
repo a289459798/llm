@@ -353,6 +353,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/code/playground",
 					Handler: code.PlaygroundHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/code/convert",
+					Handler: code.ConvertHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
