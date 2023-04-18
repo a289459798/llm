@@ -678,8 +678,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/callback/pay/vip/:type/:merchant",
-				Handler: callbackpay.PayVipHandler(serverCtx),
+				Path:    "/callback/pay/:type/:merchant",
+				Handler: callbackpay.PayHandler(serverCtx),
 			},
 		},
 	)

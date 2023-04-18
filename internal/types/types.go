@@ -590,6 +590,7 @@ type EfficiencyResponse struct {
 
 type VipPayRequest struct {
 	Platform string `json:"platform,options=wechat|alipay"`
+	VipId    uint32 `json:"vipId"`
 }
 
 type PayResponse struct {

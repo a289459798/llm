@@ -2,6 +2,7 @@ syntax = "v1"
 
 type VipPayRequest {
     Platform string `json:"platform,options=wechat|alipay"`
+    VipId uint32 `json:"vipId"`
 }
 
 type PayResponse {

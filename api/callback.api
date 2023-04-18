@@ -14,6 +14,6 @@ type(
     group: callback/pay
 )
 service tools {
-    @handler payVip
-    post /callback/pay/vip/:type/:merchant(PayRequest)  returns (WechatPayResponse)
+    @handler pay
+    post /callback/pay/:type/:merchant(PayRequest)  returns (WechatPayResponse)
 }
