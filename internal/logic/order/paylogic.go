@@ -1,78 +1,50 @@
 package order
 
 import (
-	"chatgpt-tools/common/utils"
 	pay2 "chatgpt-tools/common/utils/pay"
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
+
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type VipOrderCreateLogic struct {
+type PayLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewVipOrderCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipOrderCreateLogic {
-	return &VipOrderCreateLogic{
+func NewPayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayLogic {
+	return &PayLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *types.PayResponse, err error) {
+func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
 	if user.Uid == 0 {
 		return nil, errors.New("用户不存在")
 	}
 
-	vip := &model.Vip{}
-	l.svcCtx.Db.Where("id = ?", req.VipId).First(&vip)
-	if vip.ID == 0 {
-		return nil, errors.New("vip不存在")
-	}
+	order := &model.Order{}
+	l.svcCtx.Db.Where("id = ?", req.OrderId).First(&order)
 
-	order := &model.Order{
-		Uid:       uint32(uid),
-		OrderNo:   utils.GenerateOrderNo(),
-		OutNo:     fmt.Sprintf("VIP%s", utils.GenerateOrderNo()),
-		OrderType: "vip",
-		CostPrice: 0,
-		SellPrice: vip.Price,
-		PayPrice:  vip.Price,
-		Status:    model.OrderStatusWaitPayment,
+	if order.ID == 0 {
+		return nil, errors.New("订单不存在")
 	}
 
 	var payStr []byte
 	err = l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		err = tx.Create(&order).Error
-		if err != nil {
-			return err
-		}
-
 		merchant := "default"
-		err = tx.Create(&model.OrderItem{
-			OrderId:   order.ID,
-			ItemId:    vip.ID,
-			Name:      "会员",
-			Image:     "",
-			CostPrice: order.CostPrice,
-			SellPrice: order.SellPrice,
-			PayPrice:  order.PayPrice,
-			Number:    1,
-		}).Error
-		if err != nil {
-			return err
-		}
 		err = tx.Create(&model.OrderPay{
 			OutNo:       order.OutNo,
 			PayPrice:    order.PayPrice,
@@ -109,7 +81,7 @@ func (l *VipOrderCreateLogic) VipOrderCreate(req *types.VipPayRequest) (resp *ty
 		return nil, err
 	}
 
-	return &types.PayResponse{
+	return &types.OrderPayResponse{
 		Data: string(payStr),
 	}, nil
 }

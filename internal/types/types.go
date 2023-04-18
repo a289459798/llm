@@ -588,12 +588,22 @@ type EfficiencyResponse struct {
 	Data string `json:"data"`
 }
 
-type VipPayRequest struct {
-	Platform string `json:"platform,options=wechat|alipay"`
-	VipId    uint32 `json:"vipId"`
+type OrderRequest struct {
+	ItemId uint32 `json:"itemId"`
+	Type   string `json:"type"`
 }
 
-type PayResponse struct {
+type OrderResponse struct {
+	OrderId string  `json:"orderId"`
+	Money   float32 `json:"money"`
+}
+
+type OrderPayRequest struct {
+	OrderId  string `json:"orderId"`
+	Platform string `json:"platform,options=wechat|alipay"`
+}
+
+type OrderPayResponse struct {
 	Data string `json:"data"`
 }
 

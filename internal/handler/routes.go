@@ -612,8 +612,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/order/vip",
-					Handler: order.VipOrderCreateHandler(serverCtx),
+					Path:    "/order",
+					Handler: order.CreateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/order/pay",
+					Handler: order.PayHandler(serverCtx),
 				},
 			}...,
 		),
