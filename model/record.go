@@ -55,13 +55,13 @@ func (r Record) GetMessage(db *gorm.DB, user AIUser) ([]gogpt.ChatCompletionMess
 	}
 	message = append(message, gogpt.ChatCompletionMessage{
 		Role:    gogpt.ChatMessageRoleUser,
-		Content: "不要回复与下面问题无关的问题，如果你判断没有关联，就回答非法请求",
-	}, gogpt.ChatCompletionMessage{
-		Role:    gogpt.ChatMessageRoleUser,
-		Content: prompt,
+		Content: "不要回复与下面问题无关的问题，不要回复涉黄涉政的问题",
 	}, gogpt.ChatCompletionMessage{
 		Role:    gogpt.ChatMessageRoleAssistant,
 		Content: "好的",
+	}, gogpt.ChatCompletionMessage{
+		Role:    gogpt.ChatMessageRoleUser,
+		Content: prompt,
 	})
 
 	isFirst := true
