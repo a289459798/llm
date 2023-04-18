@@ -46,7 +46,7 @@ func (l *SetMenuLogic) SetMenu() (resp *types.WeChatCallbackResponse, err error)
 	buttons := []*menu.Button{
 		{
 			Type: "view",
-			Name: "三目AI",
+			Name: "免费问答",
 			URL:  "https://chat.smuai.com",
 		},
 		{
