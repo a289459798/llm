@@ -22,6 +22,7 @@ func EventHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.Error(w, err)
 		} else {
 			//httpx.OkJson(w, resp)
+			return
 		}
 	}
 }

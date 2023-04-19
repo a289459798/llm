@@ -24,6 +24,7 @@ func PayHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		} else {
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(resp.Data))
+			return
 		}
 	}
 }
