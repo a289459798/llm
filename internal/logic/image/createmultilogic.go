@@ -44,7 +44,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		Prompt:         prompt,
 		N:              1,
 		ResponseFormat: "url",
-		Size:           "256x256",
+		Size:           "512x512",
 	}
 
 	paramsMap := make(map[string]interface{})
