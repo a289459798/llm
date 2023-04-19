@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type VipOrder struct {
@@ -13,7 +14,9 @@ type VipOrder struct {
 }
 
 func NewVip(data OrderData) *VipOrder {
-	return &VipOrder{}
+	return &VipOrder{
+		DB: data.DB,
+	}
 }
 
 func (vipOrder *VipOrder) Create(orderData CreateRequest) (response CreateResponse, err error) {
@@ -58,7 +61,7 @@ func (vipOrder *VipOrder) Create(orderData CreateRequest) (response CreateRespon
 	})
 
 	if err == nil {
-		response.OrderId = string(order.ID)
+		response.OrderId = strconv.Itoa(int(order.ID))
 		response.Money = order.PayPrice
 	}
 
