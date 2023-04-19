@@ -16,6 +16,11 @@ func GetSuanLi(uid uint32, t string, params string, db *gorm.DB) int {
 	switch t {
 	case "image/create", "image/edit", "image/createMulti", "image/ps":
 		suanli = 5
+		if clarity, ok := paramsMap["clarity"]; ok {
+			if clarity == "superhigh" {
+				suanli = 10
+			}
+		}
 		if number, ok := paramsMap["number"]; ok {
 			suanli = suanli * int(number.(float64))
 		}
