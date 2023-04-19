@@ -46,7 +46,6 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 			case <-timer.C:
 				go func(resultChan chan []string, quitChan chan string) {
 					client := &http.Client{}
-					fmt.Println(uuid)
 					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://api.replicate.com/v1/predictions/%s", uuid), nil)
 					if err != nil {
 						return
@@ -111,8 +110,6 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	//	proxyUrl, _ := url.Parse(ip)
 	//	client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
 	//}
-
-	fmt.Println(image)
 
 	data := map[string]interface{}{
 		"version": "9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
@@ -200,7 +197,6 @@ func (ai *Tencentarc) ImageRepairAsync(image ImageRepair) (result ImageAsyncTask
 func (ai *Tencentarc) ImageTask(task ImageAsyncTask) (result ImageTask, err error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", task.Task), nil)
-	fmt.Println(fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", task.Task))
 	if err != nil {
 		return
 	}
