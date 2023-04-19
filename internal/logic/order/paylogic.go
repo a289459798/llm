@@ -1,8 +1,8 @@
 package order
 
 import (
-	pay2 "chatgpt-tools/common/utils/pay"
 	"chatgpt-tools/model"
+	"chatgpt-tools/service/pay"
 	"context"
 	"encoding/json"
 	"errors"
@@ -55,12 +55,12 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		if err != nil {
 			return err
 		}
-		payModel := pay2.GetPay(req.Platform, pay2.PayData{
+		payModel := pay.GetPay(req.Platform, pay.PayData{
 			Ctx:      l.ctx,
 			Config:   "",
 			Merchant: merchant,
 		})
-		payStr, err = payModel.Pay("h5", pay2.Order{
+		payStr, err = payModel.Pay("h5", pay.Order{
 			Body:       "Vip充值",
 			OutNo:      order.OutNo,
 			Total:      order.PayPrice,

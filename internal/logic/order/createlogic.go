@@ -1,16 +1,13 @@
 package order
 
 import (
-	"chatgpt-tools/common/utils"
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
+	"chatgpt-tools/service/order"
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"gorm.io/gorm"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,51 +33,17 @@ func (l *CreateLogic) Create(req *types.OrderRequest) (resp *types.OrderResponse
 		return nil, errors.New("用户不存在")
 	}
 
-	vip := &model.Vip{}
-	l.svcCtx.Db.Where("id = ?", req.ItemId).First(&vip)
-	if vip.ID == 0 {
-		return nil, errors.New("vip不存在")
-	}
-
-	order := &model.Order{
-		Uid:       uint32(uid),
-		OrderNo:   utils.GenerateOrderNo(),
-		OutNo:     fmt.Sprintf("VIP%s", utils.GenerateOrderNo()),
-		OrderType: "vip",
-		CostPrice: 0,
-		SellPrice: vip.Price,
-		PayPrice:  vip.Price,
-		Status:    model.OrderStatusWaitPayment,
-	}
-
-	var orderId string
-	err = l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		err = tx.Create(&order).Error
-		if err != nil {
-			return err
-		}
-		err = tx.Create(&model.OrderItem{
-			OrderId:   order.ID,
-			ItemId:    vip.ID,
-			Name:      "会员",
-			Image:     "",
-			CostPrice: order.CostPrice,
-			SellPrice: order.SellPrice,
-			PayPrice:  order.PayPrice,
-			Number:    1,
-		}).Error
-		if err != nil {
-			return err
-		}
-		return nil
+	res, err := order.GetOrder(req.Type, order.OrderData{DB: l.svcCtx.Db}).Create(order.CreateRequest{
+		Uid: uint32(uid),
+		Items: []model.OrderItem{
+			{ItemId: req.ItemId, Number: 1},
+		},
 	})
-
 	if err != nil {
 		return nil, err
 	}
-
 	return &types.OrderResponse{
-		OrderId: orderId,
-		Money:   0,
+		OrderId: res.OrderId,
+		Money:   res.Money,
 	}, nil
 }

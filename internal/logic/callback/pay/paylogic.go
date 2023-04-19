@@ -1,7 +1,7 @@
 package pay
 
 import (
-	"chatgpt-tools/common/utils/pay"
+	"chatgpt-tools/service/pay"
 	"context"
 	"fmt"
 	"net/http"
