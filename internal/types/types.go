@@ -222,6 +222,7 @@ type ImageEditRequest struct {
 
 type PicRepairRequest struct {
 	Image string `json:"image"`
+	Scale uint8  `json:"scale,optional,options=1|2"`
 }
 
 type ImageTaskRequest struct {

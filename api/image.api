@@ -46,6 +46,7 @@ type(
 
     PicRepairRequest {
         Image string `json:"image"`
+        Scale uint8 `json:"scale,optional,options=1|2"`
     }
 
     ImageTaskRequest {

@@ -9,6 +9,7 @@ type ImageCreate struct {
 
 type ImageRepair struct {
 	Image string `json:"image"`
+	Scale uint8  `json:"scale"`
 }
 
 type Image2Text struct {

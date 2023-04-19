@@ -27,13 +27,9 @@ func NewTencentarc(c context.Context, svcCtx *svc.ServiceContext) *Tencentarc {
 }
 
 func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error) {
-	cookie, err := getTencentarcCookie()
-	if cookie == "" {
-		err = errors.New("cookie is empty")
-		return
-	}
+	authorization := GetKey(ai.SvcCtx.Db, "replicate")
 
-	uuid, err := createRepair(cookie, image)
+	uuid, err := createRepair(authorization, image)
 	if err != nil {
 		return
 	}
@@ -51,11 +47,11 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 			case <-timer.C:
 				go func(resultChan chan []string, quitChan chan string) {
 					client := &http.Client{}
-					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions/%s", uuid), nil)
+					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://api.replicate.com/v1/predictions/%s", uuid), nil)
 					if err != nil {
 						return
 					}
-					req.Header.Set("x-csrftoken", cookie)
+					req.Header.Set("Authorization", "Token "+authorization)
 					req.Header.Set("Content-Type", "application/json")
 					// 发送请求并获取响应
 					resp, err := client.Do(req)
@@ -70,22 +66,20 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 					}
 
 					respData := struct {
-						Prediction struct {
-							Output    []string `json:"output_files"`
-							CreatedAt string   `json:"created_at"`
-							Uuid      string   `json:"uuid"`
-							Error     string   `json:"error"`
-							Status    string   `json:"status"`
-						} `json:"prediction"`
+						Output    []string `json:"output"`
+						CreatedAt string   `json:"created_at"`
+						Uuid      string   `json:"uuid"`
+						Error     string   `json:"error"`
+						Status    string   `json:"status"`
 					}{}
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					if respData.Prediction.Output != nil && len(respData.Prediction.Output) > 0 {
-						for i := 0; i < len(respData.Prediction.Output); i++ {
-							respData.Prediction.Output[i] = strings.Replace(respData.Prediction.Output[i], "https://replicate.delivery/", "https://img2.smuai.com/", 1)
+					if respData.Output != nil && len(respData.Output) > 0 {
+						for i := 0; i < len(respData.Output); i++ {
+							respData.Output[i] = strings.Replace(respData.Output[i], "https://replicate.delivery/", "https://img2.smuai.com/", 1)
 						}
-						resultChan <- respData.Prediction.Output
+						resultChan <- respData.Output
 						close(quitChan)
 					}
 				}(resultChan, quitChan)
@@ -119,10 +113,12 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 		proxyUrl, _ := url.Parse(ip)
 		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
 	}
-	data := map[string]map[string]interface{}{
-		"inputs": {
+
+	data := map[string]interface{}{
+		"version": "9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
+		"input": map[string]interface{}{
 			"img":     image.Image,
-			"scale":   2,
+			"scale":   image.Scale,
 			"version": "v1.4",
 		},
 	}
@@ -132,11 +128,11 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	if err != nil {
 		return
 	}
-	req, err := http.NewRequest(http.MethodPost, "https://replicate.com/api/models/tencentarc/gfpgan/versions/9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3/predictions", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(http.MethodPost, "https://api.replicate.com/v1/predictions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", errors.New("错误，请重试1")
 	}
-	req.Header.Set("x-csrftoken", cookie)
+	req.Header.Set("Authorization", "Token "+cookie)
 	req.Header.Set("Content-Type", "application/json")
 	// 发送请求并获取响应
 	resp, err := client.Do(req)
