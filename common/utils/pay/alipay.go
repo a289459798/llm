@@ -19,7 +19,7 @@ func NewAlipay(payData PayData) *AlipayPay {
 	}
 }
 
-func (p *AlipayPay) Pay(order Order) (response PayResponse, err error) {
+func (p *AlipayPay) Pay(scene string, order Order) (response string, err error) {
 
 	return
 }

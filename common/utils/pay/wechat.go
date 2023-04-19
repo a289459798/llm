@@ -3,12 +3,12 @@ package pay
 import (
 	"chatgpt-tools/common/utils/appplatform"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/pkg/util"
 	"github.com/go-pay/gopay/wechat/v3"
-	"github.com/jinzhu/copier"
 	"net/http"
 )
 
@@ -53,7 +53,7 @@ func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
 	return
 }
 
-func (p *WechatPay) Pay(order Order) (response PayResponse, err error) {
+func (p *WechatPay) Pay(scene string, order Order) (response string, err error) {
 	payConfig, _ := p.getConfig()
 	client, err := p.getClient()
 	if err != nil {
@@ -73,19 +73,55 @@ func (p *WechatPay) Pay(order Order) (response PayResponse, err error) {
 			bm.Set("openid", order.OpenId)
 		})
 
-	wxRsp, err := client.V3TransactionJsapi(p.Ctx, bm)
-	if err != nil {
-		return
+	switch scene {
+	case "h5":
+		wxRsp, err2 := client.V3TransactionH5(p.Ctx, bm)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		if wxRsp.Code == wechat.Success {
+			err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
+			return
+		}
+		response = wxRsp.Response.H5Url
+		break
+	case "jsapi":
+		wxRsp, err2 := client.V3TransactionJsapi(p.Ctx, bm)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		if wxRsp.Code == wechat.Success {
+			err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
+			return
+		}
+		applet, err2 := client.PaySignOfApplet("appid", "prepayid")
+		if err2 != nil {
+			err = err2
+			return
+		}
+		data, err2 := json.Marshal(applet)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		response = string(data)
+		break
+	case "native":
+		wxRsp, err2 := client.V3TransactionNative(p.Ctx, bm)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		if wxRsp.Code == wechat.Success {
+			err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
+			return
+		}
+		response = wxRsp.Response.CodeUrl
+		break
 	}
-	if wxRsp.Code == wechat.Success {
-		err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
-		return
-	}
-	applet, err := client.PaySignOfApplet("appid", "prepayid")
-	if err != nil {
-		return
-	}
-	copier.Copy(&response, &applet)
+
 	return
 }
 

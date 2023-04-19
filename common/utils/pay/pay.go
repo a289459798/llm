@@ -6,7 +6,7 @@ import (
 )
 
 type SanmuPay interface {
-	Pay(order Order) (response PayResponse, err error)
+	Pay(scene string, order Order) (response string, err error)
 	PayNotify(req *http.Request) (payNotifyResponse PayNotifyResponse, err error)
 }
 

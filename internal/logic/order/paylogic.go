@@ -42,7 +42,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		return nil, errors.New("订单不存在")
 	}
 
-	var payStr []byte
+	var payStr string
 	err = l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
 		merchant := "default"
 		err = tx.Create(&model.OrderPay{
@@ -60,7 +60,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			Config:   "",
 			Merchant: merchant,
 		})
-		payData, err := payModel.Pay(pay2.Order{
+		payStr, err = payModel.Pay("h5", pay2.Order{
 			Body:       "Vip充值",
 			OutNo:      order.OutNo,
 			Total:      order.PayPrice,
@@ -70,10 +70,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		if err != nil {
 			return err
 		}
-		payStr, err = json.Marshal(payData)
-		if err != nil {
-			return err
-		}
+
 		return nil
 	})
 
@@ -82,6 +79,6 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 	}
 
 	return &types.OrderPayResponse{
-		Data: string(payStr),
+		Data: payStr,
 	}, nil
 }
