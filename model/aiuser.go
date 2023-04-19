@@ -58,7 +58,7 @@ func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, err
 					DistributorRecord{
 						DistributorUid: uint32(distributorUid),
 						Uid:            user.Uid,
-					}.Create(db)
+					}.Create(tx)
 				}
 			}
 			tx.Commit()
