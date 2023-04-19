@@ -52,16 +52,16 @@ func (user AIUser) Login(db *gorm.DB, userLogin UserLogin) (*AIUser, string, err
 				tx.Rollback()
 				return nil, "", err
 			}
+			tx.Commit()
 			if userLogin.Channel != "" {
 				distributorUid, err := strconv.Atoi(userLogin.Channel)
 				if err == nil {
 					DistributorRecord{
 						DistributorUid: uint32(distributorUid),
 						Uid:            user.Uid,
-					}.Create(tx)
+					}.Create(db)
 				}
 			}
-			tx.Commit()
 		} else {
 			newUser := &AIUser{}
 			newUser.OpenId = userLogin.OpenID
