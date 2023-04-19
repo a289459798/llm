@@ -35,7 +35,7 @@ func (dr DistributorRecord) Create(db *gorm.DB) {
 			return err
 		}
 		account := NewAccount(tx).GetAccount(dr.DistributorUid, time.Now())
-		err = tx.Create(AccountRecord{
+		err = tx.Create(&AccountRecord{
 			Uid:           dr.DistributorUid,
 			RecordId:      0,
 			Way:           1,
