@@ -1,9 +1,12 @@
 package pay
 
 import (
-	"chatgpt-tools/service/pay"
+	"chatgpt-tools/model"
+	"chatgpt-tools/service/order"
 	"context"
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"net/http"
 
 	"chatgpt-tools/internal/svc"
@@ -27,17 +30,47 @@ func NewPayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayLogic {
 }
 
 func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.WechatPayResponse, err error) {
-	payModel := pay.GetPay(req.Type, pay.PayData{
-		Ctx:      l.ctx,
-		Config:   "",
-		Merchant: req.Merchant,
-	})
-
-	payNotify, err := payModel.PayNotify(r)
+	config, err := model.PaySetting{Merchant: req.Merchant}.FindByMerchant(l.svcCtx.Db)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(payNotify)
+	fmt.Println(config)
+	//payModel := pay.GetPay(req.Type, pay.PayData{
+	//	Ctx:      l.ctx,
+	//	Config:   config,
+	//	Merchant: req.Merchant,
+	//})
+	//
+	//payNotify, err := payModel.PayNotify(r)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//fmt.Println(payNotify)
+
+	outNo := "VIP202304191102026527260001"
+	var orderInfo []model.Order
+	l.svcCtx.Db.Where("out_no = ?", outNo).Where("status = ?", model.PayStatusWaitPayment).Find(&orderInfo)
+
+	if len(orderInfo) == 0 {
+		return nil, errors.New("订单不存在")
+	}
+
+	err = l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
+		for _, m := range orderInfo {
+			err = order.GetOrder(m.OrderType, order.OrderData{DB: l.svcCtx.Db}).Pay(order.PayRequest{
+				OrderId: m.ID,
+			})
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.WechatPayResponse{
 		Data: "success",

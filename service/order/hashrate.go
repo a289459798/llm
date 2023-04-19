@@ -10,3 +10,7 @@ func NewHashRate(data OrderData) *HashRateOrder {
 func (hashRateOrder *HashRateOrder) Create(order CreateRequest) (response CreateResponse, err error) {
 	return
 }
+
+func (hashRateOrder *HashRateOrder) Pay(orderData PayRequest) error {
+	return nil
+}

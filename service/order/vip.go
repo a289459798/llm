@@ -67,3 +67,38 @@ func (vipOrder *VipOrder) Create(orderData CreateRequest) (response CreateRespon
 
 	return
 }
+
+func (vipOrder *VipOrder) Pay(orderData PayRequest) error {
+
+	orderInfo := &model.Order{}
+	vipOrder.DB.Where("id = ?", orderData.OrderId).Preload("Item").Where("status = ?", model.PayStatusWaitPayment).First(&orderInfo)
+	if orderInfo.ID == 0 {
+		return errors.New("订单不存在")
+	}
+
+	err := vipOrder.DB.Transaction(func(tx *gorm.DB) error {
+		for _, item := range orderInfo.Item {
+
+			vip := &model.Vip{}
+			tx.Where("id = ?", item.ItemId).First(&vip)
+			if vip.ID == 0 {
+				return errors.New("会员不存在")
+			}
+			err := model.AIUser{Uid: orderInfo.Uid}.Find(tx).SetVip(tx, &model.VipCode{
+				VipId: vip.ID,
+				Day:   vip.Day,
+				Vip: model.Vip{
+					Amount: vip.Amount,
+				},
+			})
+			if err != nil {
+				return err
+			}
+		}
+		orderInfo.Status = model.PayStatusPayment
+		tx.Save(orderInfo)
+		return nil
+	})
+
+	return err
+}

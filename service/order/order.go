@@ -5,7 +5,8 @@ import (
 )
 
 type SMUOrder interface {
-	Create(orderI CreateRequest) (response CreateResponse, err error)
+	Create(orderData CreateRequest) (response CreateResponse, err error)
+	Pay(orderData PayRequest) error
 }
 
 type OrderData struct {
