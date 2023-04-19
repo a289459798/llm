@@ -47,7 +47,7 @@ func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.Wech
 	//}
 	//fmt.Println(payNotify)
 
-	outNo := "VIP202304191102026527260001"
+	outNo := "VIP202304191324598069300001"
 	var orderInfo []model.Order
 	l.svcCtx.Db.Where("out_no = ?", outNo).Where("status = ?", model.PayStatusWaitPayment).Find(&orderInfo)
 
