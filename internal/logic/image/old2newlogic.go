@@ -35,11 +35,20 @@ func (l *Old2newLogic) Old2new(req *types.PicRepairRequest) (resp *types.ImageMu
 		SvcCtx: l.svcCtx,
 	})
 
-	stream, err := ai.ImageRepair(sanmuai.ImageRepair{Image: req.Image})
+	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+
+	imageCreate := sanmuai.ImageRepair{Image: req.Image, Scale: 1}
+	if req.Scale == 2 {
+		isVip := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db).IsVip()
+		if isVip {
+			imageCreate.Scale = req.Scale
+		}
+	}
+
+	stream, err := ai.ImageRepair(imageCreate)
 	if err != nil {
 		return nil, err
 	}
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	service.NewRecord(l.svcCtx.Db).Insert(&model.Record{
 		Uid:     uint32(uid),
 		Type:    "image/pic-repair",

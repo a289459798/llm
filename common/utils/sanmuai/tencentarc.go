@@ -9,7 +9,6 @@ import (
 	"fmt"
 	gogpt "github.com/sashabaranov/go-openai"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 )
@@ -37,7 +36,7 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 	// 获取信息
 	resultChan := make(chan []string)
 	quitChan := make(chan string)
-	timeout := time.After(300 * time.Second)
+	timeout := time.After(60 * time.Second)
 	timer := time.NewTicker(5 * time.Second)
 	go func() {
 		for {
@@ -47,6 +46,7 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 			case <-timer.C:
 				go func(resultChan chan []string, quitChan chan string) {
 					client := &http.Client{}
+					fmt.Println(uuid)
 					req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://api.replicate.com/v1/predictions/%s", uuid), nil)
 					if err != nil {
 						return
@@ -66,20 +66,18 @@ func (ai *Tencentarc) ImageRepair(image ImageRepair) (result []string, err error
 					}
 
 					respData := struct {
-						Output    []string `json:"output"`
-						CreatedAt string   `json:"created_at"`
-						Uuid      string   `json:"uuid"`
-						Error     string   `json:"error"`
-						Status    string   `json:"status"`
+						Output    string `json:"output"`
+						CreatedAt string `json:"created_at"`
+						ID        string `json:"id"`
+						Error     string `json:"error"`
+						Status    string `json:"status"`
 					}{}
 					if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 						return
 					}
-					if respData.Output != nil && len(respData.Output) > 0 {
-						for i := 0; i < len(respData.Output); i++ {
-							respData.Output[i] = strings.Replace(respData.Output[i], "https://replicate.delivery/", "https://img2.smuai.com/", 1)
-						}
-						resultChan <- respData.Output
+					if respData.Output != "" {
+						respData.Output = strings.Replace(respData.Output, "https://replicate.delivery/", "https://img2.smuai.com/", 1)
+						resultChan <- []string{respData.Output}
 						close(quitChan)
 					}
 				}(resultChan, quitChan)
@@ -107,12 +105,14 @@ func (ai *Tencentarc) CreateImage(image ImageCreate) (result []string, err error
 }
 
 func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
-	ip := GetProxyIp()
+	//ip := GetProxyIp()
 	client := &http.Client{}
-	if ip != "" {
-		proxyUrl, _ := url.Parse(ip)
-		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
-	}
+	//if ip != "" {
+	//	proxyUrl, _ := url.Parse(ip)
+	//	client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	//}
+
+	fmt.Println(image)
 
 	data := map[string]interface{}{
 		"version": "9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
@@ -147,12 +147,12 @@ func createRepair(cookie string, image ImageRepair) (uuid string, err error) {
 	}
 
 	respData := struct {
-		UUID string `json:"uuid"`
+		ID string `json:"id"`
 	}{}
 	if err = json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 		return
 	}
-	uuid = respData.UUID
+	uuid = respData.ID
 	return
 }
 
