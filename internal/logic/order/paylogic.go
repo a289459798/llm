@@ -42,9 +42,15 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		return nil, errors.New("订单不存在")
 	}
 
+	merchant := "wechat"
+	config, err := model.PaySetting{Merchant: merchant}.FindByMerchant(l.svcCtx.Db)
+	if err != nil {
+		return nil, err
+	}
+
 	var payStr string
 	err = l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		merchant := "default"
+
 		err = tx.Create(&model.OrderPay{
 			OutNo:       order.OutNo,
 			PayPrice:    order.PayPrice,
@@ -57,7 +63,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		}
 		payModel := pay.GetPay(req.Platform, pay.PayData{
 			Ctx:      l.ctx,
-			Config:   "",
+			Config:   config,
 			Merchant: merchant,
 		})
 		payStr, err = payModel.Pay("h5", pay.Order{
