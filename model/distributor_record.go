@@ -20,12 +20,12 @@ func (dr DistributorRecord) Create(db *gorm.DB) {
 		return
 	}
 	err := db.Transaction(func(tx *gorm.DB) error {
-		err := db.Create(&dr).Error
+		err := tx.Create(&dr).Error
 		if err != nil {
 			return err
 		}
 		var amount uint32 = 20
-		err = db.Create(AIUserHashRate{
+		err = tx.Create(AIUserHashRate{
 			Uid:       dr.DistributorUid,
 			Amount:    amount,
 			UseAmount: 0,
@@ -34,8 +34,8 @@ func (dr DistributorRecord) Create(db *gorm.DB) {
 		if err != nil {
 			return err
 		}
-		account := NewAccount(db).GetAccount(dr.DistributorUid, time.Now())
-		err = db.Create(AccountRecord{
+		account := NewAccount(tx).GetAccount(dr.DistributorUid, time.Now())
+		err = tx.Create(AccountRecord{
 			Uid:           dr.DistributorUid,
 			RecordId:      0,
 			Way:           1,
