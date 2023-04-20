@@ -25,7 +25,7 @@ func (dr DistributorRecord) Create(db *gorm.DB) {
 			return err
 		}
 		var amount uint32 = 20
-		err = tx.Create(AIUserHashRate{
+		err = tx.Create(&AIUserHashRate{
 			Uid:       dr.DistributorUid,
 			Amount:    amount,
 			UseAmount: 0,
@@ -35,7 +35,7 @@ func (dr DistributorRecord) Create(db *gorm.DB) {
 			return err
 		}
 		account := NewAccount(tx).GetAccount(dr.DistributorUid, time.Now())
-		err = tx.Create(AccountRecord{
+		err = tx.Create(&AccountRecord{
 			Uid:           dr.DistributorUid,
 			RecordId:      0,
 			Way:           1,
