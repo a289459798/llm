@@ -3,6 +3,7 @@ package pay
 import (
 	"chatgpt-tools/model"
 	"chatgpt-tools/service/order"
+	"chatgpt-tools/service/pay"
 	"context"
 	"errors"
 	"fmt"
@@ -34,20 +35,20 @@ func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.Wech
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(config)
-	//payModel := pay.GetPay(req.Type, pay.PayData{
-	//	Ctx:      l.ctx,
-	//	Config:   config,
-	//	Merchant: req.Merchant,
-	//})
-	//
-	//payNotify, err := payModel.PayNotify(r)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//fmt.Println(payNotify)
+	payModel := pay.GetPay(req.Type, pay.PayData{
+		Ctx:      l.ctx,
+		Config:   config,
+		Merchant: req.Merchant,
+	})
 
-	outNo := "VIP202304191324598069300001"
+	payNotify, err := payModel.PayNotify(r)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Println(payNotify)
+
+	outNo := payNotify.OutTradeNo
 	var orderInfo []model.Order
 	l.svcCtx.Db.Where("out_no = ?", outNo).Where("status = ?", model.PayStatusWaitPayment).Find(&orderInfo)
 

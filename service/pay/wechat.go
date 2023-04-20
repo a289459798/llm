@@ -5,9 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/go-pay/gopay"
-	"github.com/go-pay/gopay/pkg/util"
 	"github.com/go-pay/gopay/wechat/v3"
 	"net/http"
 )
@@ -33,8 +31,9 @@ func (p *WechatPay) getConfig() (appplatform.WechatMiniConf, error) {
 }
 
 func (p *WechatPay) getClient() (client *wechat.ClientV3, err error) {
-	payConfig, _ := p.getConfig()
+	payConfig, err := p.getConfig()
 	client, err = wechat.NewClientV3(payConfig.MchId, payConfig.SerialNo, payConfig.ApiV3Key, payConfig.PrivateKey)
+
 	if err != nil {
 		return
 	}
@@ -62,15 +61,11 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 	bm := make(gopay.BodyMap)
 	bm.Set("appid", payConfig.AppId).
 		Set("mchid", payConfig.MchId).
-		Set("nonce_str", util.RandomString(32)).
 		Set("description", order.Body).
 		Set("out_trade_no", order.OutNo).
 		Set("notify_url", order.NotifyPath).
 		SetBodyMap("amount", func(bm gopay.BodyMap) {
 			bm.Set("total", order.Total)
-		}).
-		SetBodyMap("payer", func(bm gopay.BodyMap) {
-			bm.Set("openid", order.OpenId)
 		})
 
 	switch scene {
@@ -80,20 +75,23 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 			err = err2
 			return
 		}
-		if wxRsp.Code == wechat.Success {
-			err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
+		if wxRsp.Code != wechat.Success {
+			err = errors.New(wxRsp.Error)
 			return
 		}
 		response = wxRsp.Response.H5Url
 		break
 	case "jsapi":
+		bm.SetBodyMap("payer", func(bm gopay.BodyMap) {
+			bm.Set("openid", order.OpenId)
+		})
 		wxRsp, err2 := client.V3TransactionJsapi(p.Ctx, bm)
 		if err2 != nil {
 			err = err2
 			return
 		}
-		if wxRsp.Code == wechat.Success {
-			err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
+		if wxRsp.Code != wechat.Success {
+			err = errors.New(wxRsp.Error)
 			return
 		}
 		applet, err2 := client.PaySignOfApplet("appid", "prepayid")
@@ -114,8 +112,8 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 			err = err2
 			return
 		}
-		if wxRsp.Code == wechat.Success {
-			err = errors.New(fmt.Sprintf("wxRsp: %#v", wxRsp.Response))
+		if wxRsp.Code != wechat.Success {
+			err = errors.New(wxRsp.Error)
 			return
 		}
 		response = wxRsp.Response.CodeUrl

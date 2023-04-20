@@ -56,6 +56,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			PayPrice:    order.PayPrice,
 			RefundPrice: 0,
 			Status:      model.PayStatusWaitPayment,
+			PayType:     req.Platform,
 			Merchant:    merchant,
 		}).Error
 		if err != nil {
@@ -67,16 +68,25 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			Merchant: merchant,
 		})
 		payStr, err = payModel.Pay(req.Scene, pay.Order{
-			Body:       "Vip充值",
-			OutNo:      order.OutNo,
-			Total:      order.PayPrice,
-			OpenId:     user.OpenId,
-			NotifyPath: "https://api.smuai.com/callback/pay/wechat/" + merchant,
+			Body:  "Vip充值",
+			OutNo: order.OutNo,
+			Total: func() float32 {
+				if l.svcCtx.Config.Mode == "dev" {
+					return 1
+				}
+				return order.PayPrice * 1000
+			}(),
+			OpenId: user.OpenId,
+			NotifyPath: func() string {
+				if l.svcCtx.Config.Mode == "dev" {
+					return "https://api.smuai.com/testpay/callback/pay/wechat/" + merchant
+				}
+				return "https://api.smuai.com/callback/pay/wechat/" + merchant
+			}(),
 		})
 		if err != nil {
 			return err
 		}
-
 		return nil
 	})
 
