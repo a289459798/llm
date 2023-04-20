@@ -63,9 +63,9 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 	bm.Set("appid", payConfig.AppId).
 		Set("mchid", payConfig.MchId).
 		Set("nonce_str", util.RandomString(32)).
-		Set("description", "H5支付").
+		Set("description", order.Body).
 		Set("out_trade_no", order.OutNo).
-		Set("notify_url", fmt.Sprintf("%s%s", payConfig.NotifyUrl, order.NotifyPath)).
+		Set("notify_url", order.NotifyPath).
 		SetBodyMap("amount", func(bm gopay.BodyMap) {
 			bm.Set("total", order.Total)
 		}).

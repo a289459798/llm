@@ -42,7 +42,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		return nil, errors.New("订单不存在")
 	}
 
-	merchant := "wechat"
+	merchant := "wechat_xm"
 	config, err := model.PaySetting{Merchant: merchant}.FindByMerchant(l.svcCtx.Db)
 	if err != nil {
 		return nil, err
@@ -66,12 +66,12 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			Config:   config,
 			Merchant: merchant,
 		})
-		payStr, err = payModel.Pay("h5", pay.Order{
+		payStr, err = payModel.Pay(req.Scene, pay.Order{
 			Body:       "Vip充值",
 			OutNo:      order.OutNo,
 			Total:      order.PayPrice,
 			OpenId:     user.OpenId,
-			NotifyPath: "callback/pay/wechat/" + merchant,
+			NotifyPath: "https://api.smuai.com/callback/pay/wechat/" + merchant,
 		})
 		if err != nil {
 			return err

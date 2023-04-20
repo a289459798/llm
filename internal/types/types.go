@@ -601,7 +601,8 @@ type OrderResponse struct {
 
 type OrderPayRequest struct {
 	OrderId  string `json:"orderId"`
-	Platform string `json:"platform,options=wechat_h5|wechat_native|wechat_jsapi"`
+	Platform string `json:"platform,options=wechat|alipay"`
+	Scene    string `json:"scene,options=h5|native|jsapi"`
 }
 
 type OrderPayResponse struct {
