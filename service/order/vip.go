@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"gorm.io/gorm"
 	"strconv"
+	"time"
 )
 
 type VipOrder struct {
@@ -97,6 +98,10 @@ func (vipOrder *VipOrder) Pay(orderData PayRequest) error {
 		}
 		orderInfo.Status = model.PayStatusPayment
 		tx.Save(orderInfo)
+		tx.Model(&model.OrderPay{}).
+			Where("out_no", orderInfo.OutNo).
+			Update("status", model.PayStatusPayment).
+			Update("pay_time", time.Now().Format("2006-01-02 15:04:05"))
 		return nil
 	})
 

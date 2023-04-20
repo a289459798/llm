@@ -6,7 +6,6 @@ import (
 	"chatgpt-tools/service/pay"
 	"context"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 	"net/http"
 
@@ -43,10 +42,8 @@ func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.Wech
 
 	payNotify, err := payModel.PayNotify(r)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println(payNotify)
 
 	outNo := payNotify.OutTradeNo
 	var orderInfo []model.Order

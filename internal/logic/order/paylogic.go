@@ -68,7 +68,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			Merchant: merchant,
 		})
 		payStr, err = payModel.Pay(req.Scene, pay.Order{
-			Body:  "Vip充值",
+			Body:  "购买商品",
 			OutNo: order.OutNo,
 			Total: func() float32 {
 				if l.svcCtx.Config.Mode == "dev" {

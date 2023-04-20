@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/wechat/v3"
 	"net/http"
@@ -128,6 +129,7 @@ func (p *WechatPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyRes
 	if err != nil {
 		return
 	}
+	fmt.Println(notifyReq.SignInfo.SignBody)
 	client, err := p.getClient()
 	// 获取微信平台证书
 	certMap := client.WxPublicKeyMap()

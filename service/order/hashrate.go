@@ -32,7 +32,7 @@ func (hashRateOrder *HashRateOrder) Create(orderData CreateRequest) (response Cr
 	order := &model.Order{
 		Uid:       orderData.Uid,
 		OrderNo:   utils.GenerateOrderNo(),
-		OutNo:     fmt.Sprintf("VIP%s", utils.GenerateOrderNo()),
+		OutNo:     fmt.Sprintf("HR%s", utils.GenerateOrderNo()),
 		OrderType: "hashrate",
 		CostPrice: 0,
 		SellPrice: hashRate.Price * float32(orderData.Items[0].Number),
@@ -109,6 +109,11 @@ func (hashRateOrder *HashRateOrder) Pay(orderData PayRequest) error {
 		}
 		orderInfo.Status = model.PayStatusPayment
 		tx.Save(orderInfo)
+		tx.Model(&model.OrderPay{}).
+			Where("out_no", orderInfo.OutNo).
+			Update("status", model.PayStatusPayment).
+			Update("pay_time", time.Now().Format("2006-01-02 15:04:05"))
+
 		return nil
 	})
 
