@@ -651,6 +651,13 @@ type DistributorStatisticsResponse struct {
 	MoneyDay   float32 `json:"money_day"`
 }
 
+type DistributorShowRequest struct {
+}
+
+type DistributorShowResponse struct {
+	Show bool `json:"show"`
+}
+
 type WeChatCallbackResponse struct {
 }
 

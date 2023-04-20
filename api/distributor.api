@@ -46,6 +46,13 @@ type DistributorStatisticsResponse {
     MoneyDay float32 `json:"money_day"`
 }
 
+type DistributorShowRequest {
+}
+
+type DistributorShowResponse {
+    Show bool `json:"show"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -63,4 +70,8 @@ service tools {
 
     @handler statistics
     get /distributor/statistics(DistributorStatisticsRequest) returns (DistributorStatisticsResponse)
+
+    @handler show
+    get /distributor/show(DistributorShowRequest) returns (DistributorShowResponse)
+
 }
