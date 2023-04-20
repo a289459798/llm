@@ -105,5 +105,12 @@ func (vipOrder *VipOrder) Pay(orderData PayRequest) error {
 		return nil
 	})
 
+	model.Distributor{}.AddMoney(vipOrder.DB, model.DistributorAdd{
+		Uid:   orderInfo.Uid,
+		Money: orderInfo.PayPrice,
+		Way:   0,
+		Type:  "vip",
+	})
+
 	return err
 }

@@ -117,5 +117,12 @@ func (hashRateOrder *HashRateOrder) Pay(orderData PayRequest) error {
 		return nil
 	})
 
+	model.Distributor{}.AddMoney(hashRateOrder.DB, model.DistributorAdd{
+		Uid:   orderInfo.Uid,
+		Money: orderInfo.PayPrice,
+		Way:   0,
+		Type:  "hashrate",
+	})
+
 	return err
 }
