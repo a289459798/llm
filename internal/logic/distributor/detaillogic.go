@@ -62,7 +62,9 @@ func (l *DetailLogic) Detail(req *types.DistributorInfoRequest) (resp *types.Dis
 		MoneyDay:   model.DistributorPayRecord{}.TotalMoneyWithDate(l.svcCtx.Db, uint32(uid), today),
 	}
 
-	png, _ := qrcode.Encode(fmt.Sprintf("https://chat.smuai.com/?c=%d", uid), qrcode.Medium, 256)
+	code, _ := qrcode.New(fmt.Sprintf("https://chat.smuai.com/?c=%d", uid), qrcode.Medium)
+	code.DisableBorder = true
+	png, _ := code.PNG(256)
 	return &types.DistributorInfoResponse{
 		Level:      distributor.Level.Name,
 		Ratio:      distributor.Ratio,
