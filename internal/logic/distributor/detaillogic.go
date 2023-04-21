@@ -63,7 +63,7 @@ func (l *DetailLogic) Detail(req *types.DistributorInfoRequest) (resp *types.Dis
 	return &types.DistributorInfoResponse{
 		Level:      distributor.Level.Name,
 		Ratio:      distributor.Ratio,
-		Link:       fmt.Sprintf("https://chat.smuai.com/c=%d", uid),
+		Link:       fmt.Sprintf("https://chat.smuai.com/?c=%d", uid),
 		Money:      distributor.Money,
 		Statistics: statistics,
 		Next:       next,
