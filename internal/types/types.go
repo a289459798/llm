@@ -633,10 +633,19 @@ type DistributorInfoRequest struct {
 }
 
 type DistributorInfoResponse struct {
-	Level string  `json:"level"`
+	Level      string                        `json:"level"`
+	Ratio      float32                       `json:"ratio"`
+	Link       string                        `json:"link"`
+	Money      float32                       `json:"money"`
+	Next       DistributorInfoNext           `json:"next"`
+	Statistics DistributorStatisticsResponse `json:"statistics"`
+}
+
+type DistributorInfoNext struct {
+	Name  string  `json:"name"`
+	User  uint32  `json:"user"`
+	Price float32 `json:"price"`
 	Ratio float32 `json:"ratio"`
-	Link  string  `json:"link"`
-	Money float32 `json:"money"`
 }
 
 type DistributorStatisticsRequest struct {

@@ -31,6 +31,15 @@ type DistributorInfoResponse {
     Ratio float32 `json:"ratio"`
     Link string `json:"link"`
     Money float32 `json:"money"`
+    Next DistributorInfoNext `json:"next"`
+    Statistics DistributorStatisticsResponse `json:"statistics"`
+}
+
+type DistributorInfoNext {
+    Name string `json:"name"`
+    User uint32 `json:"user"`
+    Price float32 `json:"price"`
+    Ratio float32 `json:"ratio"`
 }
 
 type DistributorStatisticsRequest {
