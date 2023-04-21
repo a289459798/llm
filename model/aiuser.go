@@ -9,17 +9,18 @@ import (
 )
 
 type AIUser struct {
-	ID        uint32    `gorm:"primary_key" json:"id"`
-	Uid       uint32    `gorm:"after:id;index:ik_uid" json:"uid"`
-	OpenId    string    `gorm:"type:varchar(64);uniqueIndex:uk_openid" json:"open_id"`
-	UnionId   string    `gorm:"type:varchar(64)"json:"union_id"`
-	Subscribe bool      `json:"subscribe"`
-	JoinGroup bool      `json:"join_group" gorm:"default:0"`
-	AppKey    string    `json:"app_key" gorm:"type:varchar(32)"`
-	Channel   string    `json:"channel" gorm:"type:varchar(32)"`
-	CreatedAt time.Time `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
-	UpdateAt  time.Time `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
-	Vip       AIUserVip `gorm:"foreignKey:uid;references:uid"`
+	ID          uint32      `gorm:"primary_key" json:"id"`
+	Uid         uint32      `gorm:"after:id;index:ik_uid" json:"uid"`
+	OpenId      string      `gorm:"type:varchar(64);uniqueIndex:uk_openid" json:"open_id"`
+	UnionId     string      `gorm:"type:varchar(64)"json:"union_id"`
+	Subscribe   bool        `json:"subscribe"`
+	JoinGroup   bool        `json:"join_group" gorm:"default:0"`
+	AppKey      string      `json:"app_key" gorm:"type:varchar(32)"`
+	Channel     string      `json:"channel" gorm:"type:varchar(32)"`
+	CreatedAt   time.Time   `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
+	UpdateAt    time.Time   `gorm:"column:update_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP  on update current_timestamp" json:"update_at,omitempty"`
+	Vip         AIUserVip   `gorm:"foreignKey:uid;references:uid"`
+	Distributor Distributor `gorm:"foreignKey:uid;references:uid"`
 }
 
 type UserLogin struct {

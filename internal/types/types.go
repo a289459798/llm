@@ -20,6 +20,7 @@ type InfoResponse struct {
 	VipName   string `json:"vipName"`
 	VipGive   uint32 `json:"vipGive"`
 	VipExpiry string `json:"vipExpiry"`
+	IsPartner bool   `json:"isPartner"`
 }
 
 type Task struct {

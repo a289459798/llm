@@ -33,7 +33,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
 	user := &model.AIUser{}
-	l.svcCtx.Db.Where("uid = ?", uid).Preload("Vip").Preload("Vip.Vip").First(user)
+	l.svcCtx.Db.Where("uid = ?", uid).Preload("Vip").Preload("Vip.Vip").Preload("Distributor").First(user)
 
 	if user.Uid == 0 || user.UnionId == "" {
 		return nil, errors.New(string(http.StatusUnauthorized))
@@ -57,5 +57,6 @@ func (l *UserInfoLogic) UserInfo(req *types.InfoRequest) (resp *types.InfoRespon
 		Group:     user.IsJoinGroup(l.svcCtx.Db),
 		VipName:   user.Vip.Vip.Name,
 		VipExpiry: user.Vip.VipExpiry.Format("2006-01-02"),
+		IsPartner: user.Distributor.ID > 0 && user.Distributor.Status,
 	}, nil
 }
