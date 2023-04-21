@@ -3,9 +3,11 @@ package distributor
 import (
 	"chatgpt-tools/model"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/skip2/go-qrcode"
 	"time"
 
 	"chatgpt-tools/internal/svc"
@@ -60,10 +62,12 @@ func (l *DetailLogic) Detail(req *types.DistributorInfoRequest) (resp *types.Dis
 		MoneyDay:   model.DistributorPayRecord{}.TotalMoneyWithDate(l.svcCtx.Db, uint32(uid), today),
 	}
 
+	png, _ := qrcode.Encode(fmt.Sprintf("https://chat.smuai.com/?c=%d", uid), qrcode.Medium, 256)
 	return &types.DistributorInfoResponse{
 		Level:      distributor.Level.Name,
 		Ratio:      distributor.Ratio,
 		Link:       fmt.Sprintf("https://chat.smuai.com/?c=%d", uid),
+		QRCode:     base64.StdEncoding.EncodeToString(png),
 		Money:      distributor.Money,
 		Statistics: statistics,
 		Next:       next,

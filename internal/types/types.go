@@ -637,6 +637,7 @@ type DistributorInfoResponse struct {
 	Level      string                        `json:"level"`
 	Ratio      float32                       `json:"ratio"`
 	Link       string                        `json:"link"`
+	QRCode     string                        `json:"qrcode"`
 	Money      float32                       `json:"money"`
 	Next       DistributorInfoNext           `json:"next"`
 	Statistics DistributorStatisticsResponse `json:"statistics"`
