@@ -60,10 +60,11 @@ func (l *EventLogic) Event(req types.WechatValidateRequest, r *http.Request, w h
 		case message.MsgTypeEvent:
 			switch server.RequestMsg.Event {
 			case message.EventSubscribe:
-				text := message.NewText("欢迎关注三目")
+				text := message.NewText("欢迎关注三目！免费对话请访问：https://chat.smuai.com")
 				return &message.Reply{MsgType: message.MsgTypeText, MsgData: text}
 			}
 			break
+
 		}
 		return nil
 	})
