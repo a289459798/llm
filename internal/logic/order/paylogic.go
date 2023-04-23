@@ -74,7 +74,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 				if l.svcCtx.Config.Mode == "dev" {
 					return 1
 				}
-				return order.PayPrice * 1000
+				return order.PayPrice * 100
 			}(),
 			OpenId: user.OpenId,
 			NotifyPath: func() string {
