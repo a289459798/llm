@@ -29,6 +29,13 @@ func (vipOrder *VipOrder) Create(orderData CreateRequest) (response CreateRespon
 		return
 	}
 
+	// 会员等级校验
+	user := model.AIUser{Uid: orderData.Uid}.Find(vipOrder.DB)
+	if user.IsVip() && user.Vip.VipId != vip.ID {
+		err = errors.New("当前会员与购买会员不符，请联系客服")
+		return
+	}
+
 	order := &model.Order{
 		Uid:       orderData.Uid,
 		OrderNo:   utils.GenerateOrderNo(),
