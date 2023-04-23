@@ -20,6 +20,15 @@ type OrderPayResponse {
     Data string `json:"data"`
 }
 
+type OrderInfoRequest {
+    OrderId string `path:"orderId"`
+}
+
+type OrderInfoResponse {
+    OrderId string `json:"orderId"`
+    Status uint8 `json:"status"`
+}
+
 @server(
     jwt: Auth
     middleware: Sign
@@ -31,4 +40,7 @@ service tools {
 
     @handler pay
     post /order/pay(OrderPayRequest) returns (OrderPayResponse)
+
+    @handler detail
+    get /order/:orderId(OrderInfoRequest) returns (OrderInfoResponse)
 }

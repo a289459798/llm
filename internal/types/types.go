@@ -610,6 +610,15 @@ type OrderPayResponse struct {
 	Data string `json:"data"`
 }
 
+type OrderInfoRequest struct {
+	OrderId string `path:"orderId"`
+}
+
+type OrderInfoResponse struct {
+	OrderId string `json:"orderId"`
+	Status  uint8  `json:"status"`
+}
+
 type DistributorApplyRequest struct {
 }
 
