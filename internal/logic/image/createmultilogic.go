@@ -15,6 +15,7 @@ import (
 	gogpt "github.com/sashabaranov/go-openai"
 	"github.com/zeromicro/go-zero/core/logx"
 	"strings"
+	"unicode"
 )
 
 type CreateMultiLogic struct {
@@ -50,7 +51,15 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 	paramsMap := make(map[string]interface{})
 	paramsMap["number"] = 1
 
-	if req.Model == "GPT-PLUS" || req.Model == "Midjourney" || req.Model == "StableDiffusion" {
+	hasChinese := false
+	for _, r := range req.Content {
+		if unicode.Is(unicode.Han, r) {
+			hasChinese = true
+			break
+		}
+	}
+
+	if hasChinese {
 		// 翻译
 		message := []gogpt.ChatCompletionMessage{
 			{
@@ -68,11 +77,15 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		}
 		if len(stream.Choices) > 0 && stream.Choices[0].Message.Content != "" {
 			imageCreate.Prompt = stream.Choices[0].Message.Content
-			if req.Model == "Midjourney" {
-				imageCreate.Prompt = fmt.Sprintf("mdjrny-v4 style %s", stream.Choices[0].Message.Content)
-			}
 		}
+	} else {
+		imageCreate.Prompt = req.Content
 	}
+
+	if req.Model == "Midjourney" {
+		imageCreate.Prompt = fmt.Sprintf("mdjrny-v4 style %s", imageCreate.Prompt)
+	}
+
 	if isVip {
 		if req.Number > 0 {
 			imageCreate.N = req.Number
