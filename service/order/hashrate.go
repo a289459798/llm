@@ -29,6 +29,14 @@ func (hashRateOrder *HashRateOrder) Create(orderData CreateRequest) (response Cr
 		return
 	}
 
+	user := &model.AIUser{}
+	hashRateOrder.DB.Where("uid = ?", orderData.Uid).Preload("Vip").Preload("Vip.Vip").First(user)
+
+	pay := hashRate.Price
+	if user.IsVip() {
+		pay = pay * user.Vip.Vip.Discount / 10
+	}
+
 	order := &model.Order{
 		Uid:       orderData.Uid,
 		OrderNo:   utils.GenerateOrderNo(),
@@ -36,7 +44,7 @@ func (hashRateOrder *HashRateOrder) Create(orderData CreateRequest) (response Cr
 		OrderType: "hashrate",
 		CostPrice: 0,
 		SellPrice: hashRate.Price * float32(orderData.Items[0].Number),
-		PayPrice:  hashRate.Price * float32(orderData.Items[0].Number),
+		PayPrice:  pay * float32(orderData.Items[0].Number),
 		Status:    model.OrderStatusWaitPayment,
 	}
 
