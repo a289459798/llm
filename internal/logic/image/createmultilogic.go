@@ -59,7 +59,7 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 			},
 			{
 				Role:    "user",
-				Content: fmt.Sprintf("你化身为翻译官，把我提供内容翻译成英文，如果已经是英文了请直接回答原文，引号里面的不要翻译,也不需要任何解释，比如我说狗，你回复\"dog\"，第一句要翻译的内容是：%s", req.Content),
+				Content: fmt.Sprintf("你化身为翻译官，把我提供内容翻译成英文，注意如果已经是英文了直接回答我原文，不要回复其他内容，你要翻译的内容是：%s", req.Content),
 			},
 		}
 		stream, err := sanmuai.NewOpenAi(l.ctx, l.svcCtx).CreateChatCompletion(message)
@@ -81,7 +81,6 @@ func (l *CreateMultiLogic) CreateMulti(req *types.ImageRequest) (resp *types.Ima
 		paramsMap["clarity"] = req.Clarity
 		if req.Clarity == "high" {
 			imageCreate.Size = "512x512"
-			imageCreate.Prompt += " 4k"
 		} else if req.Clarity == "superhigh" {
 			imageCreate.Size = "1024x1024"
 			imageCreate.Prompt += " 8k"
