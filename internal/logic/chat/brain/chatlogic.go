@@ -295,7 +295,7 @@ func (l *ChatLogic) getImage(chatId string, uid uint32, msg string, str string, 
 			ResponseFormat: "url",
 			Size:           "512x512",
 		}
-		ai := sanmuai.GetAI("openai", sanmuai.SanmuData{
+		ai := sanmuai.GetAI("Midjourney", sanmuai.SanmuData{
 			Ctx:    l.ctx,
 			SvcCtx: l.svcCtx,
 		})
