@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"gorm.io/gorm"
+	"math"
 
 	"chatgpt-tools/internal/svc"
 	"chatgpt-tools/internal/types"
@@ -42,7 +43,13 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		return nil, errors.New("订单不存在")
 	}
 
-	merchant := "wechat_xm"
+	var merchant = ""
+	if req.Platform == "wechat" {
+		merchant = "wechat_xm"
+	} else {
+		merchant = "alipay_xm"
+	}
+
 	config, err := model.PaySetting{Merchant: merchant}.FindByMerchant(l.svcCtx.Db)
 	if err != nil {
 		return nil, err
@@ -74,7 +81,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 				if l.svcCtx.Config.Mode == "dev" {
 					return 1
 				}
-				return order.PayPrice * 100
+				return float32(math.Round(float64(order.PayPrice * 100)))
 			}(),
 			OpenId: user.OpenId,
 			NotifyPath: func() string {
