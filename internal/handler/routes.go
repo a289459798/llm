@@ -50,6 +50,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/users/login/check",
 				Handler: user.LoginCheckHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/login-app",
+				Handler: user.LoginWithAppHandler(serverCtx),
+			},
 		},
 	)
 

@@ -86,6 +86,12 @@ type WxqrcodeRequest {
     Channel string `form:"c,optional"`
 }
 
+type LoginAppRequest {
+    OpenId string `json:"openId"`
+    UnionID string `json:"unionID"`
+    Channel string `json:"channel,optional"`
+}
+
 @server(
     group: user
 )
@@ -98,6 +104,9 @@ service tools {
 
     @handler loginCheck
     get /users/login/check(LoginCheckRequest) returns (InfoResponse)
+
+    @handler loginWithApp
+    post /users/login-app (LoginAppRequest) returns (InfoResponse)
 }
 
 @server(

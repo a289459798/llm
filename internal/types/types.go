@@ -87,6 +87,12 @@ type WxqrcodeRequest struct {
 	Channel string `form:"c,optional"`
 }
 
+type LoginAppRequest struct {
+	OpenId  string `json:"openId"`
+	UnionID string `json:"unionID"`
+	Channel string `json:"channel,optional"`
+}
+
 type ChatHistoryListResponse struct {
 	Pagination Pagination        `json:"pagination"`
 	Data       []ChatHistoryData `json:"data"`
@@ -603,7 +609,7 @@ type OrderResponse struct {
 type OrderPayRequest struct {
 	OrderId  string `json:"orderId"`
 	Platform string `json:"platform,options=wechat|alipay"`
-	Scene    string `json:"scene,options=h5|native|jsapi"`
+	Scene    string `json:"scene,options=h5|native|jsapi|app"`
 }
 
 type OrderPayResponse struct {

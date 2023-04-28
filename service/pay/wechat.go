@@ -119,6 +119,28 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 		}
 		response = wxRsp.Response.CodeUrl
 		break
+	case "app":
+		wxRsp, err2 := client.V3TransactionApp(p.Ctx, bm)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		if wxRsp.Code != wechat.Success {
+			err = errors.New(wxRsp.Error)
+			return
+		}
+		applet, err2 := client.PaySignOfApp(payConfig.AppId, wxRsp.Response.PrepayId)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		data, err2 := json.Marshal(applet)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		response = string(data)
+		break
 	}
 
 	return

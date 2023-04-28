@@ -13,7 +13,7 @@ type OrderResponse {
 type OrderPayRequest {
     OrderId string `json:"orderId"`
     Platform string `json:"platform,options=wechat|alipay"`
-    Scene string `json:"scene,options=h5|native|jsapi"`
+    Scene string `json:"scene,options=h5|native|jsapi|app"`
 }
 
 type OrderPayResponse {
