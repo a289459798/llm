@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"math"
 
@@ -79,16 +80,16 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			OutNo: order.OutNo,
 			Total: func() float32 {
 				if l.svcCtx.Config.Mode == "dev" {
-					return 1
+					return 0.01
 				}
-				return float32(math.Round(float64(order.PayPrice * 100)))
+				return float32(math.Round(float64(order.PayPrice)))
 			}(),
 			OpenId: user.OpenId,
 			NotifyPath: func() string {
 				if l.svcCtx.Config.Mode == "dev" {
-					return "https://api.smuai.com/testpay/callback/pay/wechat/" + merchant
+					return fmt.Sprintf("https://api.smuai.com/testpay/callback/pay/%s/%s", req.Platform, merchant)
 				}
-				return "https://api.smuai.com/callback/pay/wechat/" + merchant
+				return fmt.Sprintf("https://api.smuai.com/callback/pay/%s/%s", req.Platform, merchant)
 			}(),
 		})
 		if err != nil {
