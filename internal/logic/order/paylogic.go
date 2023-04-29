@@ -1,6 +1,8 @@
 package order
 
 import (
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service/pay"
 	"context"
@@ -8,10 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
-	"math"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -82,7 +80,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 				if l.svcCtx.Config.Mode == "dev" {
 					return 0.01
 				}
-				return float32(math.Round(float64(order.PayPrice)))
+				return order.PayPrice
 			}(),
 			OpenId: user.OpenId,
 			NotifyPath: func() string {
