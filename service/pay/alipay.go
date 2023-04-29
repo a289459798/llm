@@ -3,6 +3,7 @@ package pay
 import (
 	"chatgpt-tools/common/utils/appplatform"
 	"context"
+	"fmt"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
 	"net/http"
@@ -82,5 +83,28 @@ func (p *AlipayPay) Pay(scene string, order Order) (response string, err error) 
 }
 
 func (p *AlipayPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyResponse, err error) {
+
+	// 解析异步通知的参数
+	notifyReq, err := alipay.ParseNotifyToBodyMap(req)
+	if err != nil {
+		return
+	}
+
+	payConfig, err := p.getConfig()
+	// 支付宝异步通知验签（公钥证书模式）
+	_, err = alipay.VerifySignWithCert(payConfig.AlipayPublicKey, notifyReq)
+	if err != nil {
+		return
+	}
+
+	fmt.Println(notifyReq)
+
+	payNotifyResponse = PayNotifyResponse{
+		OutTradeNo:    notifyReq.GetString("out_trade_no"),
+		TransactionId: notifyReq.GetString("trade_no"),
+		SuccessTime:   notifyReq.GetString("notify_time"),
+		Amount:        PayAmoount{Total: notifyReq.GetInterface("total_amount").(float32)},
+	}
+
 	return
 }

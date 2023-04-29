@@ -18,7 +18,7 @@ type PayResponse struct {
 }
 
 type PayAmoount struct {
-	Total int
+	Total float32
 }
 
 type PayNotifyResponse struct {

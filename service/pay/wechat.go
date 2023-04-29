@@ -170,7 +170,7 @@ func (p *WechatPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyRes
 		TransactionId: result.TransactionId,
 		Attach:        result.Attach,
 		SuccessTime:   result.SuccessTime,
-		Amount:        PayAmoount{Total: result.Amount.Total},
+		Amount:        PayAmoount{Total: float32(result.Amount.Total) / 100},
 	}
 	return
 }
