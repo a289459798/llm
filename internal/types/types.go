@@ -89,7 +89,7 @@ type WxqrcodeRequest struct {
 
 type LoginAppRequest struct {
 	OpenId  string `json:"openId"`
-	UnionID string `json:"unionID"`
+	UnionID string `json:"unionId"`
 	Channel string `json:"channel,optional"`
 }
 
