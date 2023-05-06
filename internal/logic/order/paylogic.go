@@ -1,15 +1,15 @@
 package order
 
 import (
+	"chatgpt-tools/internal/svc"
+	"chatgpt-tools/internal/types"
 	"chatgpt-tools/model"
 	"chatgpt-tools/service/pay"
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
-
-	"chatgpt-tools/internal/svc"
-	"chatgpt-tools/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,7 +42,13 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		return nil, errors.New("订单不存在")
 	}
 
-	merchant := "wechat_xm"
+	var merchant = ""
+	if req.Platform == "wechat" {
+		merchant = "wechat_xm"
+	} else {
+		merchant = "alipay_xm"
+	}
+
 	config, err := model.PaySetting{Merchant: merchant}.FindByMerchant(l.svcCtx.Db)
 	if err != nil {
 		return nil, err
@@ -72,16 +78,16 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 			OutNo: order.OutNo,
 			Total: func() float32 {
 				if l.svcCtx.Config.Mode == "dev" {
-					return 1
+					return 0.01
 				}
-				return order.PayPrice * 100
+				return order.PayPrice
 			}(),
 			OpenId: user.OpenId,
 			NotifyPath: func() string {
 				if l.svcCtx.Config.Mode == "dev" {
-					return "https://api.smuai.com/testpay/callback/pay/wechat/" + merchant
+					return fmt.Sprintf("https://api.smuai.com/testpay/callback/pay/%s/%s", req.Platform, merchant)
 				}
-				return "https://api.smuai.com/callback/pay/wechat/" + merchant
+				return fmt.Sprintf("https://api.smuai.com/callback/pay/%s/%s", req.Platform, merchant)
 			}(),
 		})
 		if err != nil {

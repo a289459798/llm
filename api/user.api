@@ -87,7 +87,7 @@ type WxqrcodeRequest {
 }
 
 type LoginAppRequest {
-    OpenID string `json:"openId"`
+    OpenId string `json:"openId"`
     UnionID string `json:"unionId"`
     Channel string `json:"channel,optional"`
 }

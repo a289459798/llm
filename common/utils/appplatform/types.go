@@ -14,7 +14,7 @@ type Session struct {
 }
 
 type ConfData interface {
-	WechatMiniConf | WechatOfficialConf
+	WechatMiniConf | WechatOfficialConf | AlipayConf
 }
 
 type WechatMiniConf struct {
@@ -32,4 +32,12 @@ type WechatOfficialConf struct {
 	AppSecret      string
 	Token          string
 	EncodingAESKey string
+}
+
+type AlipayConf struct {
+	AppId           string
+	PrivateKey      string
+	AppPublicKey    string
+	AlipayPublicKey string
+	RootKey         string
 }

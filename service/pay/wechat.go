@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/wechat/v3"
+	"math"
 	"net/http"
 )
 
@@ -66,7 +67,7 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 		Set("out_trade_no", order.OutNo).
 		Set("notify_url", order.NotifyPath).
 		SetBodyMap("amount", func(bm gopay.BodyMap) {
-			bm.Set("total", order.Total)
+			bm.Set("total", float32(math.Round(float64(order.Total*100))))
 		})
 
 	switch scene {
@@ -170,7 +171,7 @@ func (p *WechatPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyRes
 		TransactionId: result.TransactionId,
 		Attach:        result.Attach,
 		SuccessTime:   result.SuccessTime,
-		Amount:        PayAmoount{Total: result.Amount.Total},
+		Amount:        PayAmoount{Total: float32(result.Amount.Total) / 100},
 	}
 	return
 }
