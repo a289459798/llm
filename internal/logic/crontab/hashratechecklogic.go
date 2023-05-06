@@ -28,7 +28,7 @@ func NewHashRateCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Has
 
 func (l *HashRateCheckLogic) HashRateCheck() (resp *types.CronResponse, err error) {
 	hashRateList := []model.AIUserHashRate{}
-	l.svcCtx.Db.Where("vip_expiry between ? and ?", time.Now().Format("2006-01-02 15:04:05"), time.Now().AddDate(0, 0, 1).Format("2006-01-02 15:04:05")).
+	l.svcCtx.Db.Where("expiry between ? and ?", time.Now().Format("2006-01-02 15:04:05"), time.Now().AddDate(0, 0, 1).Format("2006-01-02 15:04:05")).
 		Where("amount > use_amount").Find(&hashRateList)
 	for _, rate := range hashRateList {
 		// 发送站内信
