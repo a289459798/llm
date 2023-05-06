@@ -26,10 +26,10 @@ func NewLoginWithAppLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 
 func (l *LoginWithAppLogic) LoginWithApp(req *types.LoginAppRequest) (resp *types.InfoResponse, err error) {
 	aiUser, tokenString, err := model.AIUser{}.Login(l.svcCtx.Db, model.UserLogin{
-		OpenID:       req.OpenId,
+		OpenID:       req.OpenID,
 		UnionID:      req.UnionID,
 		Channel:      req.Channel,
-		AppKey:       "app",
+		AppKey:       "74Bdht7",
 		AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
 		AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
 	})
