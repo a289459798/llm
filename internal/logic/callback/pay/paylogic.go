@@ -6,6 +6,7 @@ import (
 	"chatgpt-tools/service/pay"
 	"context"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"net/http"
 
@@ -32,6 +33,7 @@ func NewPayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayLogic {
 func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.WechatPayResponse, err error) {
 	config, err := model.PaySetting{Merchant: req.Merchant}.FindByMerchant(l.svcCtx.Db)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 	payModel := pay.GetPay(req.Type, pay.PayData{
@@ -42,6 +44,7 @@ func (l *PayLogic) Pay(req *types.PayRequest, r *http.Request) (resp *types.Wech
 
 	payNotify, err := payModel.PayNotify(r)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 

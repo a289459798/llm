@@ -3,10 +3,10 @@ package pay
 import (
 	"chatgpt-tools/common/utils/appplatform"
 	"context"
-	"fmt"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
 	"net/http"
+	"strconv"
 )
 
 type AlipayPay struct {
@@ -92,18 +92,18 @@ func (p *AlipayPay) PayNotify(req *http.Request) (payNotifyResponse PayNotifyRes
 
 	payConfig, err := p.getConfig()
 	// 支付宝异步通知验签（公钥证书模式）
-	_, err = alipay.VerifySignWithCert(payConfig.AlipayPublicKey, notifyReq)
+	_, err = alipay.VerifySignWithCert([]byte(payConfig.AlipayPublicKey), notifyReq)
 	if err != nil {
 		return
 	}
 
-	fmt.Println(notifyReq)
+	amount, err := strconv.ParseFloat(notifyReq.GetString("total_amount"), 32)
 
 	payNotifyResponse = PayNotifyResponse{
 		OutTradeNo:    notifyReq.GetString("out_trade_no"),
 		TransactionId: notifyReq.GetString("trade_no"),
 		SuccessTime:   notifyReq.GetString("notify_time"),
-		Amount:        PayAmoount{Total: notifyReq.GetInterface("total_amount").(float32)},
+		Amount:        PayAmoount{Total: float32(amount)},
 	}
 
 	return
