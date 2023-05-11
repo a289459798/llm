@@ -16,7 +16,7 @@ const (
 type Order struct {
 	ID           uint32      `gorm:"primary_key" json:"id"`
 	Uid          uint32      `json:"uid" gorm:"index:ik_uid"`
-	OrderNo      string      `json:"order_n0" gorm:"type:varchar(100);uniqueIndex:uk_order_no"`
+	OrderNo      string      `json:"order_no" gorm:"type:varchar(100);uniqueIndex:uk_order_no"`
 	OutNo        string      `json:"out_no" gorm:"type:varchar(100);index:ik_out_no"`
 	OrderType    string      `json:"order_type" gorm:"type:varchar(20)"`
 	CostPrice    float32     `json:"cost_price" gorm:"type:decimal(10,2)"`
