@@ -8,7 +8,7 @@ type AccountRecord struct {
 	ID            uint32    `gorm:"primary_key" json:"id"`
 	Uid           uint32    `json:"uid" gorm:"uniqueIndex:uk_uid_date"`
 	RecordId      uint32    `json:"record_id"`
-	Way           uint8     `json:"type" gorm:"COMMENT:方式"`
+	Way           uint8     `json:"way" gorm:"COMMENT:方式"`
 	Type          string    `gorm:"type:varchar(20);uniqueIndex:uk_uid_date" json:"type"`
 	Amount        uint32    `json:"amount"`
 	CurrentAmount uint32    `json:"current_amount"`
