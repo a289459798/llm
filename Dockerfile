@@ -17,7 +17,7 @@ COPY . .
 COPY ./etc /app/etc
 COPY ./data /app/data
 RUN go build -ldflags="-s -w" -o /app/tools tools.go
-
+RUN rm -rf /build
 
 FROM scratch
 
