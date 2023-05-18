@@ -42,12 +42,12 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse
 		return nil, errors.New("订单不存在")
 	}
 
-	var merchant = ""
-	if req.Platform == "wechat" {
-		merchant = "wechat_xm"
-	} else {
-		merchant = "alipay_xm"
+	paySetting := &model.PaySetting{}
+	l.svcCtx.Db.Where("platform = ?", req.Platform).Where("status = 1").First(&paySetting)
+	if paySetting.Merchant == "" {
+		return nil, errors.New("支付方式不存在")
 	}
+	merchant := paySetting.Merchant
 
 	config, err := model.PaySetting{Merchant: merchant}.FindByMerchant(l.svcCtx.Db)
 	if err != nil {
