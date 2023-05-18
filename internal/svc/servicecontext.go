@@ -115,10 +115,8 @@ func check(c config.Config) {
 	mac := ""
 	for _, iface := range interfaces {
 		if len(iface.HardwareAddr) > 0 {
-			if iface.Name == "en0" {
-				mac = fmt.Sprintf("%v", iface.HardwareAddr)
-				break
-			}
+			mac = fmt.Sprintf("%v", iface.HardwareAddr)
+			break
 		}
 	}
 	if mac == "" {
