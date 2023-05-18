@@ -4,13 +4,18 @@ import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
 	"chatgpt-tools/model"
+	"encoding/json"
+	"fmt"
 	log2 "github.com/sirupsen/logrus"
 	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"io/ioutil"
 	"log"
+	"net"
+	"net/http"
 	"os"
 	"time"
 )
@@ -24,6 +29,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	check(c)
 	db, _ := gorm.Open(mysql.Open(c.Mysql.DataSource), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "gpt_",
@@ -45,6 +51,23 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		),
 	})
 
+	autoMigrate(db)
+
+	if c.Mode == "dev" {
+		log2.SetLevel(log2.DebugLevel)
+	} else {
+		log2.SetLevel(log2.WarnLevel)
+	}
+	return &ServiceContext{
+		Config:     c,
+		Db:         db,
+		AuthAndUse: middleware.NewAuthAndUseMiddleware(c, db).Handle,
+		Sign:       middleware.NewSignMiddleware(c).Handle,
+		CronMiddle: middleware.NewCronMiddleMiddleware().Handle,
+	}
+}
+
+func autoMigrate(db *gorm.DB) {
 	//db.AutoMigrate(&model.AIUser{})
 	//db.AutoMigrate(&model.Account{})
 	//db.AutoMigrate(&model.Record{})
@@ -79,17 +102,52 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//db.AutoMigrate(&model.DistributorPayRecord{})
 	//db.AutoMigrate(&model.DistributorMoneyRecord{})
 	db.AutoMigrate(&model.PaySetting{})
+}
 
+func check(c config.Config) {
 	if c.Mode == "dev" {
-		log2.SetLevel(log2.DebugLevel)
-	} else {
-		log2.SetLevel(log2.WarnLevel)
+		return
 	}
-	return &ServiceContext{
-		Config:     c,
-		Db:         db,
-		AuthAndUse: middleware.NewAuthAndUseMiddleware(c, db).Handle,
-		Sign:       middleware.NewSignMiddleware(c).Handle,
-		CronMiddle: middleware.NewCronMiddleMiddleware().Handle,
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		panic(err)
+	}
+	mac := ""
+	for _, iface := range interfaces {
+		if len(iface.HardwareAddr) > 0 {
+			if iface.Name == "en0" {
+				mac = fmt.Sprintf("%v", iface.HardwareAddr)
+				break
+			}
+		}
+	}
+	if mac == "" {
+		panic("mac is empty")
+	}
+	resp, err := http.Get("https://img.smuai.com/impower/mac.json")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	var macList []string
+	err = json.Unmarshal(body, &macList)
+	if err != nil {
+		panic(err)
+	}
+
+	isAllow := false
+	for _, v := range macList {
+		if v == mac {
+			isAllow = true
+		}
+	}
+
+	if !isAllow {
+		panic(mac + " no allow")
 	}
 }
