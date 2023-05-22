@@ -74,7 +74,18 @@ func (p *AlipayPay) Pay(scene string, order Order) (response string, err error) 
 		Set("out_trade_no", order.OutNo).
 		Set("total_amount", order.Total)
 
-	response, err = client.TradeAppPay(p.Ctx, bm)
+	switch scene {
+	case "app":
+		response, err = client.TradeAppPay(p.Ctx, bm)
+		break
+	case "h5":
+		response, err = client.TradeWapPay(p.Ctx, bm)
+		break
+	case "native":
+		response, err = client.TradePagePay(p.Ctx, bm)
+		break
+	}
+
 	if err != nil {
 		return
 	}
