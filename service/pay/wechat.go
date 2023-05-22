@@ -96,7 +96,7 @@ func (p *WechatPay) Pay(scene string, order Order) (response string, err error) 
 			err = errors.New(wxRsp.Error)
 			return
 		}
-		applet, err2 := client.PaySignOfApplet("appid", "prepayid")
+		applet, err2 := client.PaySignOfApplet(payConfig.AppId, wxRsp.Response.PrepayId)
 		if err2 != nil {
 			err = err2
 			return
