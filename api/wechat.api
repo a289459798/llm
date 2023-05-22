@@ -11,6 +11,22 @@ type WechatValidateRequest {
     Echostr   string `form:"echostr,optional"`
 }
 
+
+type WeChatOAuthResponse {
+    Url string `json:"url"`
+}
+
+type WeChatConfigRequest {
+    Url string `form:"url"`
+}
+
+type WeChatConfigResponse {
+    AppID     string `json:"app_id"`
+    Timestamp int64  `json:"timestamp"`
+    NonceStr  string `json:"nonce_str"`
+    Signature string `json:"signature"`
+}
+
 @server(
     group: wechat
 )
@@ -26,4 +42,10 @@ service tools {
 
     @handler setMenu
     post /wechat/menu  returns (WeChatCallbackResponse)
+
+    @handler oauth
+    get /wechat/oauth  returns (WeChatOAuthResponse)
+
+    @handler config
+    get /wechat/config(WeChatConfigRequest)  returns (WeChatConfigResponse)
 }

@@ -19,7 +19,7 @@ func PayHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := order.NewPayLogic(r.Context(), svcCtx)
-		resp, err := l.Pay(&req)
+		resp, err := l.Pay(&req, r)
 		if err != nil {
 			errorx.Error(w, err.Error())
 		} else {

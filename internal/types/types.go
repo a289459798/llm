@@ -696,6 +696,21 @@ type WechatValidateRequest struct {
 	Echostr   string `form:"echostr,optional"`
 }
 
+type WeChatOAuthResponse struct {
+	Url string `json:"url"`
+}
+
+type WeChatConfigRequest struct {
+	Url string `form:"url"`
+}
+
+type WeChatConfigResponse struct {
+	AppID     string `json:"app_id"`
+	Timestamp int64  `json:"timestamp"`
+	NonceStr  string `json:"nonce_str"`
+	Signature string `json:"signature"`
+}
+
 type WechatPayResponse struct {
 	Data string `json:"data"`
 }

@@ -691,6 +691,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/wechat/menu",
 				Handler: wechat.SetMenuHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/wechat/oauth",
+				Handler: wechat.OauthHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/wechat/config",
+				Handler: wechat.ConfigHandler(serverCtx),
+			},
 		},
 	)
 

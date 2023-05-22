@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,9 +29,10 @@ func NewPayLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayLogic {
 	}
 }
 
-func (l *PayLogic) Pay(req *types.OrderPayRequest) (resp *types.OrderPayResponse, err error) {
+func (l *PayLogic) Pay(req *types.OrderPayRequest, r *http.Request) (resp *types.OrderPayResponse, err error) {
 	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
-	user := model.AIUser{Uid: uint32(uid)}.Find(l.svcCtx.Db)
+	user := &model.AIUser{}
+	l.svcCtx.Db.Where("uid = ?", uint32(uid)).Where("app_key = ?", r.Header.Get("App-Key")).First(&user)
 	if user.Uid == 0 {
 		return nil, errors.New("用户不存在")
 	}
