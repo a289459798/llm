@@ -45,7 +45,7 @@ func (l *PayLogic) Pay(req *types.OrderPayRequest, r *http.Request) (resp *types
 	}
 
 	paySetting := &model.PaySetting{}
-	l.svcCtx.Db.Where("platform = ?", req.Platform).Where("status = 1").First(&paySetting)
+	l.svcCtx.Db.Where("platform = ?", req.Platform).Where("status = 1").Where("scene like ?", req.Scene).First(&paySetting)
 	if paySetting.Merchant == "" {
 		return nil, errors.New("支付方式不存在")
 	}

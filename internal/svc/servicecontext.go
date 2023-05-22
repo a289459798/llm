@@ -3,6 +3,7 @@ package svc
 import (
 	"chatgpt-tools/internal/config"
 	"chatgpt-tools/internal/middleware"
+	"chatgpt-tools/model"
 	"encoding/json"
 	"fmt"
 	log2 "github.com/sirupsen/logrus"
@@ -100,7 +101,7 @@ func autoMigrate(db *gorm.DB) {
 	//db.AutoMigrate(&model.DistributorRecord{})
 	//db.AutoMigrate(&model.DistributorPayRecord{})
 	//db.AutoMigrate(&model.DistributorMoneyRecord{})
-	//db.AutoMigrate(&model.PaySetting{})
+	db.AutoMigrate(&model.PaySetting{})
 }
 
 func check(c config.Config) {
